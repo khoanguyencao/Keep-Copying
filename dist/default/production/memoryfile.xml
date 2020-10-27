@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<project>                                  
+  <executable name="dist/default/production/Framework4PIC32_with_u8g2.production.elf">                 
+    <memory name="program">                 
+      <units>bytes</units>                 
+      <length>263312</length>                 
+      <used>79428</used>                     
+      <free>183884</free>                     
+    </memory>                              
+    <memory name="data">              
+      <units>bytes</units>                 
+      <length>65536</length>                 
+      <used>1544</used>                     
+      <free>63992</free>                     
+    </memory>                              
+  </executable>                            
+</project>                                 
