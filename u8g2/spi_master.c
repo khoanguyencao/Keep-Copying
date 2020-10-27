@@ -17,6 +17,34 @@
  
 ****************************************************************************/
 void SPI_Init(void){
+   // Pin and PPS Settings
+   ANSELA = 0;
+   ANSELB = 0;
+   TRISA = 0;
+   TRISB = 0;
+   //pinMode(2, OUTPUT);                 // RA1
+   //pinMode(8, OUTPUT);                 // RB2
+   //pinMode(18, OUTPUT);                // RB12
+   //pinMode(19, OUTPUT);                // RB13
+   //pinMode(20, OUTPUT);                // RB14
+   RPA0R = 0x3;                        // Set RA0 to SS1
+   RPA1R = 0x3;                        // Set RA1 to SDO1
+   SPI1CONbits.ON = 0;                 // Turn off SPI
+   SPI1BRG = 0;                        // Set to 10MHz as required by OLED
+   SPI1CONbits.ENHBUF = 0;             // Turn off enhanced buffer
+   SPI1STATbits.SPIROV = 0;            // Clear SPIROV bit. 
+   SPI1CONbits.MSTEN = 1;              // Set PIC32 as master.
+   SPI1CONbits.MODE32 = 0;             // Set bit width to 8 as required by OLED
+   SPI1CONbits.MODE16 = 0;
+   // Clock Settings
+   SPI1CONbits.MCLKSEL = 0;            // Set MCLK as PBCLK
+   SPI1CONbits.CKE = 0;                // Set CKE as 0 (second edge active)
+   SPI1CONbits.CKP = 1;                // Set CKP as 1 (idle state is high)
+   // SS Settings
+   SPI1CONbits.SSEN = 1;               // SS is slave select
+   SPI1CONbits.FRMPOL = 0;             // SS is active low
+   SPI1CONbits.MSSEN = 1;              // SS automatically controlled
+   SPI1CONbits.ON = 1;                 // Turn on SPI
 }
 /****************************************************************************
  Function
@@ -32,7 +60,15 @@ void SPI_Init(void){
  
 ****************************************************************************/
 void SPI_Tx(uint8_t data){
- 
+   bool buffer_full;
+   buffer_full = SPI1STATbits.SPITBF;
+   while (buffer_full){
+      buffer_full = SPI1STATbits.SPITBF;
+   }
+   SPI1BUF = data;
+   // Read buffer to prevent overruns
+   uint8_t clear_var;
+   clear_var = SPI1BUF;
 }
 
 /****************************************************************************
@@ -49,5 +85,9 @@ void SPI_Tx(uint8_t data){
 
  
 ****************************************************************************/
-void SPI_TxBuffer(uint8_t *buffer, uint8_t length){    
+void SPI_TxBuffer(uint8_t *buffer, uint8_t length){
+   uint8_t i;
+   for (i = 0; i < length; i++){
+      SPI_Tx(buffer[i]);
+   }
 }
