@@ -1,6 +1,6 @@
 # ME218A Project 
 
-KEEP TALKING AND NOBODY EXPLODES
+KEEP COPYING AND NOBODY EXPLODES
 
 ---------------------------------------------------------------------------------------------------------
 
