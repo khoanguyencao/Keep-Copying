@@ -33,7 +33,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 1
+#define NUM_SERVICES 2
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -57,26 +57,26 @@
 // These are the definitions for Service 1
 #if NUM_SERVICES > 1
 // the header file with the public function prototypes
-#define SERV_1_HEADER "TestHarnessService1.h"
+#define SERV_1_HEADER "Seq.h"
 // the name of the Init function
-#define SERV_1_INIT InitTestHarnessService1
+#define SERV_1_INIT InitSequence
 // the name of the run function
-#define SERV_1_RUN RunTestHarnessService1
+#define SERV_1_RUN RunSequence
 // How big should this services Queue be?
-#define SERV_1_QUEUE_SIZE 3
+#define SERV_1_QUEUE_SIZE 5
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 2
 #if NUM_SERVICES > 2
 // the header file with the public function prototypes
-#define SERV_2_HEADER "TestHarnessService2.h"
+#define SERV_2_HEADER "S1_OLED_Write.h"
 // the name of the Init function
-#define SERV_2_INIT InitTestHarnessService2
+#define SERV_2_INIT InitS1_OLED_Write
 // the name of the run function
-#define SERV_2_RUN RunTestHarnessService2
+#define SERV_2_RUN RunS1_OLED_Write
 // How big should this services Queue be?
-#define SERV_2_QUEUE_SIZE 3
+#define SERV_2_QUEUE_SIZE 15
 #endif
 
 /****************************************************************************/
@@ -260,8 +260,16 @@ typedef enum
   ES_SHORT_TIMEOUT,         /* signals that a short timer has expired */
   /* User-defined events start here */
   ES_NEW_KEY,               /* signals a new key received from terminal */
-  ES_LOCK,
-  ES_UNLOCK
+  ES_PS_INIT,
+  ES_NOT_BUSY,
+  ES_WRITE,
+  ES_XFER_C,
+  ES_PRESS,
+  ES_FIRST_ROUND,
+  ES_NEXT_ROUND,
+  ES_INCORRECT_INPUT,
+  ES_CORRECT_INPUT_F,
+  ES_CORRECT_INPUT
 }ES_EventType_t;
 
 /****************************************************************************/
@@ -315,12 +323,12 @@ typedef enum
 #define TIMER7_RESP_FUNC TIMER_UNUSED
 #define TIMER8_RESP_FUNC TIMER_UNUSED
 #define TIMER9_RESP_FUNC TIMER_UNUSED
-#define TIMER10_RESP_FUNC TIMER_UNUSED
-#define TIMER11_RESP_FUNC TIMER_UNUSED
+#define TIMER10_RESP_FUNC PostSequence
+#define TIMER11_RESP_FUNC PostTestHarnessService0
 #define TIMER12_RESP_FUNC TIMER_UNUSED
-#define TIMER13_RESP_FUNC TIMER_UNUSED
-#define TIMER14_RESP_FUNC TIMER_UNUSED
-#define TIMER15_RESP_FUNC PostTestHarnessService0
+#define TIMER13_RESP_FUNC PostSequence
+#define TIMER14_RESP_FUNC PostSequence
+#define TIMER15_RESP_FUNC PostSequence
 
 /****************************************************************************/
 // Give the timer numbers symbolc names to make it easier to move them
@@ -329,7 +337,11 @@ typedef enum
 // the timer number matches where the timer event will be routed
 // These symbolic names should be changed to be relevant to your application
 
-#define SERVICE0_TIMER 15
-
+#define READY_TIMER 15
+#define INPUT_TIMER 14
+#define DIRECTION_TIMER 13
+#define LAST_DIRECTION_TIMER 12
+#define TEST_TIMER 11
+#define GO_TIMER 10
 
 #endif /* ES_CONFIGURE_H */
