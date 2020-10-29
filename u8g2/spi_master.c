@@ -18,15 +18,6 @@
 ****************************************************************************/
 void SPI_Init(void){
    // Pin and PPS Settings
-   ANSELA = 0;
-   ANSELB = 0;
-   TRISA = 0;
-   TRISB = 0;
-   //pinMode(2, OUTPUT);                 // RA1
-   //pinMode(8, OUTPUT);                 // RB2
-   //pinMode(18, OUTPUT);                // RB12
-   //pinMode(19, OUTPUT);                // RB13
-   //pinMode(20, OUTPUT);                // RB14
    RPA0R = 0x3;                        // Set RA0 to SS1
    RPA1R = 0x3;                        // Set RA1 to SDO1
    SPI1CONbits.ON = 0;                 // Turn off SPI

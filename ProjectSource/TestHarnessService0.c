@@ -219,8 +219,6 @@ ES_Event_t RunTestHarnessService0(ES_Event_t ThisEvent)
           PostSequence(ThisEvent);
       }
       
-      
-      
     }
     break;
     default:

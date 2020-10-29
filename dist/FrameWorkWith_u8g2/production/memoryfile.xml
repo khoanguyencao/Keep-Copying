@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project>                                  
-  <executable name="dist/FrameworkWith_u8g2/production/Framework4PIC32_with_u8g2.production.elf">                 
+  <executable name="dist/FrameworkWith_u8g2/production/me218a.production.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
       <length>263312</length>                 
-      <used>18012</used>                     
-      <free>245300</free>                     
+      <used>22148</used>                     
+      <free>241164</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 
       <length>65536</length>                 
-      <used>564</used>                     
-      <free>64972</free>                     
+      <used>852</used>                     
+      <free>64684</free>                     
     </memory>                              
   </executable>                            
 </project>                                 

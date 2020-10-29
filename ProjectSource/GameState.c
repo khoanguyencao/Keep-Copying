@@ -35,7 +35,7 @@
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
-static TemplateState_t CurrentState;
+static GameState_t CurrentState;
 static uint16_t highScores[3];
 
 // with the introduction of Gen2, we need a module level Priority var as well
@@ -134,12 +134,12 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         }
         PostDisplay(ES_DISPLAY_WELCOME);
         PostDotstar(ES_RANDOM);
-        CurrentState = WelcomeDisplay;
+        CurrentState = WelcomeScreen;
       }
     }
     break;
 
-    case WelcomeDISPLAY:        
+    case WelcomeScreen:        
     {
       switch (ThisEvent.EventType)
       {
@@ -298,7 +298,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
  Author
      J. Edward Carryer, 10/23/11, 19:21
 ****************************************************************************/
-TemplateState_t QueryGameState(void)
+GameState_t QueryGameState(void)
 {
   return CurrentState;
 }
@@ -307,16 +307,19 @@ TemplateState_t QueryGameState(void)
  event checkers
  ***************************************************************************/
 bool CheckTouchSensor(){
-  bool eventStatus = false;
-  uint8_t currentButtonState = digitalRead(SENSOR_INPUT_PIN);
-  if((currentButtonState != lastButtonState) && (currentButtonState == LOW)){
-    ES_Event_t ThisEvent;
-    ThisEvent.EventType = ES_SENSOR_PRESSED;
-    PostGameState(ThisEvent);
-    eventStatus = true;
+  if ((CurrentState == WelcomeScreen) || (CurrentState == GARoundComplete) || (CurrentState == GameComplete)){
+    bool eventStatus = false;
+    uint8_t currentButtonState = digitalRead(SENSOR_INPUT_PIN);
+    if((currentButtonState != lastButtonState) && (currentButtonState == LOW)){
+      ES_Event_t ThisEvent;
+      ThisEvent.EventType = ES_SENSOR_PRESSED;
+      PostGameState(ThisEvent);
+      eventStatus = true;
+    }
+    lastButtonState = currentButtonState;
+    return eventStatus;
   }
-  lastButtonState = currentButtonState;
-  return eventStatus;
+  
 }
 
 /***************************************************************************
