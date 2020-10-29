@@ -26,7 +26,8 @@
 
 //type def
 typedef enum{
-    SequenceCreate=0,
+    PseudoInit=0,
+    SequenceCreate,
     SequenceDisplay,
     SequenceInput
 }SState_t;
@@ -36,6 +37,11 @@ bool InitSequence(uint8_t Priority);
 bool PostSequence(ES_Event_t ThisEvent);
 ES_Event_t RunSequence(ES_Event_t ThisEvent);
 
+//Event Checker
+bool xyVal (void);
+
+//Complementary functions
+bool Input_Check(uint32_t *adcResults);
 
 #endif	/* SEQ_H */
 
