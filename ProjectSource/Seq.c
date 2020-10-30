@@ -40,6 +40,7 @@
 */
 static void updateScore();
 static bool inputChecker(uint32_t *adcResults);
+static uint16_t bitPack(uint16_t score, uint8_t time, uint8_t input)
 
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
@@ -151,6 +152,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                       ADC_MultiRead(adcResults);
                       Neutral[0] = adcResults[0];           // Y neutral position
                       Neutral[1] = adcResults[1];           // X neutral position
+                      input = 8;
                       //printf("Yn %d\r\n", Neutral[0]);
                       //printf("Xn %d\r\n", Neutral[1]);
 
@@ -218,8 +220,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         // Inform display service to demonstrate input and starts first direction timer
                         displayCounter = 0;
                         ES_Event_t DisplayEvent;
-                        DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
-                        DisplayEvent.EventParam3 = seqArray[displayCounter];
+                        DisplayEvent.EventType = ES_DISPLAY_INSTRUCTION;
+                        DisplayEvent.EventParam = seqArray[displayCounter];
                         //PostDisplay(DisplayEvent);
                         displayCounter++;
                         ES_Timer_InitTimer(DIRECTION_TIMER, 500);
@@ -248,8 +250,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         {
                             // Inform display service to demonstrate input and starts subsequent direction timers
                             ES_Event_t DisplayEvent;
-                            DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
-                            DisplayEvent.EventParam3 = seqArray[displayCounter];
+                            DisplayEvent.EventType = ES_DISPLAY_INSTRUCTION;
+                            DisplayEvent.EventParam = seqArray[displayCounter];
                             //PostDisplay(DisplayEvent);
                             printf("Direction %d \r\n", seqArray[displayCounter]);
                             displayCounter++;
@@ -278,8 +280,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             // Inform display service to update to play screen and starts input timer
                             ES_Event_t DisplayEvent;
                             DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
-                            DisplayEvent.EventParam3 = 8;
-                            DisplayEvent.EventParam2 = playtimeLeft;              // depends on how Ashley implements display service
+                            DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
                             //PostDisplay(DisplayEvent);
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
                             CurrentState = SequenceInput;
@@ -314,7 +315,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             playtimeLeft--;
                             ES_Event_t DisplayEvent;
                             DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
-                            DisplayEvent.EventParam2 = playtimeLeft;
+                            DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
 
                             printf("%u seconds remaining\r\n", playtimeLeft);
@@ -373,9 +374,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     seqIndex++;
 
                     ES_Event_t DisplayEvent;
-                    DisplayEvent.EventParam = score;
-                    DisplayEvent.EventParam3 = input;
                     DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
+                    DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
                     //PostDisplay(DisplayEvent);
                     
                     // TESTING
@@ -624,3 +624,12 @@ static void updateScore(){
         score = score + (arrayLength / 4) * 10;
     }
 }
+
+// score 9 bits, time 4 bits, input 3 bits 
+static uint16_t bitPack(uint16_t score, uint8_t time, uint8_t input){
+    uint16_t EventParam = score << 7;
+    EventParam = EventParam | (time << 3);
+    EventParam = EventParam | (input);
+    return EventParam;
+}
+
