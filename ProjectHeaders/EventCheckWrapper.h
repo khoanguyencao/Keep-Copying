@@ -19,6 +19,7 @@
 #include "EventCheckers.h"
 #include "GameState.h"
 #include "Seq.h"
+#include "Display.h"
 
 // Here you would #include the header files for any other modules that
 // contained event checking functions

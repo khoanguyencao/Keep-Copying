@@ -24,6 +24,7 @@
 #include "GameState.h"
 #include "hal.h"
 #include "Seq.h"
+#include "Display.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -139,7 +140,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         }
         ES_Event_t DisplayEvent;
         DisplayEvent.EventType = ES_DISPLAY_WELCOME;
-        //PostDisplay(DisplayEvent);
+        PostDisplay(DisplayEvent);
         printf("Welcome Screen\r\n");
 
         ES_Event_t DotstarEvent;
@@ -161,7 +162,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           ES_Event_t DisplayEvent;
           DisplayEvent.EventType = ES_DISPLAY_READY;
           DisplayEvent.EventParam = roundNumber;
-          //PostDisplay(DisplayEvent);
+          PostDisplay(DisplayEvent);
           printf("Ready Screen\r\n");
 
           ES_Event_t DotstarEvent;
@@ -193,7 +194,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           if (ThisEvent.EventParam == LAST_DIRECTION_TIMER){
             ES_Event_t DisplayEvent;
             DisplayEvent.EventType = ES_DISPLAY_GO;
-            //PostDisplay(DisplayEvent);
+            PostDisplay(DisplayEvent);
             printf("Go Screen\r\n");
 
             ES_Timer_InitTimer(GO_TIMER, 2000);
@@ -217,7 +218,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         {   
           ES_Event_t DisplayEvent;
           DisplayEvent.EventType = ES_DISPLAY_ROUNDCOMPLETE;
-          //PostDisplay(DisplayEvent);
+          PostDisplay(DisplayEvent);
           printf("Round Complete Screen\r\n");
 
           ES_Event_t DotstarEvent;
@@ -234,13 +235,11 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           ES_Event_t DotstarEvent;
           DisplayEvent.EventType = ES_DISPLAY_GAMECOMPLETE;
           if (UpdateHighScores(score)){
-            DisplayEvent.EventParam = score;
             DotstarEvent.EventType = ES_GREEN;
           } else {
-            DisplayEvent.EventParam = 0;
             DotstarEvent.EventType = ES_RED;
           }
-          //PostDisplay(DisplayEvent);
+          PostDisplay(DisplayEvent);
           //PostDotstar(DotstarEvent);
           ES_Timer_InitTimer(GAMEOVER_TIMER, 30000);
           CurrentState = GameComplete;
@@ -256,7 +255,6 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
     case GARoundComplete:      
     {
-      // TESTING
       switch (ThisEvent.EventType)
       {
         case ES_SENSOR_PRESSED:
@@ -265,7 +263,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           ES_Event_t DisplayEvent;
           DisplayEvent.EventType = ES_DISPLAY_READY;
           DisplayEvent.EventParam = roundNumber;
-          //PostDisplay(DisplayEvent);
+          PostDisplay(DisplayEvent);
           printf("Ready Screen\r\n");
 
           ES_Event_t DotstarEvent;
@@ -291,7 +289,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         {   
           ES_Event_t DisplayEvent;
           DisplayEvent.EventType = ES_DISPLAY_WELCOME;
-          //PostDisplay(DisplayEvent);
+          PostDisplay(DisplayEvent);
           printf("Welcome Screen\r\n");
 
           ES_Event_t DotstarEvent;
@@ -306,7 +304,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           if (ThisEvent.EventParam == GAMEOVER_TIMER){
             ES_Event_t DisplayEvent;
             DisplayEvent.EventType = ES_DISPLAY_WELCOME;
-            //PostDisplay(DisplayEvent);
+            PostDisplay(DisplayEvent);
             printf("Welcome Screen\r\n");
 
             ES_Event_t DotstarEvent;

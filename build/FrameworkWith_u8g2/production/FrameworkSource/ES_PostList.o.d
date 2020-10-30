@@ -16,8 +16,10 @@ build/FrameworkWith_u8g2/production/FrameworkSource/ES_PostList.o:  \
  ProjectHeaders/TestHarnessService0.h  \
 FrameworkHeaders/ES_Events.h  \
  FrameworkHeaders/ES_Port.h  \
-ProjectHeaders/Seq.h  \
+ProjectHeaders/Display.h  \
  FrameworkHeaders/ES_Configure.h  \
+FrameworkHeaders/ES_Types.h  \
+ ProjectHeaders/Seq.h  \
 FrameworkHeaders/ES_Framework.h  \
  FrameworkHeaders/ES_Types.h  \
 FrameworkHeaders/ES_Port.h  \
@@ -29,5 +31,4 @@ FrameworkHeaders/ES_Timers.h  \
 FrameworkHeaders/ES_Queue.h  \
  FrameworkHeaders/ES_ShortTimer.h  \
 FrameworkHeaders/ES_Configure.h  \
- ProjectHeaders/GameState.h  \
-FrameworkHeaders/ES_Types.h 
+ ProjectHeaders/GameState.h 

@@ -30,6 +30,7 @@
 
 // Game Services
 #include "GameState.h"
+#include "Display.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -212,7 +213,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         ES_Event_t DisplayEvent;
                         DisplayEvent.EventType = ES_DISPLAY_INSTRUCTION;
                         DisplayEvent.EventParam = seqArray[displayCounter];
-                        //PostDisplay(DisplayEvent);
+                        PostDisplay(DisplayEvent);
                         displayCounter++;
                         ES_Timer_InitTimer(DIRECTION_TIMER, 500);
                         CurrentState = SequenceDisplay;
@@ -242,7 +243,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             ES_Event_t DisplayEvent;
                             DisplayEvent.EventType = ES_DISPLAY_INSTRUCTION;
                             DisplayEvent.EventParam = seqArray[displayCounter];
-                            //PostDisplay(DisplayEvent);
+                            PostDisplay(DisplayEvent);
                             printf("Direction %d \r\n", seqArray[displayCounter]);
                             displayCounter++;
                             
@@ -268,7 +269,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             ES_Event_t DisplayEvent;
                             DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
                             DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
-                            //PostDisplay(DisplayEvent);
+                            PostDisplay(DisplayEvent);
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
                             CurrentState = SequenceInput;
 
@@ -322,11 +323,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             GameStateEvent.EventParam = score;
                             PostGameState(GameStateEvent);
 
-                            // Inform display service
-                            ES_Event_t DisplayEvent;
-                            DisplayEvent.EventType = ES_DISPLAY_GAMECOMPLETE;
-                            //PostDisplay(DisplayEvent);
-
                             printf("Game Over from Timeout\r\n");
                         }
                     }
@@ -348,11 +344,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     GameStateEvent.EventParam = score;
                     PostGameState(GameStateEvent);
 
-                    // Inform display service
-                    ES_Event_t DisplayEvent;
-                    DisplayEvent.EventType = ES_DISPLAY_GAMECOMPLETE;
-                    //PostDisplay(DisplayEvent);
-
                     printf("Game Over from Incorrect Input\r\n");
                 }
                 break;
@@ -365,7 +356,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     ES_Event_t DisplayEvent;
                     DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
                     DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
-                    //PostDisplay(DisplayEvent);
+                    PostDisplay(DisplayEvent);
                     
                     // TESTING
                     //printf("Input Correct\r\n");
@@ -386,11 +377,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     ES_Event_t GameStateEvent;
                     GameStateEvent.EventType = ES_ROUND_COMPLETE;
                     PostGameState(GameStateEvent);
-
-                    // Inform display service
-                    ES_Event_t DisplayEvent;
-                    DisplayEvent.EventType = ES_DISPLAY_ROUNDCOMPLETE;
-                    //PostDisplay(DisplayEvent);
 
                     // TESTING
                     //printf("Round Complete\r\n");

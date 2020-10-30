@@ -43,6 +43,7 @@
       <itemPath>ProjectHeaders/Seq.h</itemPath>
       <itemPath>ProjectHeaders/PIC32_AD_Lib.h</itemPath>
       <itemPath>ProjectHeaders/GameState.h</itemPath>
+      <itemPath>ProjectHeaders/Display.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -60,6 +61,7 @@
       <itemPath>ProjectSource/Seq.c</itemPath>
       <itemPath>ProjectSource/PIC32_AD_Lib.c</itemPath>
       <itemPath>ProjectSource/GameState.c</itemPath>
+      <itemPath>ProjectSource/Display.c</itemPath>
     </logicalFolder>
     <logicalFolder name="f3" displayName="u8g2Headers" projectFiles="true">
       <itemPath>u8g2Headers/common.h</itemPath>

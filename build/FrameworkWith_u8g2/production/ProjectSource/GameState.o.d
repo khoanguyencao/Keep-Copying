@@ -19,4 +19,5 @@ ProjectHeaders/Seq.h  \
  FrameworkHeaders/ES_DeferRecall.h  \
 FrameworkHeaders/ES_Queue.h  \
  FrameworkHeaders/ES_ShortTimer.h  \
-FrameworkHeaders/ES_Port.h 
+FrameworkHeaders/ES_Port.h  \
+ ProjectHeaders/Display.h 

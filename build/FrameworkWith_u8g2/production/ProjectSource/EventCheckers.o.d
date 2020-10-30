@@ -17,10 +17,11 @@ FrameworkHeaders/ES_Events.h  \
 FrameworkHeaders/ES_ServiceHeaders.h  \
  ProjectHeaders/TestHarnessService0.h  \
 FrameworkHeaders/ES_Port.h  \
+ ProjectHeaders/Display.h  \
+FrameworkHeaders/ES_Types.h  \
  ProjectHeaders/Seq.h  \
 FrameworkHeaders/ES_DeferRecall.h  \
  FrameworkHeaders/ES_Queue.h  \
 FrameworkHeaders/ES_ShortTimer.h  \
  ProjectHeaders/GameState.h  \
-FrameworkHeaders/ES_Types.h  \
- ProjectHeaders/EventCheckers.h 
+ProjectHeaders/EventCheckers.h 
