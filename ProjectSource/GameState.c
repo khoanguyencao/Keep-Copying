@@ -130,7 +130,8 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_INIT)    
       {
-        for (uint8_t i = 0; i < 3; i++){
+        for (uint8_t i = 0; i < 3; i++)
+        {
           highScores[i] = 0;
         }
         ES_Event_t DisplayEvent;
@@ -282,7 +283,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
         case ES_TIMEOUT:
         {   
-          if (ThisEvent.EventParam == 3) {
+          if (ThisEvent.EventParam == GAMEOVER_TIMER) {
             ES_Event_t DisplayEvent;
             DisplayEvent.EventType = ES_DISPLAY_WELCOME;
             //PostDisplay(DisplayEvent);

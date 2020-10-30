@@ -27,12 +27,12 @@
 // with the introduction of Gen2, we need a module level Priority variable
 static uint8_t MyPriority;
 
-static uint8_t seq_array[150]; //array containing random directions
-static uint8_t array_len = 4; //counter variable that contains length of array
+static uint8_t seqArray[150]; //array containing random directions
+static uint8_t arrayLength; //counter variable that contains length of array
 static uint32_t score = 0; //initial player score
-static uint8_t seq_idx = 0; //Sequence Index 
-static uint8_t play_time = 0; //Play time counter
-static uint8_t round = 1; //Round number
+static uint8_t sequenceIndex = 0; //Sequence Index 
+static uint8_t playTime = 0; //Play time counter
+static uint8_t roundNumber = 1; //Round number
 static uint8_t displayCounter = 1; // Display counter, for demonstrating sequence
 
 static SState_t Current_State; //State Machine Current State Variable
@@ -139,8 +139,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                       ADC_MultiRead(adcResults);
                       Neutral[0] = adcResults[0];           //Y neutral position
                       Neutral[1] = adcResults[1];           //X neutral position
-                      printf("Yn %d\r\n",Neutral[0]);
-                      printf("Xn %d\r\n",Neutral[1]);
+                      printf("Yn %d\r\n", Neutral[0]);
+                      printf("Xn %d\r\n", Neutral[1]);
                       
                       //Initializing complete, proceed to next state
                       ThisEvent.EventType = ES_FIRST_ROUND;
@@ -156,63 +156,61 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
             {
                 case ES_FIRST_ROUND:
                 {  
-                    //Clear Array
-                    for(uint8_t i = 0; i < 150; i++)
+                    // Clear array - to be removed (not necessary)
+                    for (uint8_t i = 0; i < 150; i++)
                     {
-                        seq_array[i] = 8;
+                        seqArray[i] = 8;
                     }
                     
-                    //Init Array length, round, and score 
-                    array_len = 4;
+                    // Initialize array length, round and score 
+                    arrayLength = 4;
                     score = 0;
-                    round = 1;
+                    roundNumber = 1;
                     
-                    
-                    //Sequence Random initialization
-                    for(i = 0; i < array_len; i++)
+                    // Randomly initialize a sequence
+                    for (i = 0; i < arrayLength; i++)
                     {
-                        seq_array[i]=(ES_Timer_GetTime() % 8); //populate new array element
+                        seqArray[i]=(ES_Timer_GetTime() % 8);
                     }
-                    seq_idx = 0; //Initial sequence index
+                    sequenceIndex = 0; 
                     
-                    printf("sequence %d \r\n",seq_array[0]);
-                    printf("sequence %d \r\n",seq_array[1]);
-                    printf("sequence %d \r\n",seq_array[2]);
-                    printf("sequence %d \r\n",seq_array[3]);
+                    printf("sequence %d \r\n",seqArray[0]);
+                    printf("sequence %d \r\n",seqArray[1]);
+                    printf("sequence %d \r\n",seqArray[2]);
+                    printf("sequence %d \r\n",seqArray[3]);
                 }
                 break;
                 
                 case ES_NEXT_ROUND:
                 {
-                    seq_array[array_len] = (ES_Timer_GetTime() % 8); //populate new array element
-                    array_len++; //Increment Array size
-                    round++; //Increment Round number
+                    seqArray[arrayLength] = (ES_Timer_GetTime() % 8);
+                    arrayLength++;
+                    roundNumber++;
+                    sequenceIndex = 0;
                     
-                    seq_idx = 0; //reset sequence index
-                    
-                    printf("sequence %d \r\n",seq_array[0]);
-                    printf("sequence %d \r\n",seq_array[1]);
-                    printf("sequence %d \r\n",seq_array[2]);
-                    printf("sequence %d \r\n",seq_array[3]);
-                    printf("sequence %d \r\n",seq_array[4]);
+                    printf("sequence %d \r\n",seqArray[0]);
+                    printf("sequence %d \r\n",seqArray[1]);
+                    printf("sequence %d \r\n",seqArray[2]);
+                    printf("sequence %d \r\n",seqArray[3]);
+                    printf("sequence %d \r\n",seqArray[4]);
                     
                     
                 }
                 break;
                 
                 case ES_TIMEOUT: 
-                //Ensure that a timer from INPUT TIMER doesn't interfere
-                //This TimeOut comes from READY_TIMER
                 {
-                    if(ThisEvent.EventParam != INPUT_TIMER)
+                    if (ThisEvent.EventParam == READY_TIMER)
                     {
-                        printf("Direction %d \r\n", seq_array[0]); 
-                        //here goes the posting to oled to display first dir
-
+                        printf("Direction %d \r\n", seqArray[0]); 
+                        ES_Event_t DisplayEvent;
+                        DisplayEvent.EventType = ES_DISPLAY_PLAY_INPUT;
+                        DisplayEvent.EventParam = seqArray[0];
+                        //PostDisplay(DisplayEvent);
                         //Initialize timer for displaying sequence, This timer
-                        //Posts to myself to continue displaying sequence
+                        //Posts to self to continue displaying sequence
                         ES_Timer_InitTimer(DIRECTION_TIMER, 500);
-                        Current_State = SequenceDisplay; //Transition to Seq_Display
+                        Current_State = SequenceDisplay;
                     }
                 }
                 break;
@@ -237,22 +235,20 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     {
                         case DIRECTION_TIMER:
                         {
-                            if(displayCounter < (array_len-1))
+                            if (displayCounter < (arrayLength - 1))
                             {
-                                printf("Direction %d \r\n", seq_array[displayCounter]); 
-                                //here goes the posting to oled to display
-                                //subsequent directions
-
+                                printf("Direction %d \r\n", seqArray[displayCounter]); 
+                                ES_Event_t DisplayEvent;
+                                DisplayEvent.EventType = ES_DISPLAY_PLAY_INPUT;
+                                DisplayEvent.EventParam = seqArray[0];
                                 //Initialize timer for displaying sequence, This timer
-                                //Posts to myself to continue displaying sequence
+                                //Posts to self to continue displaying sequence
                                 ES_Timer_InitTimer(DIRECTION_TIMER, 500);
-
-                                //Increase counter
                                 displayCounter++;
                             }
-                            else if (displayCounter == (array_len-1))
+                            else if (displayCounter == (arrayLength - 1))
                             {
-                                printf("Direction %d \r\n", seq_array[displayCounter]); 
+                                printf("Direction %d \r\n", seqArray[displayCounter]); 
                                 //here goes the posting to oled, display last dir
 
                                 /*----------------------------------------------------
@@ -279,7 +275,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             //Start 1 s Input Timer
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
                             //Set play time elapse to 0 s
-                            play_time = 0;
+                            playTime = 0;
                         }
                         break;
                         
@@ -301,7 +297,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 //keeps track of playtime 
                 case ES_TIMEOUT:
                 {
-                    if (play_time < 14)
+                    if (playTime < 14)
                     {
                         //Restart Timer
                         ES_Timer_InitTimer(INPUT_TIMER, 1000);
@@ -309,9 +305,9 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         //Remember ES_Event_t ThisEvent.....
                         
                         printf("-1 sec \r\n");
-                        play_time++;                        
+                        playTime++;                        
                     }
-                    else if (play_time == 14)
+                    else if (playTime == 14)
                     {
                         //Post to OLED to transition to game over
                         
@@ -349,13 +345,13 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     PostSequence(ThisEvent);
 
                     //Increment Score
-                    if (array_len <= 4)
+                    if (arrayLength <= 4)
                     {
                         score = score + 10;
                     }
                     else
                     {
-                        score = score + (array_len / 4) * 10;
+                        score = score + (arrayLength / 4) * 10;
                     }
                     
                     //Update Current State
@@ -368,18 +364,18 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 case ES_CORRECT_INPUT://this is sent from the event checker
                 {
                     //Increment Score
-                    if (array_len<=4)
+                    if (arrayLength <= 4)
                     {
                         score = score + 10;
                     }
                     else
                     {
-                        score = score + (array_len / 4) * 10;
+                        score = score + (arrayLength / 4) * 10;
                     }
                     //Post to OLED to display correct input
                     
                     //Increment Sequence Index
-                    seq_idx++; //This sequence index begins at zero
+                    sequenceIndex++; //This sequence index begins at zero
                     
                     printf("input correct\r\n");
                 }
@@ -413,7 +409,7 @@ bool xyVal (void)
     /*-----------------------------------------------------------------------
      This If statement minimizes the amount of times this event checking
      function gets call, to not bug down processing time-------------------*/
-    if ((Current_State == SequenceInput) && (seq_idx <= (array_len-1)))
+    if ((Current_State == SequenceInput) && (sequenceIndex <= (arrayLength - 1)))
     {
         //Read Current Z value
         //Current_Zval = PORTAbits.RA2;
@@ -437,7 +433,7 @@ bool xyVal (void)
             
             Ret_Val=true;
         }
-        else if (Last_Zval == 1 && Current_Zval ==0)
+        else if (Last_Zval == 1 && Current_Zval == 0)
         {
             //Return Last_Zval to zero
             Last_Zval = Current_Zval;
@@ -447,9 +443,9 @@ bool xyVal (void)
             //or an incorrect input and then post to myself
             
             //Check if this is the last input to post correct event
-            if (seq_idx < (array_len-1)) //Not last input
+            if (sequenceIndex < (arrayLength-1)) //Not last input
             {
-                printf("seq_idx %d\r\n",seq_idx);
+                printf("sequenceIndex %d\r\n",sequenceIndex);
                 if(Input_Check(adcResults) == true)
                 {
                     //Post Correct event
@@ -465,9 +461,9 @@ bool xyVal (void)
                     printf("posted Incorrect Input\r\n");
                 }
             }
-            else if (seq_idx == (array_len-1)) // Last input
+            else if (sequenceIndex == (arrayLength - 1)) // Last input
             {
-                printf("seq_idx2 %d\r\n",seq_idx);
+                printf("sequenceIndex2 %d\r\n",sequenceIndex);
                 if(Input_Check(adcResults) == true)
                 {
                     //Post Correct final event
@@ -500,11 +496,13 @@ bool Input_Check(uint32_t *adcResults)
     //Return Val Declaration and initialization
     static bool Ret_Val = false;
     //Direction being analyzed
-    switch (seq_array[seq_idx])
+    switch (seqArray[sequenceIndex])
     {
         case 0:
         {
-            if(adcResults[1] >1 && adcResults[1] <(Neutral[1]-10) && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            if ((adcResults[1] > 1) && (adcResults[1] < (Neutral[1] - 10)) && 
+                    (adcResults[0] >= (Neutral[0] - 20)) && 
+                    (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input = 0;
                 Ret_Val = true;
@@ -514,7 +512,9 @@ bool Input_Check(uint32_t *adcResults)
         
         case 1:
         {
-            if(adcResults[1] <=1 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            if ((adcResults[1] <= 1) && 
+                    (adcResults[0] >= (Neutral[0] - 20)) && 
+                    (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input =1;
                 Ret_Val = true;
@@ -524,7 +524,10 @@ bool Input_Check(uint32_t *adcResults)
         
         case 2:
         {
-            if(adcResults[1] >(Neutral[1]+10) && adcResults[1] <1020 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            if ((adcResults[1] > (Neutral[1]+10)) && 
+                    (adcResults[1] < 1020) && 
+                    (adcResults[0] >= (Neutral[0] - 20)) && 
+                    (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input = 2;
                 Ret_Val = true;
@@ -534,7 +537,9 @@ bool Input_Check(uint32_t *adcResults)
         
         case 3:
         {
-            if(adcResults[1] >=1020 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            if ((adcResults[1] >= 1020) && 
+                    (adcResults[0] >= (Neutral[0] - 20)) && 
+                    (adcResults[0]<=(Neutral[0] + 20)))
             {
                 input = 3;
                 Ret_Val = true;
@@ -544,7 +549,10 @@ bool Input_Check(uint32_t *adcResults)
         
         case 4:
         {
-            if(adcResults[0] >1 && adcResults[0] <(Neutral[0]-10) && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            if ((adcResults[0] > 1) && 
+                    (adcResults[0] < (Neutral[0] - 10)) && 
+                    (adcResults[1] >= (Neutral[1] - 20)) && 
+                    (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 4;
                 Ret_Val = true;
@@ -554,7 +562,9 @@ bool Input_Check(uint32_t *adcResults)
         
         case 5:
         {
-            if(adcResults[0] <=1 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            if ((adcResults[0] <= 1) && 
+                    (adcResults[1] >= (Neutral[1] - 20)) && 
+                    (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 5;
                 Ret_Val = true;
@@ -564,7 +574,10 @@ bool Input_Check(uint32_t *adcResults)
         
         case 6:
         {
-            if(adcResults[0] >(Neutral[0]+10) && adcResults[0] <1020 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            if ((adcResults[0] > (Neutral[0] + 10)) && 
+                    (adcResults[0] < 1020) && 
+                    (adcResults[1] >= (Neutral[1] - 20)) && 
+                    (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 6;
                 Ret_Val = true;
@@ -574,7 +587,9 @@ bool Input_Check(uint32_t *adcResults)
         
         case 7:
         {
-            if(adcResults[0] >=1020 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            if ((adcResults[0] >= 1020) && 
+                    (adcResults[1] >= (Neutral[1] - 20)) && 
+                    (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 7;
                 Ret_Val = true;

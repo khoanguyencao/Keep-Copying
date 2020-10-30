@@ -269,7 +269,8 @@ typedef enum
   ES_NEXT_ROUND,
   ES_INCORRECT_INPUT,
   ES_CORRECT_INPUT_F,
-  ES_CORRECT_INPUT
+  ES_CORRECT_INPUT, 
+  ES_DISPLAY_PLAY_INPUT
 }ES_EventType_t;
 
 /****************************************************************************/
@@ -315,21 +316,21 @@ typedef enum
 // priority in servicing them
 #define TIMER_UNUSED ((pPostFunc)0)
 #define TIMER0_RESP_FUNC TIMER_UNUSED
-#define TIMER1_RESP_FUNC TIMER_UNUSED
-#define TIMER2_RESP_FUNC TIMER_UNUSED
-#define TIMER3_RESP_FUNC TIMER_UNUSED
-#define TIMER4_RESP_FUNC TIMER_UNUSED
-#define TIMER5_RESP_FUNC TIMER_UNUSED
-#define TIMER6_RESP_FUNC TIMER_UNUSED
+#define TIMER1_RESP_FUNC PostSequence       // ReadyTimer
+#define TIMER2_RESP_FUNC PostSequence       // GoTimer
+#define TIMER3_RESP_FUNC PostGameState      // GameOverTimer
+#define TIMER4_RESP_FUNC PostSequence       // DirectionTimer
+#define TIMER5_RESP_FUNC TIMER_UNUSED       // InputTimer
+#define TIMER6_RESP_FUNC TIMER_UNUSED       // IdleTimer
 #define TIMER7_RESP_FUNC TIMER_UNUSED
 #define TIMER8_RESP_FUNC TIMER_UNUSED
 #define TIMER9_RESP_FUNC TIMER_UNUSED
-#define TIMER10_RESP_FUNC PostSequence
+#define TIMER10_RESP_FUNC TIMER_UNUSED
 #define TIMER11_RESP_FUNC PostTestHarnessService0
 #define TIMER12_RESP_FUNC TIMER_UNUSED
 #define TIMER13_RESP_FUNC PostSequence
 #define TIMER14_RESP_FUNC PostSequence
-#define TIMER15_RESP_FUNC PostSequence
+#define TIMER15_RESP_FUNC TIMER_UNUSED
 
 /****************************************************************************/
 // Give the timer numbers symbolc names to make it easier to move them
@@ -338,11 +339,14 @@ typedef enum
 // the timer number matches where the timer event will be routed
 // These symbolic names should be changed to be relevant to your application
 
-#define READY_TIMER 15
-#define INPUT_TIMER 14
-#define DIRECTION_TIMER 13
+#define READY_TIMER 1
+#define GO_TIMER 2
+#define GAMEOVER_TIMER 3
+#define DIRECTION_TIMER 4
+#define INPUT_TIMER 5
+#define IDLE_TIMER 6
+
 #define LAST_DIRECTION_TIMER 12
 #define TEST_TIMER 11
-#define GO_TIMER 10
 
 #endif /* ES_CONFIGURE_H */
