@@ -415,225 +415,258 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
  ----------------------------------------------------------------------------*/
 bool xyVal (void)
 {
-    static bool returnValue = false;
-    static uint8_t currentZVal;
+    //Return Variable Declaration and initialization
+    static bool Ret_Val = false;
+    //Variable declaration for Z button value
+    static uint8_t Current_Zval;
+    //Variable declaration for event
+    static ES_Event_t ThisEvent;
+    
+    /*-----------------------------------------------------------------------
+     This If statement minimizes the amount of times this event checking
+     function gets call, to not bug down processing time-------------------*/
 
-    // Only checks during the SequenceInput state   
-    if ((CurrentState == SequenceInput) && (seqIndex <= (arrayLength - 1)))
+    if ((Current_State == SequenceInput) && (seq_idx <= (array_len-1)))
     {
-        ES_Event_t JoystickEvent;
-        // Read Current Z value
-        currentZVal = PORTBbits.RB4;
-        
-        // Decision Matrix for executable action
-        if (currentZVal == lastZVal)
+
+        //Read Current Z value
+        //Current_Zval = PORTAbits.RA2;
+        Current_Zval = PORTBbits.RB4;
+               //zzzzzzz printf("here\r\n");
+        //Decision Matrix for executable action
+        if (Current_Zval == Last_Zval)
         {
-            // Do nothing; user has not decided on input if both are zero
-            // or user has not released Z button
+            //Do nothing; user has not decided on input if both are zero
+            //or user has not released Z button
             
-            returnValue = true;
+            Ret_Val=true;
         }
-        else if (currentZVal == 1 && lastZVal == 0)
+        else if (Current_Zval == 1 && Last_Zval == 0)
         {
-            // Read X and Y values from Joystick
+            //Read X and Y values from Joystick
             ADC_MultiRead(adcResults);
-            lastZVal = currentZVal;
-            returnValue = true;
-        }
-        else if (lastZVal == 1 && currentZVal == 0)
-        {
-            printf("ADC %d     ", adcResults[0]);
-            printf("ADC %d     \r\n", adcResults[1]);
+            //set Last_Zval to Current_Zval
+            //This will help us to post an event after the user 
+            Last_Zval = Current_Zval;
             
-            // Check if this is the last input to post correct event
-            if (seqIndex < (arrayLength - 1))          // Not last input
-            {
-                //printf("seqIndex %d\r\n",seqIndex);
-                if (inputChecker(adcResults) == true)
-                {
-                    // Post Correct Event
-                    JoystickEvent.EventType = ES_CORRECT_INPUT;
-                    PostSequence(JoystickEvent);
-                    //printf("posted Correct Input\r\n");
-                }
-                else
-                {
-                    // Post Incorrect Event
-                    JoystickEvent.EventType = ES_INCORRECT_INPUT;
-                    PostSequence(JoystickEvent);
-                    //printf("posted Incorrect Input\r\n");
-                }
-            }
-            else if (seqIndex == (arrayLength - 1))    // Last input
-            {
-                //printf("seqIndex2 %d\r\n",seqIndex);
-                if (inputChecker(adcResults) == true)
-                {
-                    //Post Correct Final Event
-                    JoystickEvent.EventType = ES_CORRECT_INPUT_FINAL;
-                    PostSequence(JoystickEvent);
-                    //printf("posted Correct Input F\r\n");
-                }
-                else
-                {
-                    //Post Incorrect Event
-                    JoystickEvent.EventType = ES_INCORRECT_INPUT;
-                    PostSequence(JoystickEvent);
-                    //printf("posted Incorrect Input\r\n");
-                }
-            }
-            lastZVal = currentZVal;
-            returnValue = true;
+            Ret_Val=true;
         }
+        else if (Last_Zval == 1 && Current_Zval ==0)
+        {
+
+            //Return Last_Zval to zero
+            Last_Zval = Current_Zval;
+            printf("ADC %d     ",adcResults[0]);
+            printf("ADC %d     \r\n",adcResults[1]);
+            //Perform Calculations to check if the input was a correct input
+            //or an incorrect input and then post to myself
+            
+            //Check if this is the last input to post correct event
+            if (seq_idx < (array_len-1)) //Not last input
+            {
+                printf("seq_idx %d\r\n",seq_idx);
+                if(Input_Check(adcResults) == true)
+                {
+                    //Post Correct event
+                    ThisEvent.EventType = ES_CORRECT_INPUT;
+                    PostSequence(ThisEvent);
+                    printf("posted Correct Input\r\n");
+                    printf("input %d\r\n",input);
+                }
+                else
+                {
+                    //Post Incorrect event
+                    ThisEvent.EventType = ES_INCORRECT_INPUT;
+                    PostSequence(ThisEvent);
+                    printf("posted Incorrect Input\r\n");
+                }
+            }
+            else if (seq_idx == (array_len-1)) // Last input
+            {
+                printf("seq_idx2 %d\r\n",seq_idx);
+                if(Input_Check(adcResults) == true)
+                {
+                    //Post Correct final event
+                    ThisEvent.EventType = ES_CORRECT_INPUT_F;
+                    PostSequence(ThisEvent);
+                    printf("posted Correct Input F\r\n");
+                    printf("input %d\r\n",input);
+                }
+                else
+                {
+                    //Post Incorrect event
+                    ThisEvent.EventType = ES_INCORRECT_INPUT;
+                    PostSequence(ThisEvent);
+                    printf("posted Incorrect Input\r\n");
+                }
+            }
+            
+            Ret_Val=true;
+        }        
     }
-    return returnValue;
+    else if (Current_State == SequenceCreate)
+    {
+        //Read Current Z value
+        //Current_Zval = PORTAbits.RA2;
+        Current_Zval = PORTBbits.RB4;
+
+        //Decision Matrix for executable action
+        if (Current_Zval == Last_Zval)
+        {
+            //Do nothing; user has not decided on input if both are zero
+            //or user has not released Z button
+
+            Ret_Val=true;
+        }
+        else if (Current_Zval == 1 && Last_Zval == 0)
+        {
+
+            Last_Zval = Current_Zval;
+
+            Ret_Val=true;
+        }
+        else if (Last_Zval == 1 && Current_Zval ==0)
+        {
+            Last_Zval = Current_Zval;
+            ThisEvent.EventType = ES_SENSOR_PRESSED;
+            PostGameState(ThisEvent);
+            Ret_Val=true;
+        }  
+    }
+    return Ret_Val;
 }
 
 /*---------------------------------------------------------------------------
  This function compares the input of the X, Y axis of joystick and compares
  that input to the sequence of directions, being currently analyzed
  Also updates the input variable to display to the oled---------------------*/
-static bool inputChecker(uint32_t *adcResults)
+bool Input_Check(uint32_t *adcResults)
 {
-    static bool returnValue = false;
-    // Switch case to analyze direction 
-    switch (seqArray[seqIndex])
+    //Return Val Declaration and initialization
+    static bool Ret_Val = false;
+    //Direction being analyzed
+    switch (seq_array[seq_idx])
     {
+        printf("seq array %d",seq_array[seq_idx]);
         case 0:
         {
-            if ((adcResults[1] > 1) && (adcResults[1] < (Neutral[1] - 10)) && 
-                    (adcResults[0] >= (Neutral[0] - 20)) && 
-                    (adcResults[0] <= (Neutral[0] + 20)))
+            if(adcResults[1] >1 && adcResults[1] <(Neutral[1]-2) && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
             {
                 input = 0;
-                returnValue = true;
+                Ret_Val = true;
             }
-           else
-           {
-                returnValue = false;
-           }
+            else
+            {
+                Ret_Val = false;
+            }
         }
         break;
         
         case 1:
         {
-            if ((adcResults[1] <= 1) && 
-                    (adcResults[0] >= (Neutral[0] - 20)) && 
-                    (adcResults[0] <= (Neutral[0] + 20)))
+            if(adcResults[1] <=1 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
             {
-                input = 1;
-                returnValue = true;
+                input =1;
+                Ret_Val = true;
             }
-           else
-           {
-                returnValue = false;
-           }
+            else
+            {
+                Ret_Val = false;
+            }
         }
         break;
         
         case 2:
         {
-            if ((adcResults[1] > (Neutral[1] + 10)) && 
-                    (adcResults[1] < 1020) && 
-                    (adcResults[0] >= (Neutral[0] - 20)) && 
-                    (adcResults[0] <= (Neutral[0] + 20)))
+            if(adcResults[1] >(Neutral[1]+2) && adcResults[1] <1020 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
             {
                 input = 2;
-                returnValue = true;
+                Ret_Val = true;
             }
-           else
-           {
-                returnValue = false;
-           }
+            else
+            {
+                Ret_Val = false;
+            }
         }
         break;
         
         case 3:
         {
-            if ((adcResults[1] >= 1020) && 
-                    (adcResults[0] >= (Neutral[0] - 20)) && 
-                    (adcResults[0]<=(Neutral[0] + 20)))
+            if(adcResults[1] >=1020 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
             {
                 input = 3;
-                returnValue = true;
+                Ret_Val = true;
             }
-           else
-           {
-                returnValue = false;
-           }
+            else
+            {
+                Ret_Val = false;
+            }
         }
         break;
         
         case 4:
         {
-            if ((adcResults[0] > 1) && 
-                    (adcResults[0] < (Neutral[0] - 10)) && 
-                    (adcResults[1] >= (Neutral[1] - 20)) && 
-                    (adcResults[1] <= (Neutral[1] + 20)))
+            if(adcResults[0] >1 && adcResults[0] <(Neutral[0]-2) && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
             {
                 input = 4;
-                returnValue = true;
+                Ret_Val = true;
             }
-           else
-           {
-                returnValue = false;
-           }
+            else
+            {
+                Ret_Val = false;
+            }
         }
         break;
         
         case 5:
         {
-            if ((adcResults[0] <= 1) && 
-                    (adcResults[1] >= (Neutral[1] - 20)) && 
-                    (adcResults[1] <= (Neutral[1] + 20)))
+            if(adcResults[0] <=1 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
             {
                 input = 5;
-                returnValue = true;
+                Ret_Val = true;
             }
-           else
-           {
-                returnValue = false;
-           }
+            else
+            {
+                Ret_Val = false;
+            }
         }
         break;
         
         case 6:
         {
-            if ((adcResults[0] > (Neutral[0] + 10)) && 
-                    (adcResults[0] < 1020) && 
-                    (adcResults[1] >= (Neutral[1] - 20)) && 
-                    (adcResults[1] <= (Neutral[1] + 20)))
+            if(adcResults[0] >(Neutral[0]+2) && adcResults[0] <1020 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
             {
                 input = 6;
-                returnValue = true;
+                Ret_Val = true;
             }
-           else
-           {
-                returnValue = false;
-           }
+            else
+            {
+                Ret_Val = false;
+            }
         }
         break;
         
         case 7:
         {
-            if ((adcResults[0] >= 1020) && 
-                    (adcResults[1] >= (Neutral[1] - 20)) && 
-                    (adcResults[1] <= (Neutral[1] + 20)))
+            if(adcResults[0] >=1020 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
             {
                 input = 7;
-                returnValue = true;
+                Ret_Val = true;
             }
-           else
-           {
-                returnValue = false;
-           }
+            else
+            {
+                Ret_Val = false;
+            }
         }
         break;
         
-        default:{} break;
+        default:
+        {
+            Ret_Val=false;
+        }break;
         
     }
-    return returnValue;
+    return Ret_Val;
     
 }
 
