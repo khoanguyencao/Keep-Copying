@@ -35,7 +35,7 @@
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
-static TemplateState_t CurrentState;
+static GameState_t CurrentState;
 static uint16_t highScores[3];
 
 // with the introduction of Gen2, we need a module level Priority var as well
@@ -289,7 +289,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
      None
 
  Returns
-     TemplateState_t The current state of the Template state machine
+     GameState_t The current state of the Template state machine
 
  Description
      returns the current state of the Template state machine
@@ -298,7 +298,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
  Author
      J. Edward Carryer, 10/23/11, 19:21
 ****************************************************************************/
-TemplateState_t QueryGameState(void)
+GameState_t QueryGameState(void)
 {
   return CurrentState;
 }
