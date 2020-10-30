@@ -181,7 +181,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     srand(ES_Timer_GetTime());
                     for (uint8_t i = 0; i < arrayLength; i++){
                         //uint16_t time = rand();
-                        seqArray[i] = (rand() %80)/10; //time % 8;
+                        seqArray[i] = (rand() % 80) / 10; //time % 8;
                         printf("%u\r\n", seqArray[i]);
                     }
                 }
@@ -253,7 +253,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
 
                             // If last direction
                             if (displayCounter == (arrayLength - 1)){
-                                printf("Direction %d \r\n", seqArray[displayCounter]);
                                 ES_Timer_InitTimer(LAST_DIRECTION_TIMER, 500);
                             }
                             displayCounter++;

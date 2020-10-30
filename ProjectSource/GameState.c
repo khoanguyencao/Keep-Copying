@@ -234,6 +234,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           ES_Event_t DisplayEvent;
           ES_Event_t DotstarEvent;
           DisplayEvent.EventType = ES_DISPLAY_GAMECOMPLETE;
+          
           if (UpdateHighScores(score)){
             DotstarEvent.EventType = ES_GREEN;
           } else {
@@ -244,9 +245,10 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           ES_Timer_InitTimer(GAMEOVER_TIMER, 30000);
           CurrentState = GameComplete;
           printf("Game Complete Screen\r\n");
-          for (uint8_t i = 0; i < 3; i++){
+          for (uint8_t i = 0; i < 4; i++){
               printf("%d || ", highScores[i]);
           }
+          printf("\r\n");
         }
         break;
 
@@ -365,8 +367,13 @@ bool CheckTouchSensor(){
 // Note maintained as uint16_t here to ease display service query
 static bool UpdateHighScores(uint16_t score){
   // Sort high scores with QuickSort
-  highScores[3] = score;
-  qsort(highScores, 4, sizeof(uint16_t), compareScores);
+  highScores[0] = score;
+  for (uint8_t i = 0; i < 4; i++){
+    printf("%d || ", highScores[i]);
+  }
+  printf("\r\n");
+  qsort(highScores, 4, 2, compareScores);
+  printf("reached3\r\n");
   // Check if in top 3 scores
   bool highScoreFlag = false;
   for (uint8_t i = 0; i < 3; i++){
@@ -380,5 +387,5 @@ static bool UpdateHighScores(uint16_t score){
 
 // Comparison Function for Scores
 static int compareScores(const void *a, const void *b){
-  return *(const int16_t *)a - *(const int16_t *)b;
+  return *(const uint16_t *)b - *(const uint16_t *)a;
 }
