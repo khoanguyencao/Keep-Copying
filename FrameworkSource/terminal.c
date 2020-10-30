@@ -65,7 +65,7 @@ void Terminal_HWInit(void)
   RPB7R = 0b0001; // U1TX -> RB3/b7 This is RX on USB
   U1RXR = 0b0001; // U1RX <- RB2/b6 This is TX on USB
 
-  // diable the UART to be safe
+  // disable the UART to be safe
   U1MODEbits.ON = 0;
   // Setup high-speed mode, data = 8 bit, no parity, 1 stop bit
   // Disable: loop-back, autobaud, wake, inversion

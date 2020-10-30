@@ -29,12 +29,12 @@ static uint8_t MyPriority;
 
 static uint8_t seq_array[150]; //array containing random directions
 static uint8_t *ps_array = seq_array; //pointer to seq_array
-static uint8_t array_len=4; //counter variable that contains length of array
-static uint32_t score=0; //initial player score
-static uint8_t seq_idx=0; //Sequence Index 
+static uint8_t array_len = 4; //counter variable that contains length of array
+static uint32_t score = 0; //initial player score
+static uint8_t seq_idx = 0; //Sequence Index 
 static uint8_t play_time = 0; //Play time counter
 static uint8_t round = 1; //Round number
-static uint8_t display_c=1; // Display counter, for demonstrating sequence
+static uint8_t display_c = 1; // Display counter, for demonstrating sequence
 
 static SState_t Current_State; //State Machine Current State Variable
 
@@ -139,8 +139,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 {
                       //Read X and Y values from Joystick to obtain neutral positions
                       ADC_MultiRead(adcResults);
-                      Neutral[0]=adcResults[0];//Y neutral position
-                      Neutral[1]=adcResults[1];//X neutral position
+                      Neutral[0] = adcResults[0];//Y neutral position
+                      Neutral[1] = adcResults[1];//X neutral position
                       printf("Yn %d\r\n",Neutral[0]);
                       printf("Xn %d\r\n",Neutral[1]);
                       
@@ -163,21 +163,21 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     static uint8_t i;
                     
                     //Clear Array
-                    for(i=0;i<150;i++)
+                    for(i = 0; i < 150; i++)
                     {
-                        *(ps_array+i)='\0';
+                        seq_array[i] = 8;
                     }
                     
                     //Init Array length, round, and score 
-                    array_len =4;
-                    score=0;
+                    array_len = 4;
+                    score = 0;
                     round = 1;
                     
                     
                     //Sequence Random initialization
                     for(i=0;i<array_len;i++)
                     {
-                        seq_array[i]=(rand() % 8); //populate new array element
+                        seq_array[i]=(ES_Timer_GetTime() % 8); //populate new array element
                     }
                     seq_idx=0; //Initial sequence index
                     
@@ -190,7 +190,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 
                 case ES_NEXT_ROUND:
                 {
-                    seq_array[array_len]=(rand() % 8); //populate new array element
+                    seq_array[array_len]=(ES_Timer_GetTime() % 8); //populate new array element
                     array_len++; //Increment Array size
                     round++; //Increment Round number
                     

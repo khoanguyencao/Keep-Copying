@@ -173,7 +173,7 @@ ES_Event_t RunTestHarnessService0(ES_Event_t ThisEvent)
       if ('q' == ThisEvent.EventParam)
       {
           printf("key %c \r\n",ThisEvent.EventParam);
-          printf("%d\n", rand() % 8);
+          printf("%d\n", ES_Timer_GetTime() % 8);
 
       }
       if ('a' == ThisEvent.EventParam)
