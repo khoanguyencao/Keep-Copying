@@ -38,7 +38,7 @@ bool PostSequence(ES_Event_t ThisEvent);
 ES_Event_t RunSequence(ES_Event_t ThisEvent);
 
 //Event Checker
-bool xyVal (void);
+bool CheckXYVal (void);
 
 //Complementary functions
 bool Input_Check(uint32_t *adcResults);

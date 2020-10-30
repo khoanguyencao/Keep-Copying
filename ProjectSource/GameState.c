@@ -74,8 +74,6 @@ bool InitGameState(uint8_t Priority)
   MyPriority = Priority;
   CurrentState = InitPState;
   InitEvent.EventType = ES_INIT;
-  // Set touch sensor (RB4) as a digital input
-  TRISBbits.TRISB4 = 1;
 
   if (ES_PostToService(MyPriority, InitEvent) == true){
     return true;

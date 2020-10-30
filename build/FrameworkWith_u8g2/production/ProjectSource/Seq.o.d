@@ -28,4 +28,5 @@ ProjectSource/../u8g2Headers/u8x8.h  \
  ProjectSource/../u8g2Headers/u8x8.h  \
 ProjectHeaders/GameState.h  \
  FrameworkHeaders/ES_Types.h  \
-ProjectHeaders/Display.h 
+ProjectHeaders/Display.h  \
+ ProjectHeaders/hal.h 

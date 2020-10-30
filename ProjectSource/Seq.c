@@ -31,6 +31,7 @@
 // Game Services
 #include "GameState.h"
 #include "Display.h"
+#include "hal.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -58,7 +59,7 @@ static uint8_t displayCounter;
 static SequenceState_t CurrentState; //State Machine Current State Variable
 
 static uint32_t adcResults[2]; //Array for Joystick AD converter function
-static uint8_t lastZVal; //Last value for event checker
+static uint8_t lastTouchSensor; //Last value for event checker
 static uint32_t Neutral[2]; //Array containing neutral positions for X, Y
 static uint8_t input; //variable to pass user input to OLED
 
@@ -73,7 +74,7 @@ static uint8_t input; //variable to pass user input to OLED
      bool, false if error in initialization, true otherwise
  Description
      Initialize Joystick pins and program, sets input for touch button and
-     Z button.  Initializes Last_Zvar for event checking function xyVal
+     Z button.  Initializes lastTouchSensor for event checking function xyVal
 ****************************************************************************/
 
 bool InitSequence(uint8_t Priority)
@@ -93,8 +94,8 @@ bool InitSequence(uint8_t Priority)
   //Initialization of AD converter
   ADC_ConfigAutoScan((BIT4HI | BIT5HI), 2);
   
-  //Initializing lastZVal for event checker
-  lastZVal = PORTBbits.RB4;
+  //Initializing lastTouchSensor for event checker
+  lastTouchSensor = PORTBbits.RB4;
   
   //Set current State
   CurrentState = PseudoInit;
@@ -402,34 +403,34 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
  * the z button is pressed, preserving the input the user wants to give to
  * the game.
  ----------------------------------------------------------------------------*/
-bool xyVal (void)
+bool CheckXYVal (void)
 {
     static bool returnValue = false;
-    static uint8_t currentZVal;
+    static uint8_t currentTouchSensor;
 
     // Only checks during the SequenceInput state   
     if ((CurrentState == SequenceInput) && (seqIndex <= (arrayLength - 1)))
     {
         ES_Event_t JoystickEvent;
         // Read Current Z value
-        currentZVal = PORTBbits.RB4;
+        currentTouchSensor = PORTBbits.RB4;
         
         // Decision Matrix for executable action
-        if (currentZVal == lastZVal)
+        if (currentTouchSensor == lastTouchSensor)
         {
             // Do nothing; user has not decided on input if both are zero
             // or user has not released Z button
             
             returnValue = true;
         }
-        else if (currentZVal == 1 && lastZVal == 0)
+        else if (currentTouchSensor == 1 && lastTouchSensor == 0)
         {
             // Read X and Y values from Joystick
             ADC_MultiRead(adcResults);
-            lastZVal = currentZVal;
+            lastTouchSensor = currentTouchSensor;
             returnValue = true;
         }
-        else if (lastZVal == 1 && currentZVal == 0)
+        else if (lastTouchSensor == 1 && currentTouchSensor == 0)
         {
             printf("ADC %d     ", adcResults[0]);
             printf("ADC %d     \r\n", adcResults[1]);
@@ -471,7 +472,7 @@ bool xyVal (void)
                     //printf("posted Incorrect Input\r\n");
                 }
             }
-            lastZVal = currentZVal;
+            lastTouchSensor = currentTouchSensor;
             returnValue = true;
         }
     }
