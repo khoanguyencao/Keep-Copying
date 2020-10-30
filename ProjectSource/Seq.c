@@ -190,7 +190,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 
                 case ES_NEXT_ROUND:
                 {
-                    seq_array[array_len]=(ES_Timer_GetTime() % 8); //populate new array element
+                    seq_array[array_len] = (ES_Timer_GetTime() % 8); //populate new array element
                     array_len++; //Increment Array size
                     round++; //Increment Round number
                     
@@ -218,7 +218,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         //Initialize timer for displaying sequence, This timer
                         //Posts to myself to continue displaying sequence
                         ES_Timer_InitTimer(DIRECTION_TIMER, 500);
-                        Current_State=SequenceDisplay; //Transition to Seq_Display
+                        Current_State = SequenceDisplay; //Transition to Seq_Display
                     }
                 }
                 break;
@@ -355,13 +355,13 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     PostSequence(ThisEvent);
 
                     //Increment Score
-                    if (array_len<=4)
+                    if (array_len <= 4)
                     {
-                        score=score+10;
+                        score = score + 10;
                     }
                     else
                     {
-                        score=score+(array_len/4)*10;
+                        score = score + (array_len / 4) * 10;
                     }
                     
                     //Update Current State
@@ -376,11 +376,11 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     //Increment Score
                     if (array_len<=4)
                     {
-                        score=score+10;
+                        score = score + 10;
                     }
                     else
                     {
-                        score=score+(array_len/4)*10;
+                        score = score + (array_len / 4) * 10;
                     }
                     //Post to OLED to display correct input
                     
