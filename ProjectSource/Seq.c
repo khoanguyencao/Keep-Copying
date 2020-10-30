@@ -33,7 +33,7 @@ static uint32_t score = 0; //initial player score
 static uint8_t seq_idx = 0; //Sequence Index 
 static uint8_t play_time = 0; //Play time counter
 static uint8_t round = 1; //Round number
-static uint8_t display_c = 1; // Display counter, for demonstrating sequence
+static uint8_t displayCounter = 1; // Display counter, for demonstrating sequence
 
 static SState_t Current_State; //State Machine Current State Variable
 
@@ -73,10 +73,10 @@ bool InitSequence(uint8_t Priority)
   TRISBbits.TRISB4 = 1;
   
   //Initialization of AD converter
-  ADC_ConfigAutoScan( (BIT4HI | BIT5HI), 2);
+  ADC_ConfigAutoScan((BIT4HI | BIT5HI), 2);
   
   //Initializing Last_Zval for event checker
-  Last_Zval=PORTBbits.RB4;
+  Last_Zval = PORTBbits.RB4;
   
   //Set current State
   Current_State = PseudoInit;
@@ -137,8 +137,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 {
                       //Read X and Y values from Joystick to obtain neutral positions
                       ADC_MultiRead(adcResults);
-                      Neutral[0] = adcResults[0];//Y neutral position
-                      Neutral[1] = adcResults[1];//X neutral position
+                      Neutral[0] = adcResults[0];           //Y neutral position
+                      Neutral[1] = adcResults[1];           //X neutral position
                       printf("Yn %d\r\n",Neutral[0]);
                       printf("Xn %d\r\n",Neutral[1]);
                       
@@ -155,13 +155,9 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
             switch (ThisEvent.EventType)
             {
                 case ES_FIRST_ROUND:
-                {
-                  
-                    //Counter variable
-                    static uint8_t i;
-                    
+                {  
                     //Clear Array
-                    for(i = 0; i < 150; i++)
+                    for(uint8_t i = 0; i < 150; i++)
                     {
                         seq_array[i] = 8;
                     }
@@ -173,11 +169,11 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     
                     
                     //Sequence Random initialization
-                    for(i=0;i<array_len;i++)
+                    for(i = 0; i < array_len; i++)
                     {
                         seq_array[i]=(ES_Timer_GetTime() % 8); //populate new array element
                     }
-                    seq_idx=0; //Initial sequence index
+                    seq_idx = 0; //Initial sequence index
                     
                     printf("sequence %d \r\n",seq_array[0]);
                     printf("sequence %d \r\n",seq_array[1]);
@@ -192,7 +188,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     array_len++; //Increment Array size
                     round++; //Increment Round number
                     
-                    seq_idx=0; //reset sequence index
+                    seq_idx = 0; //reset sequence index
                     
                     printf("sequence %d \r\n",seq_array[0]);
                     printf("sequence %d \r\n",seq_array[1]);
@@ -228,7 +224,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
         
         case SequenceDisplay:
         {
-            //display_c is counter to count the sequence of directions that
+            //displayCounter is counter to count the sequence of directions that
             //have been displayed to the user, and begin a transition to 
             //the GO screen
             
@@ -241,9 +237,9 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     {
                         case DIRECTION_TIMER:
                         {
-                            if(display_c < (array_len-1))
+                            if(displayCounter < (array_len-1))
                             {
-                                printf("Direction %d \r\n", seq_array[display_c]); 
+                                printf("Direction %d \r\n", seq_array[displayCounter]); 
                                 //here goes the posting to oled to display
                                 //subsequent directions
 
@@ -252,11 +248,11 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                                 ES_Timer_InitTimer(DIRECTION_TIMER, 500);
 
                                 //Increase counter
-                                display_c++;
+                                displayCounter++;
                             }
-                            else if (display_c == (array_len-1))
+                            else if (displayCounter == (array_len-1))
                             {
-                                printf("Direction %d \r\n", seq_array[display_c]); 
+                                printf("Direction %d \r\n", seq_array[displayCounter]); 
                                 //here goes the posting to oled, display last dir
 
                                 /*----------------------------------------------------
@@ -267,7 +263,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                                 //Notice that is a different Timer that
 
                                 //Reset Display Counter
-                                display_c = 1;
+                                displayCounter = 1;
                             }
                         }
                         break;

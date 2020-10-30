@@ -161,7 +161,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           DotstarEvent.EventType = ES_OFF;
           //PostDotstar(DotstarEvent);
 
-          ES_Timer_Init(1, 2000);
+          ES_Timer_Init(1, 2000);       // ReadyTimer
           CurrentState = GALeader;
         }
         break;
@@ -182,7 +182,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           DisplayEvent.EventType = ES_DISPLAY_GO;
           //PostDisplay(DisplayEvent);
 
-          ES_Timer_Init(2, 2000);
+          ES_Timer_Init(2, 2000);       // GoTimer
           CurrentState = GAFollower;
         }
         break;
@@ -225,7 +225,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           //}
           //PostDisplay(DisplayEvent);
           //PostDotstar(DotstarEvent);
-          ES_Timer_Init(3, 30000);
+          ES_Timer_Init(3, 30000);      // GameOverTimer
           CurrentState = GameComplete;
         }
         break;
@@ -252,7 +252,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           DotstarEvent.EventType = ES_OFF;
           //PostDotstar(DotstarEvent);
 
-          ES_Timer_Init(1, 2000);
+          ES_Timer_Init(1, 2000);       // ReadyTimer
           CurrentState = GALeader;
         }
         break;
@@ -334,14 +334,17 @@ GameState_t QueryGameState(void)
  ***************************************************************************/
 bool CheckTouchSensor(){
   bool eventStatus = false;
-  uint8_t currentButtonState = digitalRead(SENSOR_INPUT_PIN);
-  if((currentButtonState != lastButtonState) && (currentButtonState == LOW)){
-    ES_Event_t ThisEvent;
-    ThisEvent.EventType = ES_SENSOR_PRESSED;
-    PostGameState(ThisEvent);
-    eventStatus = true;
-  }
+  if ((CurrentState == WelcomeScreen) || (CurrentState == GARoundComplete) 
+      || (CurrentState == GameComplete)){
+    uint8_t currentButtonState = digitalRead(SENSOR_INPUT_PIN);
+    if((currentButtonState != lastButtonState) && (currentButtonState == LOW)){
+      ES_Event_t ThisEvent;
+      ThisEvent.EventType = ES_SENSOR_PRESSED;
+      PostGameState(ThisEvent);
+      eventStatus = true;
+    }
   lastButtonState = currentButtonState;
+  }
   return eventStatus;
 }
 
