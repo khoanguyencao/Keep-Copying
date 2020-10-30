@@ -76,7 +76,6 @@ bool InitSequence(uint8_t Priority)
   ADC_ConfigAutoScan( (BIT4HI | BIT5HI), 2);
   
   //Initializing Last_Zval for event checker
-  //Last_Zval=PORTAbits.RA2;
   Last_Zval=PORTBbits.RB4;
   
   //Set current State

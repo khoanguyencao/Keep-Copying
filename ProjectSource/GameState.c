@@ -132,8 +132,11 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         for (uint8_t i = 0; i < 3; i++){
           highScores[i] = 0;
         }
-        PostDisplay(ES_DISPLAY_WELCOME);
-        PostDotstar(ES_RANDOM);
+        ES_Event_t ThisEvent;
+        ThisEvent.EventType = ES_DISPLAY_WELCOME;
+        //PostDisplay(ThisEvent);
+        ThisEvent.EventType = ES_RANDOM;
+        //PostDotstar(ThisEvent);
         CurrentState = WelcomeDisplay;
       }
     }
@@ -145,8 +148,11 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       {
         case ES_SENSOR_PRESSED:
         {   
-          PostDisplay(ES_DISPLAY_READY);
-          PostDotstar(ES_OFF);
+          ES_Event_t ThisEvent;
+          ThisEvent.EventType = ES_DISPLAY_READY;
+          //PostDisplay(ThisEvent);
+          ThisEvent.EventType = ES_OFF;
+          //PostDotstar(ThisEvent);
           ES_Timer_Init(1, 2000);
           CurrentState = GALeader;
         }
@@ -166,7 +172,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         {   
           ES_Event_t ThisEvent;
           ThisEvent.EventType = ES_DISPLAY_GO;
-          PostDisplay(ThisEvent);
+          //PostDisplay(ThisEvent);
           ES_Timer_Init(2, 2000);
           CurrentState = GAFollower;
         }
@@ -186,9 +192,9 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         {   
           ES_Event_t ThisEvent;
           ThisEvent.EventType = ES_DISPLAY_ROUNDCOMPLETE;
-          PostDisplay(ThisEvent);
+          //PostDisplay(ThisEvent);
           ThisEvent.EventType = ES_GREEN;
-          PostDotstar(ThisEvent);
+          //PostDotstar(ThisEvent);
           CurrentState = GARoundComplete;
         }
         break;
@@ -206,8 +212,8 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
             DisplayEvent.EventParam = 0;
             DotstarEvent.EventType = ES_RED;
           }
-          postDisplay(ThisEvent);
-          postDotstar(ThisEvent);
+          //PostDisplay(ThisEvent);
+          //PostDotstar(ThisEvent);
           ES_Timer_Init(3, 30000);
           CurrentState = GameComplete;
         }
@@ -227,9 +233,9 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         {   
           ES_Event_t ThisEvent;
           ThisEvent.EventType = ES_DISPLAY_READY;
-          PostDisplay(ThisEvent);
+          //PostDisplay(ThisEvent);
           ThisEvent.EventType = ES_OFF;
-          PostDotstar(ThisEvent);
+          //PostDotstar(ThisEvent);
           ES_Timer_Init(1, 2000);
           CurrentState = GALeader;
         }
@@ -249,9 +255,9 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         {   
           ES_Event_t ThisEvent;
           ThisEvent.EventType = ES_DISPLAY_WELCOME;
-          PostDisplay(ThisEvent);
+          //PostDisplay(ThisEvent);
           ThisEvent.EventType = ES_RANDOM;
-          PostDotstar(ThisEvent);
+          //PostDotstar(ThisEvent);
           CurrentState = WelcomeScreen;
         }
         break;
@@ -261,9 +267,9 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           if (ThisEvent.EventParam == 3) {
             ES_Event_t ThisEvent;
             ThisEvent.EventType = ES_DISPLAY_WELCOME;
-            PostDisplay(ThisEvent);
+            //PostDisplay(ThisEvent);
             ThisEvent.EventType = ES_RANDOM;
-            PostDotstar(ThisEvent);
+            //PostDotstar(ThisEvent);
             CurrentState = WelcomeScreen;
           }
         }
