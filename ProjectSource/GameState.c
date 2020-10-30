@@ -245,10 +245,6 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           ES_Timer_InitTimer(GAMEOVER_TIMER, 30000);
           CurrentState = GameComplete;
           printf("Game Complete Screen\r\n");
-          for (uint8_t i = 0; i < 4; i++){
-              printf("%d || ", highScores[i]);
-          }
-          printf("\r\n");
         }
         break;
 
@@ -368,12 +364,7 @@ bool CheckTouchSensor(){
 static bool UpdateHighScores(uint16_t score){
   // Sort high scores with QuickSort
   highScores[0] = score;
-  for (uint8_t i = 0; i < 4; i++){
-    printf("%d || ", highScores[i]);
-  }
-  printf("\r\n");
   qsort(highScores, 4, 2, compareScores);
-  printf("reached3\r\n");
   // Check if in top 3 scores
   bool highScoreFlag = false;
   for (uint8_t i = 0; i < 3; i++){
