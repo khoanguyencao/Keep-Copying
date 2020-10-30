@@ -319,7 +319,7 @@ typedef enum
 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST CheckTouchSensor, Check4Keystroke, Check4WriteDone, CheckXYVal
+#define EVENT_CHECK_LIST Check4WriteDone, CheckTouchSensor, Check4Keystroke, CheckXYVal
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the
