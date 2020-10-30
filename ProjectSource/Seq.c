@@ -616,7 +616,6 @@ static bool inputChecker(uint32_t *adcResults)
     
 }
 
-
 static void updateScore(){
     if (arrayLength <= 4) {
         score = score + 10;
