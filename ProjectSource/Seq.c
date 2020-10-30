@@ -521,6 +521,10 @@ static bool inputChecker(uint32_t *adcResults)
                 input = 0;
                 returnValue = true;
             }
+           else
+           {
+                returnValue = false;
+           }
         }
         break;
         
@@ -533,6 +537,10 @@ static bool inputChecker(uint32_t *adcResults)
                 input = 1;
                 returnValue = true;
             }
+           else
+           {
+                returnValue = false;
+           }
         }
         break;
         
@@ -546,6 +554,10 @@ static bool inputChecker(uint32_t *adcResults)
                 input = 2;
                 returnValue = true;
             }
+           else
+           {
+                returnValue = false;
+           }
         }
         break;
         
@@ -558,6 +570,10 @@ static bool inputChecker(uint32_t *adcResults)
                 input = 3;
                 returnValue = true;
             }
+           else
+           {
+                returnValue = false;
+           }
         }
         break;
         
@@ -571,6 +587,10 @@ static bool inputChecker(uint32_t *adcResults)
                 input = 4;
                 returnValue = true;
             }
+           else
+           {
+                returnValue = false;
+           }
         }
         break;
         
@@ -583,6 +603,10 @@ static bool inputChecker(uint32_t *adcResults)
                 input = 5;
                 returnValue = true;
             }
+           else
+           {
+                returnValue = false;
+           }
         }
         break;
         
@@ -596,6 +620,10 @@ static bool inputChecker(uint32_t *adcResults)
                 input = 6;
                 returnValue = true;
             }
+           else
+           {
+                returnValue = false;
+           }
         }
         break;
         
@@ -608,6 +636,10 @@ static bool inputChecker(uint32_t *adcResults)
                 input = 7;
                 returnValue = true;
             }
+           else
+           {
+                returnValue = false;
+           }
         }
         break;
         
