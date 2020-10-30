@@ -218,8 +218,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         // Inform display service to demonstrate input and starts first direction timer
                         displayCounter = 0;
                         ES_Event_t DisplayEvent;
-                        DisplayEvent.EventType = ES_DISPLAY_PLAY_INPUT;
-                        DisplayEvent.EventParam = seqArray[displayCounter];
+                        DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
+                        DisplayEvent.EventParam3 = seqArray[displayCounter];
                         //PostDisplay(DisplayEvent);
                         displayCounter++;
                         ES_Timer_InitTimer(DIRECTION_TIMER, 500);
@@ -248,8 +248,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         {
                             // Inform display service to demonstrate input and starts subsequent direction timers
                             ES_Event_t DisplayEvent;
-                            DisplayEvent.EventType = ES_DISPLAY_PLAY_INPUT;
-                            DisplayEvent.EventParam = seqArray[displayCounter];
+                            DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
+                            DisplayEvent.EventParam3 = seqArray[displayCounter];
                             //PostDisplay(DisplayEvent);
                             printf("Direction %d \r\n", seqArray[displayCounter]);
                             displayCounter++;
@@ -277,8 +277,9 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             playtimeLeft = ROUND_TIME;
                             // Inform display service to update to play screen and starts input timer
                             ES_Event_t DisplayEvent;
-                            DisplayEvent.EventType = ES_DISPLAY_PLAY;
-                            DisplayEvent.EventType = playtimeLeft;              // depends on how Ashley implements display service
+                            DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
+                            DisplayEvent.EventParam3 = 8;
+                            DisplayEvent.EventParam2 = playtimeLeft;              // depends on how Ashley implements display service
                             //PostDisplay(DisplayEvent);
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
                             CurrentState = SequenceInput;
@@ -312,8 +313,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             // Inform display service to update time
                             playtimeLeft--;
                             ES_Event_t DisplayEvent;
-                            DisplayEvent.EventType = ES_DISPLAY_PLAY;
-                            DisplayEvent.EventType = playtimeLeft;
+                            DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
+                            DisplayEvent.EventParam2 = playtimeLeft;
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
 
                             printf("%u seconds remaining\r\n", playtimeLeft);
@@ -370,6 +371,12 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 {
                     updateScore();
                     seqIndex++;
+
+                    ES_Event_t DisplayEvent;
+                    DisplayEvent.EventParam = score;
+                    DisplayEvent.EventParam3 = input;
+                    DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
+                    //PostDisplay(DisplayEvent);
                     
                     // TESTING
                     //printf("Input Correct\r\n");
