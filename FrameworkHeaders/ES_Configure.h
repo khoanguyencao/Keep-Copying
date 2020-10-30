@@ -33,7 +33,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 3
+#define NUM_SERVICES 4
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -57,37 +57,37 @@
 // These are the definitions for Service 1
 #if NUM_SERVICES > 1
 // the header file with the public function prototypes
-#define SERV_1_HEADER "Seq.h"
+#define SERV_1_HEADER "Display.h"
 // the name of the Init function
-#define SERV_1_INIT InitSequence
+#define SERV_1_INIT InitDisplay
 // the name of the run function
-#define SERV_1_RUN RunSequence
+#define SERV_1_RUN RunDisplay
 // How big should this services Queue be?
-#define SERV_1_QUEUE_SIZE 3
+#define SERV_1_QUEUE_SIZE 5
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 2
 #if NUM_SERVICES > 2
 // the header file with the public function prototypes
-#define SERV_2_HEADER "GameState.h"
+#define SERV_2_HEADER "Seq.h"
 // the name of the Init function
-#define SERV_2_INIT InitGameState
+#define SERV_2_INIT InitSequence
 // the name of the run function
-#define SERV_2_RUN RunGameState
+#define SERV_2_RUN RunSequence
 // How big should this services Queue be?
-#define SERV_2_QUEUE_SIZE 3
+#define SERV_2_QUEUE_SIZE 15
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 3
 #if NUM_SERVICES > 3
 // the header file with the public function prototypes
-#define SERV_3_HEADER "TestHarnessService3.h"
+#define SERV_3_HEADER "GameState.h"
 // the name of the Init function
-#define SERV_3_INIT InitTestHarnessService3
+#define SERV_3_INIT InitGameState
 // the name of the run function
-#define SERV_3_RUN RunTestHarnessService3
+#define SERV_3_RUN RunGameState
 // How big should this services Queue be?
 #define SERV_3_QUEUE_SIZE 3
 #endif
@@ -269,20 +269,21 @@ typedef enum
   ES_NEXT_ROUND,
   ES_INCORRECT_INPUT,
   ES_CORRECT_INPUT_FINAL,
-  ES_CORRECT_INPUT, 
-  ES_GAME_COMPLETE, 
-  ES_DISPLAY_WELCOME,
+  ES_CORRECT_INPUT,
+  ES_GAME_COMPLETE,
+  ES_DISPLAY_WELCOME,       /*display stuff */
   ES_DISPLAY_READY,
   ES_DISPLAY_INSTRUCTION,
   ES_DISPLAY_GO,
   ES_DISPLAY_PLAY_UPDATE,
-  ES_DISPLAY_GAMECOMPLETE, 
-  ES_DISPLAY_ROUNDCOMPLETE, 
+  ES_DISPLAY_ROUNDCOMPLETE,
+  ES_DISPLAY_GAMECOMPLETE,
+  ES_UPDATE_COMPLETE,
   ES_RANDOM,
   ES_GREEN,
   ES_RED,
   ES_OFF,
-  ES_SENSOR_PRESSED, 
+  ES_SENSOR_PRESSED,
   ES_ROUND_COMPLETE
 }ES_EventType_t;
 
@@ -318,7 +319,7 @@ typedef enum
 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST CheckTouchSensor, Check4Keystroke
+#define EVENT_CHECK_LIST CheckTouchSensor, Check4Keystroke, Check4WriteDone
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the
