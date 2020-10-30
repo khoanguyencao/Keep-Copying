@@ -337,6 +337,7 @@ void welcomeScreen(void)
 // Creates and displays the Ready screen
 void readyScreen(uint16_t score, uint16_t round)
 {
+    score = score * 10;
     // turn round into a string and add it to "R"
     char roundstring[4];
     sprintf(roundstring, "R%i", round);
@@ -911,6 +912,7 @@ void playScreen(uint16_t score, uint16_t time, uint16_t input)
 void roundCompleteScreen(uint16_t score, uint16_t round)
 {
     // turn round into a string and add it to "R"
+    score = score * 10;
     char roundstring[4];
     sprintf(roundstring, "R%i", round);
     

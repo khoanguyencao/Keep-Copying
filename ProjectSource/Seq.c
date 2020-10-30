@@ -245,9 +245,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             DisplayEvent.EventParam = seqArray[displayCounter];
                             PostDisplay(DisplayEvent);
                             printf("Direction %d \r\n", seqArray[displayCounter]);
-                            displayCounter++;
-                            
-                            
+                                                        
                             // If not last direction
                             if (displayCounter < (arrayLength - 1)){
                                 ES_Timer_InitTimer(DIRECTION_TIMER, 500);
@@ -257,8 +255,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             if (displayCounter == (arrayLength - 1)){
                                 printf("Direction %d \r\n", seqArray[displayCounter]);
                                 ES_Timer_InitTimer(LAST_DIRECTION_TIMER, 500);
-                                displayCounter = 0;
                             }
+                            displayCounter++;
                         }
                         break;
                         
