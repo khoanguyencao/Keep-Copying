@@ -14,4 +14,9 @@ FrameworkHeaders/ES_General.h  \
  FrameworkHeaders/ES_Timers.h  \
 ProjectHeaders/GameState.h  \
  FrameworkHeaders/ES_Types.h  \
-ProjectHeaders/hal.h 
+ProjectHeaders/hal.h  \
+ProjectHeaders/Seq.h  \
+ FrameworkHeaders/ES_DeferRecall.h  \
+FrameworkHeaders/ES_Queue.h  \
+ FrameworkHeaders/ES_ShortTimer.h  \
+FrameworkHeaders/ES_Port.h 

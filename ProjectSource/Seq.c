@@ -40,7 +40,7 @@
 */
 static void updateScore();
 static bool inputChecker(uint32_t *adcResults);
-static uint16_t bitPack(uint16_t score, uint8_t time, uint8_t input)
+static uint16_t bitPack(uint16_t score, uint8_t time, uint8_t input);
 
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
@@ -332,6 +332,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             // Inform GameState machine 
                             ES_Event_t GameStateEvent;
                             GameStateEvent.EventType = ES_GAME_COMPLETE;
+                            GameStateEvent.EventParam = score;
                             PostGameState(GameStateEvent);
 
                             // Inform display service
@@ -357,6 +358,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     // Inform GameState machine 
                     ES_Event_t GameStateEvent;
                     GameStateEvent.EventType = ES_GAME_COMPLETE;
+                    GameStateEvent.EventParam = score;
                     PostGameState(GameStateEvent);
 
                     // Inform display service

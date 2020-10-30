@@ -23,6 +23,7 @@
 #include "ES_Framework.h"
 #include "GameState.h"
 #include "hal.h"
+#include "Seq.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -33,8 +34,8 @@
    relevant to the behavior of this state machine
 */
 
-static void UpdateHighScores();
-static uint16_t compareScores(const void *a, const void *b);
+static bool UpdateHighScores(uint16_t score);
+static int compareScores(const void *a, const void *b);
 
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
@@ -232,13 +233,13 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           ES_Event_t DisplayEvent;
           ES_Event_t DotstarEvent;
           DisplayEvent.EventType = ES_DISPLAY_GAMECOMPLETE;
-          //if (UpdateHighScore(score)){
-          //  DisplayEvent.EventParam = score;
-          //  DotstarEvent.EventType = ES_GREEN;
-          //} else {
-          //  DisplayEvent.EventParam = 0;
-          //  DotstarEvent.EventType = ES_RED;
-          //}
+          if (UpdateHighScores(score)){
+            DisplayEvent.EventParam = score;
+            DotstarEvent.EventType = ES_GREEN;
+          } else {
+            DisplayEvent.EventParam = 0;
+            DotstarEvent.EventType = ES_RED;
+          }
           //PostDisplay(DisplayEvent);
           //PostDotstar(DotstarEvent);
           ES_Timer_InitTimer(GAMEOVER_TIMER, 30000);
@@ -330,9 +331,9 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
 // Need to pass by reference (queryHighScores(&score1, &score2, &score3))
 void queryHighScores(uint16_t* score1, uint16_t* score2, uint16_t* score3){
-  score1 = highScores[0];
-  score2 = highScores[1];
-  score3 = highScores[2];
+  *score1 = highScores[0];
+  *score2 = highScores[1];
+  *score3 = highScores[2];
 }
 
 /***************************************************************************
@@ -360,12 +361,22 @@ bool CheckTouchSensor(){
  private functions
  ***************************************************************************/
 // Update Function for High Scores
-static void UpdateHighScores(){
+static bool UpdateHighScores(uint16_t score){
+  // Sort high scores with QuickSort
   highScores[3] = score;
   qsort(highScores, 4, sizeof(uint16_t), compareScores);
+  // Check if in top 3 scores
+  bool highScoreFlag = false;
+  for (uint8_t i = 0; i < 3; i++){
+    if (highScores[i] == score){
+      highScoreFlag = true;
+      break;
+    }
+  }
+  return highScoreFlag;
 }
 
 // Comparison Function for Scores
-static uint16_t compareScores(const void *a, const void *b){
+static int compareScores(const void *a, const void *b){
   return *(const uint16_t *)a - *(const uint16_t *)b;
 }
