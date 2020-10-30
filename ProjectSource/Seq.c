@@ -364,7 +364,13 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 case ES_CORRECT_INPUT_FINAL:
                 {
                     updateScore();
-
+                    
+                    // Inform Display service
+                    ES_Event_t DisplayEvent;
+                    DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
+                    DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
+                    PostDisplay(DisplayEvent);
+                    
                     // Update sequence state machine
                     CurrentState = SequenceCreate;
                     ES_Event_t SequenceEvent;                            
