@@ -244,6 +244,9 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           ES_Timer_InitTimer(GAMEOVER_TIMER, 30000);
           CurrentState = GameComplete;
           printf("Game Complete Screen\r\n");
+          for (uint8_t i = 0; i < 3; i++){
+              printf("%d || ", highScores[i]);
+          }
         }
         break;
 
@@ -377,5 +380,5 @@ static bool UpdateHighScores(uint16_t score){
 
 // Comparison Function for Scores
 static int compareScores(const void *a, const void *b){
-  return *(const uint16_t *)a - *(const uint16_t *)b;
+  return *(const int16_t *)a - *(const int16_t *)b;
 }

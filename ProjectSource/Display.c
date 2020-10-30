@@ -381,6 +381,7 @@ void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction)
     sprintf(roundstring, "R%i", round);
     
     // turn score into a string
+    score = 10*score;
     char scorestring[5];
     sprintf(scorestring, "%i", score);
     
@@ -615,6 +616,7 @@ void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction)
 void goScreen(uint16_t score, uint16_t round)
 {
     // turn round into a string and add it to "R"
+    score = 10*score;
     char roundstring[4];
     sprintf(roundstring, "R%i", round);
     
