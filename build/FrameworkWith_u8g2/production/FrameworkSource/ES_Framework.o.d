@@ -29,6 +29,9 @@ FrameworkHeaders/ES_Framework.h  \
 FrameworkHeaders/ES_Queue.h  \
  FrameworkHeaders/ES_Events.h  \
 FrameworkHeaders/ES_ShortTimer.h  \
+ ProjectHeaders/GameState.h  \
+FrameworkHeaders/ES_Types.h  \
  ProjectHeaders/EventCheckWrapper.h  \
 ProjectHeaders/EventCheckers.h  \
- ProjectHeaders/Seq.h 
+ ProjectHeaders/Seq.h  \
+ProjectHeaders/GameState.h 

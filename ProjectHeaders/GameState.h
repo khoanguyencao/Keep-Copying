@@ -26,5 +26,9 @@ bool PostGameState(ES_Event_t ThisEvent);
 ES_Event_t RunGameState(ES_Event_t ThisEvent);
 GameState_t QueryTemplateSM(void);
 
+// Event Checkers
+
+bool CheckTouchSensor();
+
 #endif /* GameState_H */
 

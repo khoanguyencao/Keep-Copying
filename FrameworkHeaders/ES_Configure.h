@@ -33,7 +33,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 2
+#define NUM_SERVICES 3
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -70,11 +70,11 @@
 // These are the definitions for Service 2
 #if NUM_SERVICES > 2
 // the header file with the public function prototypes
-#define SERV_2_HEADER "S1_OLED_Write.h"
+#define SERV_2_HEADER "GameState.h"
 // the name of the Init function
-#define SERV_2_INIT InitS1_OLED_Write
+#define SERV_2_INIT InitGameState
 // the name of the run function
-#define SERV_2_RUN RunS1_OLED_Write
+#define SERV_2_RUN RunGameState
 // How big should this services Queue be?
 #define SERV_2_QUEUE_SIZE 15
 #endif
@@ -268,9 +268,21 @@ typedef enum
   ES_FIRST_ROUND,
   ES_NEXT_ROUND,
   ES_INCORRECT_INPUT,
-  ES_CORRECT_INPUT_F,
+  ES_CORRECT_INPUT_FINAL,
   ES_CORRECT_INPUT, 
-  ES_DISPLAY_PLAY_INPUT
+  ES_DISPLAY_PLAY_INPUT, 
+  ES_DISPLAY_PLAY, 
+  ES_GAME_COMPLETE, 
+  ES_DISPLAY_WELCOME,
+  ES_DISPLAY_READY,
+  ES_DISPLAY_GO,
+  ES_DISPLAY_GAMECOMPLETE, 
+  ES_DISPLAY_ROUNDCOMPLETE, 
+  ES_RANDOM,
+  ES_GREEN,
+  ES_OFF,
+  ES_SENSOR_PRESSED, 
+  ES_ROUND_COMPLETE
 }ES_EventType_t;
 
 /****************************************************************************/
@@ -305,8 +317,7 @@ typedef enum
 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST Check4Keystroke 
-//CheckTouchSensor
+#define EVENT_CHECK_LIST CheckTouchSensor, Check4Keystroke
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the
@@ -320,7 +331,7 @@ typedef enum
 #define TIMER2_RESP_FUNC PostSequence       // GoTimer
 #define TIMER3_RESP_FUNC PostGameState      // GameOverTimer
 #define TIMER4_RESP_FUNC PostSequence       // DirectionTimer
-#define TIMER5_RESP_FUNC TIMER_UNUSED       // InputTimer
+#define TIMER5_RESP_FUNC PostSequence       // InputTimer
 #define TIMER6_RESP_FUNC TIMER_UNUSED       // IdleTimer
 #define TIMER7_RESP_FUNC PostGameState      // LastDirectionTimer
 #define TIMER8_RESP_FUNC TIMER_UNUSED
@@ -328,8 +339,8 @@ typedef enum
 #define TIMER10_RESP_FUNC TIMER_UNUSED
 #define TIMER11_RESP_FUNC PostTestHarnessService0
 #define TIMER12_RESP_FUNC TIMER_UNUSED
-#define TIMER13_RESP_FUNC PostSequence
-#define TIMER14_RESP_FUNC PostSequence
+#define TIMER13_RESP_FUNC TIMER_UNUSED
+#define TIMER14_RESP_FUNC TIMER_UNUSED
 #define TIMER15_RESP_FUNC TIMER_UNUSED
 
 /****************************************************************************/

@@ -51,8 +51,9 @@ static uint32_t score; //initial player score
 static uint8_t seqIndex; //Sequence Index 
 static uint8_t playtimeLeft; //Play time counter
 static uint8_t roundNumber; //Round number
+static uint8_t displayCounter;
 
-static SequenceState_t Current_State; //State Machine Current State Variable
+static SequenceState_t CurrentState; //State Machine Current State Variable
 
 static uint32_t adcResults[2]; //Array for Joystick AD converter function
 static uint8_t lastZVal; //Last value for event checker
@@ -94,7 +95,7 @@ bool InitSequence(uint8_t Priority)
   lastZVal = PORTBbits.RB4;
   
   //Set current State
-  Current_State = PseudoInit;
+  CurrentState = PseudoInit;
   // post the initial transition event
   InitEvent.EventType = ES_INIT;
   if (ES_PostToService(MyPriority, InitEvent) == true)
@@ -138,13 +139,9 @@ bool PostSequence(ES_Event_t ThisEvent)
 ****************************************************************************/
 ES_Event_t RunSequence(ES_Event_t ThisEvent)
 {
-  ES_Event_t ReturnEvent;
-  ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
-/*-----------------------------------------------------------------------------
- * Current State switch case statement, Compares NOT BUSY, WRITING
- * --------------------------------------------------------------------------*/
-
-    switch(Current_State)
+    ES_Event_t ReturnEvent;
+    ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
+    switch(CurrentState)
     {
         case PseudoInit:
         {
@@ -154,13 +151,13 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                       ADC_MultiRead(adcResults);
                       Neutral[0] = adcResults[0];           // Y neutral position
                       Neutral[1] = adcResults[1];           // X neutral position
-                      printf("Yn %d\r\n", Neutral[0]);
-                      printf("Xn %d\r\n", Neutral[1]);
+                      //printf("Yn %d\r\n", Neutral[0]);
+                      //printf("Xn %d\r\n", Neutral[1]);
 
                       ES_Event_t InitEvent;
                       InitEvent.EventType = ES_FIRST_ROUND;
                       PostSequence(InitEvent);
-                      Current_State = SequenceCreate;
+                      CurrentState = SequenceCreate;
                 }
         }
         break;
@@ -176,16 +173,23 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     arrayLength = 4;
                     roundNumber = 1;
                     score = 0;
-
+                    
+                    //printf("%s\r\n", __TIME__);
+                    //uint8_t randomNum = __TIME__[7];
+                    //printf("%u\r\n", __TIME__[7]);
+                    //srand(randomNum % 10);
                     // Randomly initialize a sequence
-                    for (i = 0; i < arrayLength; i++){
-                        seqArray[i] = ES_Timer_GetTime() % 8;
+                    for (uint8_t i = 0; i < arrayLength; i++){
+                        uint16_t time = rand();
+                        seqArray[i] = time % 8;
+                        printf("%u\r\n", seqArray[i]);
                     }
                     
-                    printf("sequence %d \r\n", seqArray[0]);
-                    printf("sequence %d \r\n", seqArray[1]);
-                    printf("sequence %d \r\n", seqArray[2]);
-                    printf("sequence %d \r\n", seqArray[3]);
+                    // TESTING
+                    //printf("sequence %d \r\n", seqArray[0]);
+                    //printf("sequence %d \r\n", seqArray[1]);
+                    //printf("sequence %d \r\n", seqArray[2]);
+                    //printf("sequence %d \r\n", seqArray[3]);
                 }
                 break;
                 
@@ -197,11 +201,12 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     arrayLength++;
                     roundNumber++;
                     
-                    printf("sequence %d \r\n", seqArray[0]);
-                    printf("sequence %d \r\n", seqArray[1]);
-                    printf("sequence %d \r\n", seqArray[2]);
-                    printf("sequence %d \r\n", seqArray[3]);
-                    printf("sequence %d \r\n", seqArray[4]);
+                    // TESTING
+                    //printf("sequence %d \r\n", seqArray[0]);
+                    //printf("sequence %d \r\n", seqArray[1]);
+                    //printf("sequence %d \r\n", seqArray[2]);
+                    //printf("sequence %d \r\n", seqArray[3]);
+                    //printf("sequence %d \r\n", seqArray[4]);
                 }
                 break;
                 
@@ -210,14 +215,16 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     if (ThisEvent.EventParam == READY_TIMER)
                     {
                         // Inform display service to demonstrate input and starts first direction timer
+                        displayCounter = 0;
                         ES_Event_t DisplayEvent;
                         DisplayEvent.EventType = ES_DISPLAY_PLAY_INPUT;
-                        DisplayEvent.EventParam = seqArray[seqIndex];
+                        DisplayEvent.EventParam = seqArray[displayCounter];
                         //PostDisplay(DisplayEvent);
-                        seqIndex++;
+                        displayCounter++;
                         ES_Timer_InitTimer(DIRECTION_TIMER, 500);
-                        Current_State = SequenceDisplay;
+                        CurrentState = SequenceDisplay;
 
+                        // TESTING
                         printf("Direction %d \r\n", seqArray[seqIndex]); 
                     }
                 }
@@ -238,23 +245,29 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     {
                         case DIRECTION_TIMER:
                         {
-                            if (seqIndex < arrayLength){
-                                // Inform display service to demonstrate input and starts subsequent direction timers
-                                ES_Event_t DisplayEvent;
-                                DisplayEvent.EventType = ES_DISPLAY_PLAY_INPUT;
-                                DisplayEvent.EventParam = seqArray[seqIndex];
-                                //PostDisplay(DisplayEvent);
-                                seqIndex++;
+                            // Inform display service to demonstrate input and starts subsequent direction timers
+                            ES_Event_t DisplayEvent;
+                            DisplayEvent.EventType = ES_DISPLAY_PLAY_INPUT;
+                            DisplayEvent.EventParam = seqArray[displayCounter];
+                            //PostDisplay(DisplayEvent);
+                            printf("Direction %d \r\n", seqArray[displayCounter]);
+                            displayCounter++;
+                            
+                            
+                            // If not last direction
+                            if (displayCounter < (arrayLength - 1)){
                                 ES_Timer_InitTimer(DIRECTION_TIMER, 500);
-
-                                // If last direction detected
-                                if (seqIndex == (arrayLength - 1)){
-                                    ES_Timer_InitTimer(LAST_DIRECTION_TIMER, 500);
-                                    seqIndex = 0;
-                                }
-
-                                printf("Direction %d \r\n", seqArray[seqIndex]);    
                             }
+
+                            // If last direction
+                            if (displayCounter == (arrayLength - 1)){
+                                printf("Direction %d \r\n", seqArray[displayCounter]);
+                                ES_Timer_InitTimer(LAST_DIRECTION_TIMER, 500);
+                                displayCounter = 0;
+                            }
+                            
+                            // TESTING
+                                
                         }
                         break;
                         
@@ -267,9 +280,10 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             DisplayEvent.EventType = playtimeLeft;              // depends on how Ashley implements display service
                             //PostDisplay(DisplayEvent);
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
-                            Current_State = SequenceInput;
+                            CurrentState = SequenceInput;
 
-                            printf("GAMEPLAY SCREEN\r\n");
+                            // TESTING
+                            printf("Gameplay Screen\r\n");
                         }
                         break;
                         
@@ -356,7 +370,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     updateScore();
                     seqIndex++;
                     
-                    printf("Input Correct\r\n");
+                    // TESTING
+                    //printf("Input Correct\r\n");
                 }
                 break;
                 
@@ -380,7 +395,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     DisplayEvent.EventType = ES_DISPLAY_ROUNDCOMPLETE;
                     //PostDisplay(DisplayEvent);
 
-                    printf("Round Complete\r\n");
+                    // TESTING
+                    //printf("Round Complete\r\n");
                 }
                 break;
                 
@@ -406,7 +422,7 @@ bool xyVal (void)
     static uint8_t currentZVal;
 
     // Only checks during the SequenceInput state   
-    if ((Current_State == SequenceInput) && (seqIndex <= (arrayLength - 1)))
+    if ((CurrentState == SequenceInput) && (seqIndex <= (arrayLength - 1)))
     {
         ES_Event_t JoystickEvent;
         // Read Current Z value

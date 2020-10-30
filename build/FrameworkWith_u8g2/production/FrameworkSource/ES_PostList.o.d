@@ -28,4 +28,6 @@ FrameworkHeaders/ES_Timers.h  \
  FrameworkHeaders/ES_DeferRecall.h  \
 FrameworkHeaders/ES_Queue.h  \
  FrameworkHeaders/ES_ShortTimer.h  \
-FrameworkHeaders/ES_Configure.h 
+FrameworkHeaders/ES_Configure.h  \
+ ProjectHeaders/GameState.h  \
+FrameworkHeaders/ES_Types.h 

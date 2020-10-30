@@ -22,6 +22,7 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "GameState.h"
+#include "hal.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -38,6 +39,7 @@
 static GameState_t CurrentState;
 static uint16_t highScores[3];
 static uint16_t roundNumber;
+static uint8_t lastTouchSensorState;
 
 // with the introduction of Gen2, we need a module level Priority var as well
 static uint8_t MyPriority;
@@ -64,18 +66,14 @@ static uint8_t MyPriority;
 bool InitGameState(uint8_t Priority)
 {
   ES_Event_t InitEvent;
-
   MyPriority = Priority;
-  // put us into the Initial PseudoState
   CurrentState = InitPState;
-  // post the initial transition event
   InitEvent.EventType = ES_INIT;
-  if (ES_PostToService(MyPriority, InitEvent) == true)
-  {
+  // Set touch sensor (RB4) as a digital input
+  TRISBbits.TRISB4 = 1;
+  if (ES_PostToService(MyPriority, InitEvent) == true){
     return true;
-  }
-  else
-  {
+  } else {
     return false;
   }
 }
@@ -130,17 +128,20 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_INIT)    
       {
+        lastTouchSensorState = digitalRead(SENSOR_INPUT_PIN);
         for (uint8_t i = 0; i < 3; i++){
           highScores[i] = 0;
         }
         ES_Event_t DisplayEvent;
         DisplayEvent.EventType = ES_DISPLAY_WELCOME;
         //PostDisplay(DisplayEvent);
+        printf("Welcome Screen\r\n");
 
         ES_Event_t DotstarEvent;
         DotstarEvent.EventType = ES_RANDOM;
         //PostDotstar(DotstarEvent);
         CurrentState = WelcomeScreen;
+        
       }
     }
     break;
@@ -156,12 +157,13 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           DisplayEvent.EventType = ES_DISPLAY_READY;
           DisplayEvent.EventParam = roundNumber;
           //PostDisplay(DisplayEvent);
+          printf("Ready Screen\r\n");
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_OFF;
           //PostDotstar(DotstarEvent);
 
-          ES_Timer_Init(1, 2000);       // ReadyTimer
+          ES_Timer_InitTimer(READY_TIMER, 2000);       
           CurrentState = GALeader;
         }
         break;
@@ -182,8 +184,9 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
             ES_Event_t DisplayEvent;
             DisplayEvent.EventType = ES_DISPLAY_GO;
             //PostDisplay(DisplayEvent);
+            printf("Go Screen\r\n");
 
-            ES_Timer_Init(2, 2000);       // GoTimer
+            ES_Timer_InitTimer(GO_TIMER, 2000);
             CurrentState = GAFollower;
           }
           
@@ -205,6 +208,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           ES_Event_t DisplayEvent;
           DisplayEvent.EventType = ES_DISPLAY_ROUNDCOMPLETE;
           //PostDisplay(DisplayEvent);
+          printf("Round Complete Screen\r\n");
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_GREEN;
@@ -228,8 +232,9 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           //}
           //PostDisplay(DisplayEvent);
           //PostDotstar(DotstarEvent);
-          ES_Timer_Init(3, 30000);      // GameOverTimer
+          ES_Timer_InitTimer(GAMEOVER_TIMER, 30000);
           CurrentState = GameComplete;
+          printf("Game Complete Screen\r\n");
         }
         break;
 
@@ -241,6 +246,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
     case GARoundComplete:      
     {
+      // TESTING
       switch (ThisEvent.EventType)
       {
         case ES_SENSOR_PRESSED:
@@ -250,12 +256,13 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           DisplayEvent.EventType = ES_DISPLAY_READY;
           DisplayEvent.EventParam = roundNumber;
           //PostDisplay(DisplayEvent);
+          printf("Ready Screen\r\n");
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_OFF;
           //PostDotstar(DotstarEvent);
 
-          ES_Timer_Init(1, 2000);       // ReadyTimer
+          ES_Timer_InitTimer(READY_TIMER, 2000);
           CurrentState = GALeader;
         }
         break;
@@ -275,6 +282,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           ES_Event_t DisplayEvent;
           DisplayEvent.EventType = ES_DISPLAY_WELCOME;
           //PostDisplay(DisplayEvent);
+          printf("Welcome Screen\r\n");
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_RANDOM;
@@ -289,6 +297,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
             ES_Event_t DisplayEvent;
             DisplayEvent.EventType = ES_DISPLAY_WELCOME;
             //PostDisplay(DisplayEvent);
+            printf("Welcome Screen\r\n");
 
             ES_Event_t DotstarEvent;
             DotstarEvent.EventType = ES_RANDOM;
@@ -310,28 +319,6 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
   return ReturnEvent;
 }
 
-/****************************************************************************
- Function
-     QueryTemplateSM
-
- Parameters
-     None
-
- Returns
-     GameState_t The current state of the Template state machine
-
- Description
-     returns the current state of the Template state machine
- Notes
-
- Author
-     J. Edward Carryer, 10/23/11, 19:21
-****************************************************************************/
-GameState_t QueryGameState(void)
-{
-  return CurrentState;
-}
-
 /***************************************************************************
  event checkers
  ***************************************************************************/
@@ -340,14 +327,15 @@ bool CheckTouchSensor(){
   if ((CurrentState == WelcomeScreen) || 
       (CurrentState == GARoundComplete) || 
       (CurrentState == GameComplete)){
-    uint8_t currentButtonState = digitalRead(SENSOR_INPUT_PIN);
-    if ((currentButtonState != lastButtonState) && (currentButtonState == LOW)){
+    uint8_t currentTouchSensorState = digitalRead(SENSOR_INPUT_PIN);
+    if ((currentTouchSensorState != lastTouchSensorState) && (currentTouchSensorState == LOW)){
       ES_Event_t ThisEvent;
       ThisEvent.EventType = ES_SENSOR_PRESSED;
       PostGameState(ThisEvent);
       eventStatus = true;
+      printf("Touch Sensor Pressed\r\n");
     }
-  lastButtonState = currentButtonState;
+  lastTouchSensorState = currentTouchSensorState;
   }
   return eventStatus;
 }

@@ -25,4 +25,6 @@ ProjectHeaders/PIC32_AD_Lib.h  \
  ProjectSource/../u8g2Headers/../u8g2Headers/common.h  \
  ProjectSource/../u8g2Headers/u8g2.h  \
 ProjectSource/../u8g2Headers/u8x8.h  \
- ProjectSource/../u8g2Headers/u8x8.h 
+ ProjectSource/../u8g2Headers/u8x8.h  \
+ProjectHeaders/GameState.h  \
+ FrameworkHeaders/ES_Types.h 

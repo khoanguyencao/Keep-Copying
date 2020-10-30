@@ -172,8 +172,6 @@ ES_Event_t RunTestHarnessService0(ES_Event_t ThisEvent)
           (char)ThisEvent.EventParam);
       if ('q' == ThisEvent.EventParam)
       {
-          printf("key %c \r\n",ThisEvent.EventParam);
-          printf("%d\n", ES_Timer_GetTime() % 8);
 
       }
       if ('a' == ThisEvent.EventParam)
@@ -214,7 +212,7 @@ ES_Event_t RunTestHarnessService0(ES_Event_t ThisEvent)
       }
       if ('m' == ThisEvent.EventParam)
       {
-          ThisEvent.EventType = ES_CORRECT_INPUT_F;
+          ThisEvent.EventType = ES_CORRECT_INPUT_FINAL;
           ThisEvent.EventParam = 10;
           PostSequence(ThisEvent);
       }

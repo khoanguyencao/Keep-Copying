@@ -21,4 +21,6 @@ FrameworkHeaders/ES_Port.h  \
 FrameworkHeaders/ES_DeferRecall.h  \
  FrameworkHeaders/ES_Queue.h  \
 FrameworkHeaders/ES_ShortTimer.h  \
+ ProjectHeaders/GameState.h  \
+FrameworkHeaders/ES_Types.h  \
  ProjectHeaders/EventCheckers.h 
