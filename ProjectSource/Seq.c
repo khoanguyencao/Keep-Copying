@@ -28,7 +28,6 @@
 static uint8_t MyPriority;
 
 static uint8_t seq_array[150]; //array containing random directions
-static uint8_t *ps_array = seq_array; //pointer to seq_array
 static uint8_t array_len = 4; //counter variable that contains length of array
 static uint32_t score = 0; //initial player score
 static uint8_t seq_idx = 0; //Sequence Index 
