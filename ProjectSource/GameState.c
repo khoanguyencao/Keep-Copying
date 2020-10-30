@@ -63,14 +63,14 @@ static uint8_t MyPriority;
 ****************************************************************************/
 bool InitGameState(uint8_t Priority)
 {
-  ES_Event_t ThisEvent;
+  ES_Event_t InitEvent;
 
   MyPriority = Priority;
   // put us into the Initial PseudoState
   CurrentState = InitPState;
   // post the initial transition event
-  ThisEvent.EventType = ES_INIT;
-  if (ES_PostToService(MyPriority, ThisEvent) == true)
+  InitEvent.EventType = ES_INIT;
+  if (ES_PostToService(MyPriority, InitEvent) == true)
   {
     return true;
   }
