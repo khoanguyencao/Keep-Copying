@@ -40,10 +40,37 @@
 // actual functionsdefinition
 #include "EventCheckers.h"
 
-// This is the event checking function sample. It is not intended to be
-// included in the module. It is only here as a sample to guide you in writing
-// your own event checkers
-#if 0
+
+#include "../ProjectHeaders/Morse_Decoder.h"
+#include "../u8g2Headers/portmap.h"
+#include "Morse_Elements.h"
+#include "Morse_Decoder.h"
+#include "../ProjectHeaders/S1_OLED_Write.h"
+
+// Hardware
+#include <xc.h>
+#include <stdlib.h>
+#include <string.h>
+#include <proc/p32mx170f256b.h>
+#include <sys/attribs.h> // for ISR macors
+#include "EventCheckers.h"
+
+// Event & Services Framework
+#include "ES_Configure.h"
+#include "ES_Framework.h"
+#include "ES_DeferRecall.h"
+#include "ES_ShortTimer.h"
+#include "ES_Port.h"
+
+//OLED headers
+#include "../u8g2Headers/u8g2TestHarness_main.h"
+#include "../u8g2Headers/common.h"
+#include "../u8g2Headers/spi_master.h"
+#include "../u8g2Headers/u8g2.h"
+#include "../u8g2Headers/u8x8.h"
+
+// This is the event checking for checking initiating calibration
+
 /****************************************************************************
  Function
    Check4Lock
@@ -52,39 +79,40 @@
  Returns
    bool: true if a new event was detected
  Description
-   Sample event checker grabbed from the simple lock state machine example
- Notes
-   will not compile, sample only
- Author
-   J. Edward Carryer, 08/06/13, 13:48
+ Post ES_PRESS to re calibrate
 ****************************************************************************/
-bool Check4Lock(void)
+/*
+bool Check4Press(void)
 {
   static uint8_t  LastPinState = 0;
   uint8_t         CurrentPinState;
   bool            ReturnVal = false;
-
-  CurrentPinState = LOCK_PIN;
-  // check for pin high AND different from last time
-  // do the check for difference first so that you don't bother with a test
-  // of a port/variable that is not going to matter, since it hasn't changed
-  if ((CurrentPinState != LastPinState) &&
-      (CurrentPinState == LOCK_PIN_HI)) // event detected, so post detected event
+ 
+  CurrentPinState = PORTBbits.RB5;
+  /*Debugging tool aid---------------------------------------------------
+  if(PORTBbits.RB5 == 1)
   {
-    ES_Event ThisEvent;
-    ThisEvent.EventType   = ES_LOCK;
-    ThisEvent.EventParam  = 1;
-    // this could be any of the service post functions, ES_PostListx or
-    // ES_PostAll functions
-    ES_PostAll(ThisEvent);
+      printf("test\r\n");
+  }
+   * ------------------------------------------------------------------
+  // check for pin high AND different from last time
+  if ((CurrentPinState != LastPinState) &&
+      (CurrentPinState == 1)) // event detected, so post detected event
+  {
+    ES_Event_t ThisEvent;
+    ThisEvent.EventType   = ES_PRESS;
+    // PostAll functions
+    PostMorse_Elem(ThisEvent);
+    PostMorse_Decoder(ThisEvent);
+    PostS1_OLED_Write(ThisEvent);
+    LastPinState = CurrentPinState; // update the state for next time
     ReturnVal = true;
   }
   LastPinState = CurrentPinState; // update the state for next time
 
   return ReturnVal;
 }
-
-#endif
+*/
 
 /****************************************************************************
  Function

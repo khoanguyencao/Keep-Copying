@@ -29,6 +29,7 @@
 // This module
 #include "../ProjectHeaders/TestHarnessService0.h"
 #include "../ProjectHeaders/Seq.h"
+#include "GameState.h"
 // debugging printf()
 //#include "dbprintf.h"
 
@@ -183,8 +184,8 @@ ES_Event_t RunTestHarnessService0(ES_Event_t ThisEvent)
       }
       if ('z' == ThisEvent.EventParam)
       {
-          ThisEvent.EventType = ES_FIRST_ROUND;
-          PostSequence(ThisEvent);
+          ThisEvent.EventType = ES_SENSOR_PRESSED;
+          PostGameState(ThisEvent);
       }
       if ('x' == ThisEvent.EventParam)
       {
@@ -218,6 +219,8 @@ ES_Event_t RunTestHarnessService0(ES_Event_t ThisEvent)
           ThisEvent.EventParam = 10;
           PostSequence(ThisEvent);
       }
+      
+      
       
     }
     break;

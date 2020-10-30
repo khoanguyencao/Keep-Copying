@@ -53,7 +53,7 @@ void Terminal_HWInit(void)
 {
   // Set up RB2/6 as RX and RB3/7 as TX
   // clear analog control
-  ANSELB &= (BIT6LO);
+  ANSELB &= (BIT6LO);// & BIT2LO);
   ANSELB &= (BIT7LO);
   // start with TX high
   LATBbits.LATB7 = 1;
@@ -65,13 +65,12 @@ void Terminal_HWInit(void)
   RPB7R = 0b0001; // U1TX -> RB3/b7 This is RX on USB
   U1RXR = 0b0001; // U1RX <- RB2/b6 This is TX on USB
 
-
-  // disable the UART to be safe
+  // diable the UART to be safe
   U1MODEbits.ON = 0;
   // Setup high-speed mode, data = 8 bit, no parity, 1 stop bit
   // Disable: loop-back, autobaud, wake, inversion
   U1MODEbits.BRGH = 1;
-  // Disable TX inversion, everything else we don't care about
+  // Diable TX inversion, everything else we don't care about
   U1STA = 0;
   // Set the baud rate based on the constant
   U1BRG = BAUD_CONST;

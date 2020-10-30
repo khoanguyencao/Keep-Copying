@@ -19,8 +19,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "../ProjectHeaders/S1_OLED_Write.h"
+#include "../u8g2Headers/common.h"
+#include "../u8g2Headers/spi_master.h"
+#include "../u8g2Headers/u8g2.h"
+#include "../u8g2Headers/u8x8.h"
 // prototypes for event checkers
 
 bool Check4Keystroke(void);
-
+bool Check4Press(void);
 #endif /* EventCheckers_H */

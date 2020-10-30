@@ -6,7 +6,7 @@
  */
 
 #ifndef SPI_MATER_H
-#define	SPI_MATER_H
+#define	SPI_MATERH
 
 #include "../u8g2Headers/u8g2TestHarness_main.h"
 #include "../u8g2Headers/common.h"

@@ -1,6 +1,10 @@
 #include "../u8g2Headers/spi_master.h"
+#include "../u8g2Headers/portmap.h"
  //tweaked for PIC32MX170F256B, uses SPI1
-         
+
+
+static uint8_t rBUF_Data;
+
 /****************************************************************************
  Function
     SPI_Init
@@ -17,25 +21,48 @@
  
 ****************************************************************************/
 void SPI_Init(void){
-   // Pin and PPS Settings
-   RPA0R = 0x3;                        // Set RA0 to SS1
-   RPA1R = 0x3;                        // Set RA1 to SDO1
-   SPI1CONbits.ON = 0;                 // Turn off SPI
-   SPI1BRG = 0;                        // Set to 10MHz as required by OLED
-   SPI1CONbits.ENHBUF = 0;             // Turn off enhanced buffer
-   SPI1STATbits.SPIROV = 0;            // Clear SPIROV bit. 
-   SPI1CONbits.MSTEN = 1;              // Set PIC32 as master.
-   SPI1CONbits.MODE32 = 0;             // Set bit width to 8 as required by OLED
-   SPI1CONbits.MODE16 = 0;
-   // Clock Settings
-   SPI1CONbits.MCLKSEL = 0;            // Set MCLK as PBCLK
-   SPI1CONbits.CKE = 0;                // Set CKE as 0 (second edge active)
-   SPI1CONbits.CKP = 1;                // Set CKP as 1 (idle state is high)
-   // SS Settings
-   SPI1CONbits.SSEN = 1;               // SS is slave select
-   SPI1CONbits.FRMPOL = 0;             // SS is active low
-   SPI1CONbits.MSSEN = 1;              // SS automatically controlled
-   SPI1CONbits.ON = 1;                 // Turn on SPI
+        //setting all pins to digital
+    digiPin();
+    
+    //Set pins RA0, RA1, RB12, RB13, and RB14 to output with TRIS
+    pinMode(RA0, OUTPUT); pinMode(RA1, OUTPUT); pinMode(RB14, OUTPUT);
+    pinMode(RB12, OUTPUT); pinMode(RB13, OUTPUT);
+      
+    //Map RA0 to SS output, RA1 to SDO output, RB14 to SCK output
+    RPA0R=0b0011; RPA1R=0b0011; //RPB14R is always SDK
+    
+    //Stopping SPI to modify operations
+    SPI1CONbits.ON=0;
+    SPI1CON2=0;
+    
+    //Read SPI1BUF to clear receive buffer
+    rBUF_Data = SPI1BUF;
+    
+    //Clear Overflow
+    SPI1STATbits.SPIROV=0;
+    
+    //SET Baud Rate Generator XFER speed of 10MHz
+    SPI1BRG = 0;
+    
+    /*--------------------------------------------------------------------------
+    Enable desired Settings: MSSEN, MSTEN, ENHBUF, DISSDO, DISSDI, CKP =1
+    SeCKE, FRMPOL =0
+     -------------------------------------------------------------------------*/
+    SPI1CONbits.CKE =0;
+    SPI1CONbits.CKP=1;
+    SPI1CONbits.MSTEN=1;
+    SPI1CONbits.MSSEN=1;
+    SPI1CONbits.ENHBUF=0;
+    SPI1CONbits.DISSDO=0;
+    SPI1CONbits.FRMPOL=0;
+    SPI1CONbits.DISSDI=0;
+    
+    //Set Bit width XFER rate
+            SPI1CONbits.MODE16=0;
+            SPI1CONbits.MODE32=0;
+     
+    //Re-enable SPI functionality
+    SPI1CONbits.ON=1;
 }
 /****************************************************************************
  Function
@@ -51,15 +78,17 @@ void SPI_Init(void){
  
 ****************************************************************************/
 void SPI_Tx(uint8_t data){
-   bool buffer_full;
-   buffer_full = SPI1STATbits.SPITBF;
-   while (buffer_full){
-      buffer_full = SPI1STATbits.SPITBF;
-   }
-   SPI1BUF = data;
-   // Read buffer to prevent overruns
-   uint8_t clear_var;
-   clear_var = SPI1BUF;
+            
+            /*-----------------------------------------------------------------
+             Write to buffer passing 8 bits at a time and verifying that there
+             is open space in the XMIT register before passing the next value
+            -----------------------------------------------------------------*/
+                SPI1BUF=data;
+            //Loop to ensure data has transmitted
+                while(SPI1STATbits.SPITBF==1){}
+            //Reading buffer to clear it
+                rBUF_Data = SPI1BUF;
+            
 }
 
 /****************************************************************************
@@ -77,8 +106,10 @@ void SPI_Tx(uint8_t data){
  
 ****************************************************************************/
 void SPI_TxBuffer(uint8_t *buffer, uint8_t length){
-   uint8_t i;
-   for (i = 0; i < length; i++){
-      SPI_Tx(buffer[i]);
-   }
+//Loop for calling SPI_Tx and counter variable initialization
+    int i; //counter
+    for(i=0;i<=(length - 1);i++)
+    {
+        SPI_Tx(*(buffer+i)); //Writing pointer to buffer
+    }
 }

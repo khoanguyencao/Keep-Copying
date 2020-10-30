@@ -17,6 +17,7 @@
 
 // This is the header for the event checkers for the template project
 #include "EventCheckers.h"
+#include "S1_OLED_Write.h"
 #include "Seq.h"
 #include "GameState.h"
 

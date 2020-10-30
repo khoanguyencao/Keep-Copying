@@ -3,17 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/L:/ME218_2020-21/DevProjects/EventFramework/Framework4PIC32_with_u8g2/ProjectSource/EventCheckers.c</file>
-            <file>file:/L:/ME218_2020-21/DevProjects/EventFramework/Framework4PIC32_with_u8g2/u8g2/spi_master.c</file>
-            <file>file:/L:/ME218_2020-21/DevProjects/EventFramework/Framework4PIC32_with_u8g2/u8g2/u8g2_TestHarness_main.c</file>
-            <file>file:/L:/ME218_2020-21/DevProjects/EventFramework/Framework4PIC32_with_u8g2/FrameworkSource/ES_Queue.c</file>
-            <file>file:/L:/ME218_2020-21/DevProjects/EventFramework/Framework4PIC32_with_u8g2/u8g2/u8g2_pic32mz.c</file>
-            <file>file:/L:/ME218_2020-21/DevProjects/EventFramework/Framework4PIC32_with_u8g2/FrameworkSource/ES_PostList.c</file>
-            <file>file:/L:/ME218_2020-21/DevProjects/EventFramework/Framework4PIC32_with_u8g2/FrameworkSource/ES_Timers.c</file>
-            <file>file:/L:/ME218_2020-21/DevProjects/EventFramework/Framework4PIC32_with_u8g2/FrameworkSource/ES_CheckEvents.c</file>
-            <file>file:/L:/ME218_2020-21/DevProjects/EventFramework/Framework4PIC32_with_u8g2/FrameworkSource/ES_Framework.c</file>
-            <file>file:/L:/ME218_2020-21/DevProjects/EventFramework/Framework4PIC32_with_u8g2/ProjectSource/TestHarnessService0.c</file>
-            <file>file:/L:/ME218_2020-21/DevProjects/EventFramework/Framework4PIC32_with_u8g2/u8g2/common.c</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/Lab4/FrameworkSource/terminal.c</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/Lab4/ProjectSource/Seq.c</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/Lab4/ProjectSource/PIC32_AD_Lib.c</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/Lab4/ProjectHeaders/EventCheckWrapper.h</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/Lab4/ProjectHeaders/Seq.h</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/Lab4/FrameworkSource/ES_Timers.c</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/Lab4/FrameworkHeaders/ES_Configure.h</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/Lab4/ProjectSource/TestHarnessService0.c</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/Lab4/nbproject/Makefile-impl.mk</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/Lab4/FrameworkHeaders/ES_Events.h</file>
         </group>
     </open-files>
 </project-private>

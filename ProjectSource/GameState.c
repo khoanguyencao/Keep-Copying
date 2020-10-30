@@ -22,6 +22,8 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "GameState.h"
+#include "hal.h"
+#include "Seq.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -32,11 +34,16 @@
    relevant to the behavior of this state machine
 */
 
+static bool UpdateHighScores(uint16_t score);
+static int compareScores(const void *a, const void *b);
+
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
 static GameState_t CurrentState;
-static uint16_t highScores[3];
+static uint16_t highScores[4];
+static uint16_t roundNumber;
+static uint8_t lastTouchSensorState;
 
 // with the introduction of Gen2, we need a module level Priority var as well
 static uint8_t MyPriority;
@@ -62,19 +69,16 @@ static uint8_t MyPriority;
 ****************************************************************************/
 bool InitGameState(uint8_t Priority)
 {
-  ES_Event_t ThisEvent;
-
+  ES_Event_t InitEvent;
   MyPriority = Priority;
-  // put us into the Initial PseudoState
   CurrentState = InitPState;
-  // post the initial transition event
-  ThisEvent.EventType = ES_INIT;
-  if (ES_PostToService(MyPriority, ThisEvent) == true)
-  {
+  InitEvent.EventType = ES_INIT;
+  // Set touch sensor (RB4) as a digital input
+  TRISBbits.TRISB4 = 1;
+  lastTouchSensorState=PORTBbits.RB4;
+  if (ES_PostToService(MyPriority, InitEvent) == true){
     return true;
-  }
-  else
-  {
+  } else {
     return false;
   }
 }
@@ -129,12 +133,20 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_INIT)    
       {
-        for (uint8_t i = 0; i < 3; i++){
+        lastTouchSensorState = digitalRead(SENSOR_INPUT_PIN);
+        for (uint8_t i = 0; i < 4; i++){
           highScores[i] = 0;
         }
-        PostDisplay(ES_DISPLAY_WELCOME);
-        PostDotstar(ES_RANDOM);
+        ES_Event_t DisplayEvent;
+        DisplayEvent.EventType = ES_DISPLAY_WELCOME;
+        //PostDisplay(DisplayEvent);
+        printf("Welcome Screen\r\n");
+
+        ES_Event_t DotstarEvent;
+        DotstarEvent.EventType = ES_RANDOM;
+        //PostDotstar(DotstarEvent);
         CurrentState = WelcomeScreen;
+        
       }
     }
     break;
@@ -145,10 +157,24 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       {
         case ES_SENSOR_PRESSED:
         {   
-          PostDisplay(ES_DISPLAY_READY);
-          PostDotstar(ES_OFF);
-          ES_Timer_Init(1, 2000);
+          roundNumber = 1;
+          ES_Event_t DisplayEvent;
+          DisplayEvent.EventType = ES_DISPLAY_READY;
+          DisplayEvent.EventParam = roundNumber;
+          //PostDisplay(DisplayEvent);
+          printf("Ready Screen\r\n");
+
+          ES_Event_t DotstarEvent;
+          DotstarEvent.EventType = ES_OFF;
+          //PostDotstar(DotstarEvent);
+
+          ES_Timer_InitTimer(READY_TIMER, 2000);       
           CurrentState = GALeader;
+         
+          ES_Event_t SequenceRandomizer;
+          SequenceRandomizer.EventType = ES_FIRST_ROUND;
+          //SequenceRandomizer.EventParam = ES_Timer_GetTime();
+          PostSequence(SequenceRandomizer);
         }
         break;
 
@@ -162,13 +188,18 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
     {
       switch (ThisEvent.EventType)
       {
-        case ES_GAME_START:
+        case ES_TIMEOUT:
         {   
-          ES_Event_t ThisEvent;
-          ThisEvent.EventType = ES_DISPLAY_GO;
-          PostDisplay(ThisEvent);
-          ES_Timer_Init(2, 2000);
-          CurrentState = GAFollower;
+          if (ThisEvent.EventParam == LAST_DIRECTION_TIMER){
+            ES_Event_t DisplayEvent;
+            DisplayEvent.EventType = ES_DISPLAY_GO;
+            //PostDisplay(DisplayEvent);
+            printf("Go Screen\r\n");
+
+            ES_Timer_InitTimer(GO_TIMER, 2000);
+            CurrentState = GAFollower;
+          }
+          
         }
         break;
 
@@ -184,32 +215,36 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       {
         case ES_ROUND_COMPLETE:
         {   
-          ES_Event_t ThisEvent;
-          ThisEvent.EventType = ES_DISPLAY_ROUNDCOMPLETE;
-          PostDisplay(ThisEvent);
-          ThisEvent.EventType = ES_GREEN;
-          PostDotstar(ThisEvent);
+          ES_Event_t DisplayEvent;
+          DisplayEvent.EventType = ES_DISPLAY_ROUNDCOMPLETE;
+          //PostDisplay(DisplayEvent);
+          printf("Round Complete Screen\r\n");
+
+          ES_Event_t DotstarEvent;
+          DotstarEvent.EventType = ES_GREEN;
+          //PostDotstar(DotstarEvent);
           CurrentState = GARoundComplete;
         }
         break;
 
         case ES_GAME_COMPLETE:
-        {   
+        {   CurrentState = GameComplete;
           uint16_t score = ThisEvent.EventParam;
           ES_Event_t DisplayEvent;
           ES_Event_t DotstarEvent;
           DisplayEvent.EventType = ES_DISPLAY_GAMECOMPLETE;
-          if (UpdateHighScore(score)){
+          if (UpdateHighScores(score)){
             DisplayEvent.EventParam = score;
             DotstarEvent.EventType = ES_GREEN;
           } else {
             DisplayEvent.EventParam = 0;
             DotstarEvent.EventType = ES_RED;
           }
-          postDisplay(ThisEvent);
-          postDotstar(ThisEvent);
-          ES_Timer_Init(3, 30000);
-          CurrentState = GameComplete;
+          //PostDisplay(DisplayEvent);
+          //PostDotstar(DotstarEvent);
+          ES_Timer_InitTimer(GAMEOVER_TIMER, 5000);
+          
+          printf("Game Complete Screen\r\n");
         }
         break;
 
@@ -221,16 +256,23 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
     case GARoundComplete:      
     {
+      // TESTING
       switch (ThisEvent.EventType)
       {
         case ES_SENSOR_PRESSED:
         {   
-          ES_Event_t ThisEvent;
-          ThisEvent.EventType = ES_DISPLAY_READY;
-          PostDisplay(ThisEvent);
-          ThisEvent.EventType = ES_OFF;
-          PostDotstar(ThisEvent);
-          ES_Timer_Init(1, 2000);
+          roundNumber++;
+          ES_Event_t DisplayEvent;
+          DisplayEvent.EventType = ES_DISPLAY_READY;
+          DisplayEvent.EventParam = roundNumber;
+          //PostDisplay(DisplayEvent);
+          printf("Ready Screen\r\n");
+
+          ES_Event_t DotstarEvent;
+          DotstarEvent.EventType = ES_OFF;
+          //PostDotstar(DotstarEvent);
+
+          ES_Timer_InitTimer(READY_TIMER, 2000);
           CurrentState = GALeader;
         }
         break;
@@ -243,27 +285,34 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
     case GameComplete:        
     {
+      printf("I am Game Complete State\r\n");
       switch (ThisEvent.EventType)
       {
         case ES_SENSOR_PRESSED:
         {   
-          ES_Event_t ThisEvent;
-          ThisEvent.EventType = ES_DISPLAY_WELCOME;
-          PostDisplay(ThisEvent);
-          ThisEvent.EventType = ES_RANDOM;
-          PostDotstar(ThisEvent);
+          ES_Event_t DisplayEvent;
+          DisplayEvent.EventType = ES_DISPLAY_WELCOME;
+          //PostDisplay(DisplayEvent);
+          printf("Welcome Screen\r\n");
+
+          ES_Event_t DotstarEvent;
+          DotstarEvent.EventType = ES_RANDOM;
+          //PostDotstar(DotstarEvent);
           CurrentState = WelcomeScreen;
         }
         break;
 
         case ES_TIMEOUT:
         {   
-          if (ThisEvent.EventParam == 3) {
-            ES_Event_t ThisEvent;
-            ThisEvent.EventType = ES_DISPLAY_WELCOME;
-            PostDisplay(ThisEvent);
-            ThisEvent.EventType = ES_RANDOM;
-            PostDotstar(ThisEvent);
+          if (ThisEvent.EventParam == GAMEOVER_TIMER){
+            ES_Event_t DisplayEvent;
+            DisplayEvent.EventType = ES_DISPLAY_WELCOME;
+            //PostDisplay(DisplayEvent);
+            printf("Welcome Screen\r\n");
+
+            ES_Event_t DotstarEvent;
+            DotstarEvent.EventType = ES_RANDOM;
+            //PostDotstar(DotstarEvent);
             CurrentState = WelcomeScreen;
           }
         }
@@ -281,48 +330,34 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
   return ReturnEvent;
 }
 
-/****************************************************************************
- Function
-     QueryTemplateSM
-
- Parameters
-     None
-
- Returns
-     TemplateState_t The current state of the Template state machine
-
- Description
-     returns the current state of the Template state machine
- Notes
-
- Author
-     J. Edward Carryer, 10/23/11, 19:21
-****************************************************************************/
-GameState_t QueryGameState(void)
-{
-  return CurrentState;
+// Need to pass by reference (queryHighScores(&score1, &score2, &score3))
+void queryHighScores(uint16_t* score1, uint16_t* score2, uint16_t* score3){
+  *score1 = highScores[0];
+  *score2 = highScores[1];
+  *score3 = highScores[2];
 }
 
-/***************************************************************************
- event checkers
- ***************************************************************************/
-bool CheckTouchSensor(){
-  if ((CurrentState == WelcomeScreen) || (CurrentState == GARoundComplete) || (CurrentState == GameComplete)){
-    bool eventStatus = false;
-    uint8_t currentButtonState = digitalRead(SENSOR_INPUT_PIN);
-    if((currentButtonState != lastButtonState) && (currentButtonState == LOW)){
-      ES_Event_t ThisEvent;
-      ThisEvent.EventType = ES_SENSOR_PRESSED;
-      PostGameState(ThisEvent);
-      eventStatus = true;
-    }
-    lastButtonState = currentButtonState;
-    return eventStatus;
-  }
-  
-}
 
 /***************************************************************************
  private functions
  ***************************************************************************/
+// Update Function for High Scores
+static bool UpdateHighScores(uint16_t score){
+  // Sort high scores with QuickSort
+  highScores[3] = score;
+  qsort(highScores, 4, sizeof(uint16_t), compareScores);
+  // Check if in top 3 scores
+  bool highScoreFlag = false;
+  for (uint8_t i = 0; i < 3; i++){
+    if (highScores[i] == score){
+      highScoreFlag = true;
+      break;
+    }
+  }
+  return highScoreFlag;
+}
 
+// Comparison Function for Scores
+static int compareScores(const void *a, const void *b){
+  return *(const uint16_t *)a - *(const uint16_t *)b;
+}
