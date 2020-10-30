@@ -37,6 +37,7 @@
 // type of state variable should match htat of enum in header file
 static GameState_t CurrentState;
 static uint16_t highScores[3];
+static uint16_t roundNumber;
 
 // with the introduction of Gen2, we need a module level Priority var as well
 static uint8_t MyPriority;
@@ -132,27 +133,34 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         for (uint8_t i = 0; i < 3; i++){
           highScores[i] = 0;
         }
-        ES_Event_t ThisEvent;
-        ThisEvent.EventType = ES_DISPLAY_WELCOME;
-        //PostDisplay(ThisEvent);
-        ThisEvent.EventType = ES_RANDOM;
-        //PostDotstar(ThisEvent);
-        CurrentState = WelcomeDisplay;
+        ES_Event_t DisplayEvent;
+        DisplayEvent.EventType = ES_DISPLAY_WELCOME;
+        //PostDisplay(DisplayEvent);
+
+        ES_Event_t DotstarEvent;
+        DotstarEvent.EventType = ES_RANDOM;
+        //PostDotstar(DotstarEvent);
+        CurrentState = WelcomeScreen;
       }
     }
     break;
 
-    case WelcomeDISPLAY:        
+    case WelcomeScreen:        
     {
       switch (ThisEvent.EventType)
       {
         case ES_SENSOR_PRESSED:
         {   
-          ES_Event_t ThisEvent;
-          ThisEvent.EventType = ES_DISPLAY_READY;
-          //PostDisplay(ThisEvent);
-          ThisEvent.EventType = ES_OFF;
-          //PostDotstar(ThisEvent);
+          roundNumber = 1;
+          ES_Event_t DisplayEvent;
+          DisplayEvent.EventType = ES_DISPLAY_READY;
+          DisplayEvent.EventParam = roundNumber;
+          //PostDisplay(DisplayEvent);
+
+          ES_Event_t DotstarEvent;
+          DotstarEvent.EventType = ES_OFF;
+          //PostDotstar(DotstarEvent);
+
           ES_Timer_Init(1, 2000);
           CurrentState = GALeader;
         }
@@ -170,9 +178,10 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       {
         case ES_GAME_START:
         {   
-          ES_Event_t ThisEvent;
-          ThisEvent.EventType = ES_DISPLAY_GO;
-          //PostDisplay(ThisEvent);
+          ES_Event_t DisplayEvent;
+          DisplayEvent.EventType = ES_DISPLAY_GO;
+          //PostDisplay(DisplayEvent);
+
           ES_Timer_Init(2, 2000);
           CurrentState = GAFollower;
         }
@@ -190,11 +199,13 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       {
         case ES_ROUND_COMPLETE:
         {   
-          ES_Event_t ThisEvent;
-          ThisEvent.EventType = ES_DISPLAY_ROUNDCOMPLETE;
-          //PostDisplay(ThisEvent);
-          ThisEvent.EventType = ES_GREEN;
-          //PostDotstar(ThisEvent);
+          ES_Event_t DisplayEvent;
+          DisplayEvent.EventType = ES_DISPLAY_ROUNDCOMPLETE;
+          //PostDisplay(DisplayEvent);
+
+          ES_Event_t DotstarEvent;
+          DotstarEvent.EventType = ES_GREEN;
+          //PostDotstar(DotstarEvent);
           CurrentState = GARoundComplete;
         }
         break;
@@ -205,15 +216,15 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           ES_Event_t DisplayEvent;
           ES_Event_t DotstarEvent;
           DisplayEvent.EventType = ES_DISPLAY_GAMECOMPLETE;
-          if (UpdateHighScore(score)){
-            DisplayEvent.EventParam = score;
-            DotstarEvent.EventType = ES_GREEN;
-          } else {
-            DisplayEvent.EventParam = 0;
-            DotstarEvent.EventType = ES_RED;
-          }
-          //PostDisplay(ThisEvent);
-          //PostDotstar(ThisEvent);
+          //if (UpdateHighScore(score)){
+          //  DisplayEvent.EventParam = score;
+          //  DotstarEvent.EventType = ES_GREEN;
+          //} else {
+          //  DisplayEvent.EventParam = 0;
+          //  DotstarEvent.EventType = ES_RED;
+          //}
+          //PostDisplay(DisplayEvent);
+          //PostDotstar(DotstarEvent);
           ES_Timer_Init(3, 30000);
           CurrentState = GameComplete;
         }
@@ -231,11 +242,16 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       {
         case ES_SENSOR_PRESSED:
         {   
-          ES_Event_t ThisEvent;
-          ThisEvent.EventType = ES_DISPLAY_READY;
-          //PostDisplay(ThisEvent);
-          ThisEvent.EventType = ES_OFF;
-          //PostDotstar(ThisEvent);
+          roundNumber++;
+          ES_Event_t DisplayEvent;
+          DisplayEvent.EventType = ES_DISPLAY_READY;
+          DisplayEvent.EventParam = roundNumber;
+          //PostDisplay(DisplayEvent);
+
+          ES_Event_t DotstarEvent;
+          DotstarEvent.EventType = ES_OFF;
+          //PostDotstar(DotstarEvent);
+
           ES_Timer_Init(1, 2000);
           CurrentState = GALeader;
         }
@@ -253,11 +269,13 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       {
         case ES_SENSOR_PRESSED:
         {   
-          ES_Event_t ThisEvent;
-          ThisEvent.EventType = ES_DISPLAY_WELCOME;
-          //PostDisplay(ThisEvent);
-          ThisEvent.EventType = ES_RANDOM;
-          //PostDotstar(ThisEvent);
+          ES_Event_t DisplayEvent;
+          DisplayEvent.EventType = ES_DISPLAY_WELCOME;
+          //PostDisplay(DisplayEvent);
+
+          ES_Event_t DotstarEvent;
+          DotstarEvent.EventType = ES_RANDOM;
+          //PostDotstar(DotstarEvent);
           CurrentState = WelcomeScreen;
         }
         break;
@@ -265,11 +283,13 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         case ES_TIMEOUT:
         {   
           if (ThisEvent.EventParam == 3) {
-            ES_Event_t ThisEvent;
-            ThisEvent.EventType = ES_DISPLAY_WELCOME;
-            //PostDisplay(ThisEvent);
-            ThisEvent.EventType = ES_RANDOM;
-            //PostDotstar(ThisEvent);
+            ES_Event_t DisplayEvent;
+            DisplayEvent.EventType = ES_DISPLAY_WELCOME;
+            //PostDisplay(DisplayEvent);
+
+            ES_Event_t DotstarEvent;
+            DotstarEvent.EventType = ES_RANDOM;
+            //PostDotstar(DotstarEvent);
             CurrentState = WelcomeScreen;
           }
         }
