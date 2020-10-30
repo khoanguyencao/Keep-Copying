@@ -165,6 +165,11 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
           ES_Timer_InitTimer(READY_TIMER, 2000);       
           CurrentState = GALeader;
+         
+          ES_Event_t SequenceRandomizer;
+          SequenceRandomizer.EventType = ES_FIRST_ROUND;
+          SequenceRandomizer.EventParam = ES_Timer_GetTime();
+          PostSequence(SequenceRandomizer);
         }
         break;
 
