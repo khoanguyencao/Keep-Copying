@@ -154,9 +154,9 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                       //printf("Yn %d\r\n", Neutral[0]);
                       //printf("Xn %d\r\n", Neutral[1]);
 
-                      ES_Event_t InitEvent;
-                      InitEvent.EventType = ES_FIRST_ROUND;
-                      PostSequence(InitEvent);
+                      //ES_Event_t InitEvent;
+                      //InitEvent.EventType = ES_FIRST_ROUND;
+                      //PostSequence(InitEvent);
                       CurrentState = SequenceCreate;
                 }
         }
@@ -179,9 +179,10 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     //printf("%u\r\n", __TIME__[7]);
                     //srand(randomNum % 10);
                     // Randomly initialize a sequence
+                    srand(ES_Timer_GetTime());
                     for (uint8_t i = 0; i < arrayLength; i++){
-                        uint16_t time = rand();
-                        seqArray[i] = time % 8;
+                        //uint16_t time = rand();
+                        seqArray[i] = (rand() %80)/10; //time % 8;
                         printf("%u\r\n", seqArray[i]);
                     }
                     
@@ -197,7 +198,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 {
                     // Append random direction to sequence
                     seqIndex = 0;
-                    seqArray[arrayLength] = ES_Timer_GetTime() % 8;
+                    seqArray[arrayLength] = (rand() %80)/10;//ES_Timer_GetTime() % 8;
                     arrayLength++;
                     roundNumber++;
                     
