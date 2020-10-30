@@ -33,5 +33,5 @@ FrameworkHeaders/ES_ShortTimer.h  \
 FrameworkHeaders/ES_Types.h  \
  ProjectHeaders/EventCheckWrapper.h  \
 ProjectHeaders/EventCheckers.h  \
- ProjectHeaders/Seq.h  \
-ProjectHeaders/GameState.h 
+ ProjectHeaders/GameState.h  \
+ProjectHeaders/Seq.h 

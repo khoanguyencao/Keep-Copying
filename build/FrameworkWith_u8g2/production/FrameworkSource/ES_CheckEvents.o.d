@@ -8,6 +8,8 @@ FrameworkHeaders/ES_CheckEvents.h  \
  FrameworkHeaders/ES_Types.h  \
 ProjectHeaders/EventCheckWrapper.h  \
  ProjectHeaders/EventCheckers.h  \
+ProjectHeaders/GameState.h  \
+ FrameworkHeaders/ES_Types.h  \
 ProjectHeaders/Seq.h  \
  FrameworkHeaders/ES_Framework.h  \
 FrameworkHeaders/ES_Port.h  \
@@ -21,6 +23,4 @@ FrameworkHeaders/ES_General.h  \
 FrameworkHeaders/ES_DeferRecall.h  \
  FrameworkHeaders/ES_Queue.h  \
 FrameworkHeaders/ES_ShortTimer.h  \
- FrameworkHeaders/ES_Port.h  \
-ProjectHeaders/GameState.h  \
- FrameworkHeaders/ES_Types.h 
+ FrameworkHeaders/ES_Port.h 

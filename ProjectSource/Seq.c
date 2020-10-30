@@ -40,7 +40,7 @@
 */
 static void updateScore();
 static bool inputChecker(uint32_t *adcResults);
-static uint16_t bitPack(uint16_t score, uint8_t time, uint8_t input);
+static uint16_t bitPack(uint8_t score, uint8_t time, uint8_t input);
 
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
@@ -48,7 +48,7 @@ static uint8_t MyPriority;
 
 static uint8_t seqArray[150]; //array containing random directions
 static uint8_t arrayLength; //counter variable that contains length of array
-static uint32_t score; //initial player score
+static uint8_t score; //initial player score
 static uint8_t seqIndex; //Sequence Index 
 static uint8_t playtimeLeft; //Play time counter
 static uint8_t roundNumber; //Round number
@@ -153,8 +153,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                       Neutral[0] = adcResults[0];           // Y neutral position
                       Neutral[1] = adcResults[1];           // X neutral position
                       input = 8;
-                      //printf("Yn %d\r\n", Neutral[0]);
-                      //printf("Xn %d\r\n", Neutral[1]);
+                      printf("Yn %d\r\n", Neutral[0]);
+                      printf("Xn %d\r\n", Neutral[1]);
 
                       //ES_Event_t InitEvent;
                       //InitEvent.EventType = ES_FIRST_ROUND;
@@ -176,10 +176,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     roundNumber = 1;
                     score = 0;
                     
-                    //printf("%s\r\n", __TIME__);
-                    //uint8_t randomNum = __TIME__[7];
-                    //printf("%u\r\n", __TIME__[7]);
-                    //srand(randomNum % 10);
                     // Randomly initialize a sequence
                     srand(ES_Timer_GetTime());
                     for (uint8_t i = 0; i < arrayLength; i++){
@@ -187,12 +183,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         seqArray[i] = (rand() %80)/10; //time % 8;
                         printf("%u\r\n", seqArray[i]);
                     }
-                    
-                    // TESTING
-                    //printf("sequence %d \r\n", seqArray[0]);
-                    //printf("sequence %d \r\n", seqArray[1]);
-                    //printf("sequence %d \r\n", seqArray[2]);
-                    //printf("sequence %d \r\n", seqArray[3]);
                 }
                 break;
                 
@@ -200,7 +190,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 {
                     // Append random direction to sequence
                     seqIndex = 0;
-                    seqArray[arrayLength] = (rand() %80)/10;//ES_Timer_GetTime() % 8;
+                    seqArray[arrayLength] = (rand() %80)/10;        //ES_Timer_GetTime() % 8;
                     arrayLength++;
                     roundNumber++;
                     
@@ -268,9 +258,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                                 ES_Timer_InitTimer(LAST_DIRECTION_TIMER, 500);
                                 displayCounter = 0;
                             }
-                            
-                            // TESTING
-                                
                         }
                         break;
                         
@@ -652,16 +639,16 @@ static bool inputChecker(uint32_t *adcResults)
 
 static void updateScore(){
     if (arrayLength <= 4) {
-        score = score + 10;
+        score = score + 1;
     } else {
-        score = score + (arrayLength / 4) * 10;
+        score = score + (arrayLength / 4) * 1;
     }
 }
 
-// score 9 bits, time 4 bits, input 3 bits 
-static uint16_t bitPack(uint16_t score, uint8_t time, uint8_t input){
-    uint16_t EventParam = score << 7;
-    EventParam = EventParam | (time << 3);
+// score 8 bits, time 4 bits, input 4 bits 
+static uint16_t bitPack(uint8_t score, uint8_t time, uint8_t input){
+    uint16_t EventParam = score << 8;
+    EventParam = EventParam | (time << 4);
     EventParam = EventParam | (input);
     return EventParam;
 }

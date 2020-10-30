@@ -63,7 +63,7 @@
 // the name of the run function
 #define SERV_1_RUN RunSequence
 // How big should this services Queue be?
-#define SERV_1_QUEUE_SIZE 5
+#define SERV_1_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
@@ -76,7 +76,7 @@
 // the name of the run function
 #define SERV_2_RUN RunGameState
 // How big should this services Queue be?
-#define SERV_2_QUEUE_SIZE 15
+#define SERV_2_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/

@@ -24,7 +24,6 @@ typedef enum
 bool InitGameState(uint8_t Priority);
 bool PostGameState(ES_Event_t ThisEvent);
 ES_Event_t RunGameState(ES_Event_t ThisEvent);
-GameState_t QueryTemplateSM(void);
 
 // Event Checkers
 
