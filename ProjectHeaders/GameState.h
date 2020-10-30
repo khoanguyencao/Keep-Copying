@@ -30,5 +30,9 @@ GameState_t QueryTemplateSM(void);
 
 bool CheckTouchSensor();
 
+// High Score Query
+
+void queryHighScores(uint16_t* score1, uint16_t* score2, uint16_t* score3);
+
 #endif /* GameState_H */
 

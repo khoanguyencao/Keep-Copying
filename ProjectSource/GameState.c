@@ -33,11 +33,14 @@
    relevant to the behavior of this state machine
 */
 
+static void UpdateHighScores();
+static uint16_t compareScores(const void *a, const void *b);
+
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
 static GameState_t CurrentState;
-static uint16_t highScores[3];
+static uint16_t highScores[4];
 static uint16_t roundNumber;
 static uint8_t lastTouchSensorState;
 
@@ -71,6 +74,7 @@ bool InitGameState(uint8_t Priority)
   InitEvent.EventType = ES_INIT;
   // Set touch sensor (RB4) as a digital input
   TRISBbits.TRISB4 = 1;
+
   if (ES_PostToService(MyPriority, InitEvent) == true){
     return true;
   } else {
@@ -129,7 +133,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       if (ThisEvent.EventType == ES_INIT)    
       {
         lastTouchSensorState = digitalRead(SENSOR_INPUT_PIN);
-        for (uint8_t i = 0; i < 3; i++){
+        for (uint8_t i = 0; i < 4; i++){
           highScores[i] = 0;
         }
         ES_Event_t DisplayEvent;
@@ -324,6 +328,13 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
   return ReturnEvent;
 }
 
+// Need to pass by reference (queryHighScores(&score1, &score2, &score3))
+void queryHighScores(uint16_t* score1, uint16_t* score2, uint16_t* score3){
+  score1 = highScores[0];
+  score2 = highScores[1];
+  score3 = highScores[2];
+}
+
 /***************************************************************************
  event checkers
  ***************************************************************************/
@@ -348,4 +359,13 @@ bool CheckTouchSensor(){
 /***************************************************************************
  private functions
  ***************************************************************************/
+// Update Function for High Scores
+static void UpdateHighScores(){
+  highScores[3] = score;
+  qsort(highScores, 4, sizeof(uint16_t), compareScores);
+}
 
+// Comparison Function for Scores
+static uint16_t compareScores(const void *a, const void *b){
+  return *(const uint16_t *)a - *(const uint16_t *)b;
+}
