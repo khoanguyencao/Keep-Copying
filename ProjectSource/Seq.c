@@ -1,6 +1,6 @@
 #include "Seq.h"
 #include "PIC32_AD_Lib.h"
-//Hardware
+// Hardware
 #include <xc.h>
 #include <proc/p32mx170f256b.h>
 #include <sys/attribs.h> // for ISR macors
@@ -15,12 +15,23 @@
 #include "ES_ShortTimer.h"
 #include "ES_Port.h"
 
-//OLED headers
+// OLED headers
 #include "../u8g2Headers/u8g2TestHarness_main.h"
 #include "../u8g2Headers/common.h"
 #include "../u8g2Headers/spi_master.h"
 #include "../u8g2Headers/u8g2.h"
 #include "../u8g2Headers/u8x8.h"
+
+// Game Services
+#include "GameState.h"
+
+/*----------------------------- Module Defines ----------------------------*/
+
+#define ROUND_TIME 15
+/*---------------------------- Module Functions ---------------------------*/
+/* prototypes for private functions for this machine.They should be functions
+   relevant to the behavior of this state machine
+*/
 
 
 /*---------------------------- Module Variables ---------------------------*/
@@ -29,13 +40,12 @@ static uint8_t MyPriority;
 
 static uint8_t seqArray[150]; //array containing random directions
 static uint8_t arrayLength; //counter variable that contains length of array
-static uint32_t score = 0; //initial player score
-static uint8_t sequenceIndex = 0; //Sequence Index 
-static uint8_t playTime = 0; //Play time counter
-static uint8_t roundNumber = 1; //Round number
-static uint8_t displayCounter = 1; // Display counter, for demonstrating sequence
+static uint32_t score; //initial player score
+static uint8_t seqIndex; //Sequence Index 
+static uint8_t playtimeLeft; //Play time counter
+static uint8_t roundNumber; //Round number
 
-static SState_t Current_State; //State Machine Current State Variable
+static SequenceState_t Current_State; //State Machine Current State Variable
 
 static uint32_t adcResults[2];//Array for Joystick AD converter function
 static uint8_t Last_Zval;//Last value for event checker
@@ -61,7 +71,6 @@ bool InitSequence(uint8_t Priority)
   ES_Event_t ThisEvent;
 
   MyPriority = Priority;
- 
   //Initialize Framework Pins for Joystick
   //Pins RB2-Y, RB3-X are analog inputs, RA2-Z is digital Input,
   //Set Touch Sensor as Digital Input RB4-TS
@@ -135,16 +144,16 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
         {
                 if (ThisEvent.EventType == ES_INIT)
                 {
-                      //Read X and Y values from Joystick to obtain neutral positions
+                      // Read X and Y values from Joystick to obtain neutral positions
                       ADC_MultiRead(adcResults);
-                      Neutral[0] = adcResults[0];           //Y neutral position
-                      Neutral[1] = adcResults[1];           //X neutral position
+                      Neutral[0] = adcResults[0];           // Y neutral position
+                      Neutral[1] = adcResults[1];           // X neutral position
                       printf("Yn %d\r\n", Neutral[0]);
                       printf("Xn %d\r\n", Neutral[1]);
-                      
-                      //Initializing complete, proceed to next state
-                      ThisEvent.EventType = ES_FIRST_ROUND;
-                      PostSequence(ThisEvent);  
+
+                      ES_Event_t InitEvent;
+                      InitEvent.EventType = ES_FIRST_ROUND;
+                      PostSequence(InitEvent);
                       Current_State = SequenceCreate;
                 }
         }
@@ -155,46 +164,37 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
             switch (ThisEvent.EventType)
             {
                 case ES_FIRST_ROUND:
-                {  
-                    // Clear array - to be removed (not necessary)
-                    for (uint8_t i = 0; i < 150; i++)
-                    {
-                        seqArray[i] = 8;
-                    }
-                    
+                {   
                     // Initialize array length, round and score 
+                    seqIndex = 0;
                     arrayLength = 4;
-                    score = 0;
                     roundNumber = 1;
-                    
+                    score = 0;
+
                     // Randomly initialize a sequence
-                    for (i = 0; i < arrayLength; i++)
-                    {
-                        seqArray[i]=(ES_Timer_GetTime() % 8);
+                    for (i = 0; i < arrayLength; i++){
+                        seqArray[i] = ES_Timer_GetTime() % 8;
                     }
-                    sequenceIndex = 0; 
                     
-                    printf("sequence %d \r\n",seqArray[0]);
-                    printf("sequence %d \r\n",seqArray[1]);
-                    printf("sequence %d \r\n",seqArray[2]);
-                    printf("sequence %d \r\n",seqArray[3]);
+                    printf("sequence %d \r\n", seqArray[0]);
+                    printf("sequence %d \r\n", seqArray[1]);
+                    printf("sequence %d \r\n", seqArray[2]);
+                    printf("sequence %d \r\n", seqArray[3]);
                 }
                 break;
                 
                 case ES_NEXT_ROUND:
                 {
-                    seqArray[arrayLength] = (ES_Timer_GetTime() % 8);
+                    seqArray[arrayLength] = ES_Timer_GetTime() % 8;
                     arrayLength++;
                     roundNumber++;
-                    sequenceIndex = 0;
+                    seqIndex = 0;
                     
-                    printf("sequence %d \r\n",seqArray[0]);
-                    printf("sequence %d \r\n",seqArray[1]);
-                    printf("sequence %d \r\n",seqArray[2]);
-                    printf("sequence %d \r\n",seqArray[3]);
-                    printf("sequence %d \r\n",seqArray[4]);
-                    
-                    
+                    printf("sequence %d \r\n", seqArray[0]);
+                    printf("sequence %d \r\n", seqArray[1]);
+                    printf("sequence %d \r\n", seqArray[2]);
+                    printf("sequence %d \r\n", seqArray[3]);
+                    printf("sequence %d \r\n", seqArray[4]);
                 }
                 break;
                 
@@ -202,15 +202,16 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 {
                     if (ThisEvent.EventParam == READY_TIMER)
                     {
-                        printf("Direction %d \r\n", seqArray[0]); 
+                        // Update display, start direction timer and change state
                         ES_Event_t DisplayEvent;
                         DisplayEvent.EventType = ES_DISPLAY_PLAY_INPUT;
-                        DisplayEvent.EventParam = seqArray[0];
+                        DisplayEvent.EventParam = seqArray[seqIndex];
                         //PostDisplay(DisplayEvent);
-                        //Initialize timer for displaying sequence, This timer
-                        //Posts to self to continue displaying sequence
+                        seqIndex++;
                         ES_Timer_InitTimer(DIRECTION_TIMER, 500);
                         Current_State = SequenceDisplay;
+
+                        printf("Direction %d \r\n", seqArray[seqIndex]); 
                     }
                 }
                 break;
@@ -222,60 +223,45 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
         
         case SequenceDisplay:
         {
-            //displayCounter is counter to count the sequence of directions that
-            //have been displayed to the user, and begin a transition to 
-            //the GO screen
-            
             switch(ThisEvent.EventType)
             {
                 case ES_TIMEOUT:
                 {
-                    //This part deals with the TimeOut event from GO Screen
                     switch (ThisEvent.EventParam)
                     {
                         case DIRECTION_TIMER:
                         {
-                            if (displayCounter < (arrayLength - 1))
-                            {
-                                printf("Direction %d \r\n", seqArray[displayCounter]); 
+                            if (seqIndex < arrayLength){
                                 ES_Event_t DisplayEvent;
                                 DisplayEvent.EventType = ES_DISPLAY_PLAY_INPUT;
-                                DisplayEvent.EventParam = seqArray[0];
-                                //Initialize timer for displaying sequence, This timer
-                                //Posts to self to continue displaying sequence
+                                DisplayEvent.EventParam = seqArray[seqIndex];
+                                //PostDisplay(DisplayEvent);
+                                seqIndex++;
                                 ES_Timer_InitTimer(DIRECTION_TIMER, 500);
-                                displayCounter++;
-                            }
-                            else if (displayCounter == (arrayLength - 1))
-                            {
-                                printf("Direction %d \r\n", seqArray[displayCounter]); 
-                                //here goes the posting to oled, display last dir
 
-                                /*----------------------------------------------------
-                                 * Initialize timer for displaying sequence, This timer
-                                 * post to Game SM to proceed to GO screen
-                                 * --------------------------------------------------*/
-                                ES_Timer_InitTimer(LAST_DIRECTION_TIMER, 500);
-                                //Notice that is a different Timer that
+                                // Last direction
+                                if (seqIndex == arrayLength - 1){
+                                    ES_Timer_InitTimer(LAST_DIRECTION_TIMER, 500);
+                                    seqIndex = 0;
+                                }
 
-                                //Reset Display Counter
-                                displayCounter = 1;
+                                printf("Direction %d \r\n", seqArray[seqIndex]);    
                             }
                         }
                         break;
                         
-                        case GO_TIMER://Received from GAME SM
+                        case GO_TIMER:
                         {
-                            //Post to OLED to display gameplay screen
-                            //Remember to ES_Event_t ThisEvent.EventType...
-                            
-                            printf("GAMEPLAY SCREEN\r\n");
-                            //Transition to next State
-                            Current_State = SequenceInput;
-                            //Start 1 s Input Timer
+                            playtimeLeft = ROUND_TIME;
+                            // Update display, start input timer 
+                            ES_Event_t DisplayEvent;
+                            DisplayEvent.EventType = ES_DISPLAY_PLAY;
+                            DisplayEvent.EventType = playtimeLeft;              // depends on how Ashley implements display service
+                            //PostDisplay(DisplayEvent);
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
-                            //Set play time elapse to 0 s
-                            playTime = 0;
+                            Current_State = SequenceInput;
+
+                            printf("GAMEPLAY SCREEN\r\n");
                         }
                         break;
                         
@@ -294,50 +280,70 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
         {
             switch (ThisEvent.EventType)
             {
-                //keeps track of playtime 
                 case ES_TIMEOUT:
                 {
-                    if (playTime < 14)
+                    if (ThisEvent.EventParam == INPUT_TIMER)
                     {
-                        //Restart Timer
-                        ES_Timer_InitTimer(INPUT_TIMER, 1000);
-                        //Post to OLED screen
-                        //Remember ES_Event_t ThisEvent.....
-                        
-                        printf("-1 sec \r\n");
-                        playTime++;                        
+                        if (playtimeLeft > 0) 
+                        {
+                            // Inform display service to update time
+                            playtimeLeft--;
+                            ES_Event_t DisplayEvent;
+                            DisplayEvent.EventType = ES_DISPLAY_PLAY;
+                            DisplayEvent.EventType = playtimeLeft;
+                            ES_Timer_InitTimer(INPUT_TIMER, 1000);
+
+                            printf("%u seconds remaining", playtimeLeft);
+                        } 
+
+                        else if (playtimeLeft == 0) 
+                        {
+                            // Update sequence state machine
+                            CurrentState = SequenceCreate;
+                            ES_Event_t SequenceEvent;                            
+                            SequenceEvent.EventType = ES_FIRST_ROUND;
+                            PostSequence(SequenceEvent);
+
+                            // Inform GameState machine 
+                            ES_Event_t GameStateEvent;
+                            GameStateEvent.EventType = ES_GAME_COMPLETE;
+                            PostGameState(GameStateEvent);
+
+                            // Inform display service
+                            ES_Event_t DisplayEvent;
+                            DisplayEvent.EventType = ES_DISPLAY_GAMECOMPLETE;
+                            //PostDisplay(DisplayEvent);
+
+                            printf("Game Over from Timeout");
+                        }
                     }
-                    else if (playTime == 14)
-                    {
-                        //Post to OLED to transition to game over
-                        
-                        //Post to myself to transition
-                        ThisEvent.EventType = ES_FIRST_ROUND;
-                        PostSequence(ThisEvent);
-                        
-                        //Update Current State
-                        Current_State = SequenceCreate;
-                        //Send event to OLED for Game Over
-                        printf("timeout gameover\r\n");
-                    }  
+                    
                 }
                 break;
 
-                case ES_INCORRECT_INPUT://sent from event checker
+                case ES_INCORRECT_INPUT:
                 {
-                    //Post to OLED to transition to game over
-                    //Post to myself to transition
-                    ThisEvent.EventType = ES_FIRST_ROUND;
-                    PostSequence(ThisEvent);
+                    // Update sequence state machine
+                    CurrentState = SequenceCreate;
+                    ES_Event_t SequenceEvent;                            
+                    SequenceEvent.EventType = ES_FIRST_ROUND;
+                    PostSequence(SequenceEvent);
 
-                    //Update Current State
-                    Current_State = SequenceCreate;
-                    
-                    printf("input gameover\r\n");
+                    // Inform GameState machine 
+                    ES_Event_t GameStateEvent;
+                    GameStateEvent.EventType = ES_GAME_COMPLETE;
+                    PostGameState(GameStateEvent);
+
+                    // Inform display service
+                    ES_Event_t DisplayEvent;
+                    DisplayEvent.EventType = ES_DISPLAY_GAMECOMPLETE;
+                    //PostDisplay(DisplayEvent);
+
+                    printf("Game Over from Incorrect Input");
                 }
                 break;
                 
-                case ES_CORRECT_INPUT_F://this is sent from the event checker
+                case ES_CORRECT_INPUT_FINAL://this is sent from the event checker
                 {
                     //Post to OLED to transition to Round Complete
                     //Post to myself to transition
@@ -375,7 +381,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     //Post to OLED to display correct input
                     
                     //Increment Sequence Index
-                    sequenceIndex++; //This sequence index begins at zero
+                    seqIndex++; //This sequence index begins at zero
                     
                     printf("input correct\r\n");
                 }
@@ -400,7 +406,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
 bool xyVal (void)
 {
     //Return Variable Declaration and initialization
-    static bool Ret_Val = false;
+    static bool returnValue = false;
     //Variable declaration for Z button value
     static uint8_t Current_Zval;
     //Variable declaration for event
@@ -409,10 +415,9 @@ bool xyVal (void)
     /*-----------------------------------------------------------------------
      This If statement minimizes the amount of times this event checking
      function gets call, to not bug down processing time-------------------*/
-    if ((Current_State == SequenceInput) && (sequenceIndex <= (arrayLength - 1)))
+    if ((Current_State == SequenceInput) && (seqIndex <= (arrayLength - 1)))
     {
         //Read Current Z value
-        //Current_Zval = PORTAbits.RA2;
         Current_Zval = PORTBbits.RB4;
         
         //Decision Matrix for executable action
@@ -421,7 +426,7 @@ bool xyVal (void)
             //Do nothing; user has not decided on input if both are zero
             //or user has not released Z button
             
-            Ret_Val=true;
+            returnValue = true;
         }
         else if (Current_Zval == 1 && Last_Zval == 0)
         {
@@ -431,7 +436,7 @@ bool xyVal (void)
             //This will help us to post an event after the user 
             Last_Zval = Current_Zval;
             
-            Ret_Val=true;
+            returnValue = true;
         }
         else if (Last_Zval == 1 && Current_Zval == 0)
         {
@@ -443,9 +448,9 @@ bool xyVal (void)
             //or an incorrect input and then post to myself
             
             //Check if this is the last input to post correct event
-            if (sequenceIndex < (arrayLength-1)) //Not last input
+            if (seqIndex < (arrayLength - 1))          // Not last input
             {
-                printf("sequenceIndex %d\r\n",sequenceIndex);
+                printf("seqIndex %d\r\n",seqIndex);
                 if(Input_Check(adcResults) == true)
                 {
                     //Post Correct event
@@ -461,13 +466,13 @@ bool xyVal (void)
                     printf("posted Incorrect Input\r\n");
                 }
             }
-            else if (sequenceIndex == (arrayLength - 1)) // Last input
+            else if (seqIndex == (arrayLength - 1))    // Last input
             {
-                printf("sequenceIndex2 %d\r\n",sequenceIndex);
+                printf("seqIndex2 %d\r\n",seqIndex);
                 if(Input_Check(adcResults) == true)
                 {
                     //Post Correct final event
-                    ThisEvent.EventType = ES_CORRECT_INPUT_F;
+                    ThisEvent.EventType = ES_CORRECT_INPUT_FINAL;
                     PostSequence(ThisEvent);
                     printf("posted Correct Input F\r\n");
                 }
@@ -480,11 +485,11 @@ bool xyVal (void)
                 }
             }
             
-            Ret_Val=true;
+            returnValue = true;
         }
         
     }
-    return Ret_Val;
+    return returnValue;
 }
 
 /*---------------------------------------------------------------------------
@@ -494,9 +499,9 @@ bool xyVal (void)
 bool Input_Check(uint32_t *adcResults)
 {
     //Return Val Declaration and initialization
-    static bool Ret_Val = false;
+    static bool returnValue = false;
     //Direction being analyzed
-    switch (seqArray[sequenceIndex])
+    switch (seqArray[seqIndex])
     {
         case 0:
         {
@@ -505,7 +510,7 @@ bool Input_Check(uint32_t *adcResults)
                     (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input = 0;
-                Ret_Val = true;
+                returnValue = true;
             }
         }
         break;
@@ -517,20 +522,20 @@ bool Input_Check(uint32_t *adcResults)
                     (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input =1;
-                Ret_Val = true;
+                returnValue = true;
             }
         }
         break;
         
         case 2:
         {
-            if ((adcResults[1] > (Neutral[1]+10)) && 
+            if ((adcResults[1] > (Neutral[1] + 10)) && 
                     (adcResults[1] < 1020) && 
                     (adcResults[0] >= (Neutral[0] - 20)) && 
                     (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input = 2;
-                Ret_Val = true;
+                returnValue = true;
             }
         }
         break;
@@ -542,7 +547,7 @@ bool Input_Check(uint32_t *adcResults)
                     (adcResults[0]<=(Neutral[0] + 20)))
             {
                 input = 3;
-                Ret_Val = true;
+                returnValue = true;
             }
         }
         break;
@@ -555,7 +560,7 @@ bool Input_Check(uint32_t *adcResults)
                     (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 4;
-                Ret_Val = true;
+                returnValue = true;
             }
         }
         break;
@@ -567,7 +572,7 @@ bool Input_Check(uint32_t *adcResults)
                     (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 5;
-                Ret_Val = true;
+                returnValue = true;
             }
         }
         break;
@@ -580,7 +585,7 @@ bool Input_Check(uint32_t *adcResults)
                     (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 6;
-                Ret_Val = true;
+                returnValue = true;
             }
         }
         break;
@@ -592,15 +597,15 @@ bool Input_Check(uint32_t *adcResults)
                     (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 7;
-                Ret_Val = true;
+                returnValue = true;
             }
         }
         break;
         
-        default:{Ret_Val=false;}break;
+        default:{returnValue = false;}break;
         
     }
-    return Ret_Val;
+    return returnValue;
     
 }
     

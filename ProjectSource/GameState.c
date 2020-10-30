@@ -130,8 +130,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_INIT)    
       {
-        for (uint8_t i = 0; i < 3; i++)
-        {
+        for (uint8_t i = 0; i < 3; i++){
           highScores[i] = 0;
         }
         ES_Event_t DisplayEvent;
@@ -177,14 +176,17 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
     {
       switch (ThisEvent.EventType)
       {
-        case ES_GAME_START:
+        case ES_TIMEOUT:
         {   
-          ES_Event_t DisplayEvent;
-          DisplayEvent.EventType = ES_DISPLAY_GO;
-          //PostDisplay(DisplayEvent);
+          if (ThisEvent.EventParam == LAST_DIRECTION_TIMER){
+            ES_Event_t DisplayEvent;
+            DisplayEvent.EventType = ES_DISPLAY_GO;
+            //PostDisplay(DisplayEvent);
 
-          ES_Timer_Init(2, 2000);       // GoTimer
-          CurrentState = GAFollower;
+            ES_Timer_Init(2, 2000);       // GoTimer
+            CurrentState = GAFollower;
+          }
+          
         }
         break;
 
@@ -283,7 +285,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
         case ES_TIMEOUT:
         {   
-          if (ThisEvent.EventParam == GAMEOVER_TIMER) {
+          if (ThisEvent.EventParam == GAMEOVER_TIMER){
             ES_Event_t DisplayEvent;
             DisplayEvent.EventType = ES_DISPLAY_WELCOME;
             //PostDisplay(DisplayEvent);
@@ -335,10 +337,11 @@ GameState_t QueryGameState(void)
  ***************************************************************************/
 bool CheckTouchSensor(){
   bool eventStatus = false;
-  if ((CurrentState == WelcomeScreen) || (CurrentState == GARoundComplete) 
-      || (CurrentState == GameComplete)){
+  if ((CurrentState == WelcomeScreen) || 
+      (CurrentState == GARoundComplete) || 
+      (CurrentState == GameComplete)){
     uint8_t currentButtonState = digitalRead(SENSOR_INPUT_PIN);
-    if((currentButtonState != lastButtonState) && (currentButtonState == LOW)){
+    if ((currentButtonState != lastButtonState) && (currentButtonState == LOW)){
       ES_Event_t ThisEvent;
       ThisEvent.EventType = ES_SENSOR_PRESSED;
       PostGameState(ThisEvent);

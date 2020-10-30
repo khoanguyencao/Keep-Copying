@@ -30,7 +30,7 @@ typedef enum{
     SequenceCreate,
     SequenceDisplay,
     SequenceInput
-}SState_t;
+}SequenceState_t;
 
 //functions
 bool InitSequence(uint8_t Priority);
