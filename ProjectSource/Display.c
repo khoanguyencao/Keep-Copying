@@ -228,6 +228,7 @@ ES_Event_t RunDisplay(ES_Event_t ThisEvent)
         {
             bitUnpack(ThisEvent.EventParam, &score, &time, &input);
             playScreen(score, time, input);     // display play screen
+            printf("%u, %u, %u\r\n", score, time, input);
             CurrentState = DisplayBusy;         // transition to busy state
         }
         

@@ -154,7 +154,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                       ADC_MultiRead(adcResults);
                       Neutral[0] = adcResults[0];           // Y neutral position
                       Neutral[1] = adcResults[1];           // X neutral position
-                      input = 8;
                       printf("Yn %d\r\n", Neutral[0]);
                       printf("Xn %d\r\n", Neutral[1]);
 
@@ -303,6 +302,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             ES_Event_t DisplayEvent;
                             DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
                             DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
+                            PostDisplay(DisplayEvent);
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
 
                             printf("%u seconds remaining\r\n", playtimeLeft);
