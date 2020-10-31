@@ -29,7 +29,7 @@ void welcomeScreen(void);
 void readyScreen(uint16_t score, uint16_t round);
 void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction);
 void goScreen(uint16_t score, uint16_t round);
-void playScreen(uint16_t score, uint16_t time, uint16_t input);
+void playScreen(uint16_t score, uint8_t time, uint8_t input);
 void roundCompleteScreen(uint16_t score, uint16_t round);
 void gameCompleteScreen(void);
 static void bitUnpack(uint16_t EventParam, uint16_t* score, uint8_t* time, uint8_t* input);

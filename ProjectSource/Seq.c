@@ -265,6 +265,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             playtimeLeft = ROUND_TIME;
                             // Inform display service to update to play screen and starts input timer
                             ES_Event_t DisplayEvent;
+                            input = 8;
                             DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
                             DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
                             PostDisplay(DisplayEvent);

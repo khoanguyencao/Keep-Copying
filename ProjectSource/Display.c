@@ -200,6 +200,7 @@ ES_Event_t RunDisplay(ES_Event_t ThisEvent)
         if (ThisEvent.EventType == ES_DISPLAY_WELCOME)
         {
             welcomeScreen();                    // display welcome screen
+            score = 0;
             CurrentState = DisplayBusy;         // transition to busy state
         }
                 
@@ -381,7 +382,7 @@ void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction)
     sprintf(roundstring, "R%i", round);
     
     // turn score into a string
-    score = 10*score;
+    score = score * 10;
     char scorestring[5];
     sprintf(scorestring, "%i", score);
     
@@ -616,7 +617,7 @@ void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction)
 void goScreen(uint16_t score, uint16_t round)
 {
     // turn round into a string and add it to "R"
-    score = 10*score;
+    score = score * 10;
     char roundstring[4];
     sprintf(roundstring, "R%i", round);
     
@@ -652,21 +653,35 @@ void goScreen(uint16_t score, uint16_t round)
 }
 
 // Creates and displays the Play screen
-void playScreen(uint16_t score, uint16_t time, uint16_t input)
+void playScreen(uint16_t score, uint8_t time, uint8_t input)
 {
     // turn round into a string and add it to "R"
     char roundstring[4];
     sprintf(roundstring, "R%i", round);
     
     // multiply score by 10 and turn score into a string
-    score = 10*score;
+    score = score * 10;
     char scorestring[5];
     sprintf(scorestring, "%i", score);
+    
+    // turn time into a string
+    char timestring[3];
+    sprintf(timestring, "%i", time);
     
     // clear screen
     u8g2_FirstPage(&u8g2); 
     // write the round number to the display
     u8g2_DrawStr(&u8g2, 1, 15, roundstring); 
+    
+    // write the time to the display
+    if (time < 10)                                  // time is 1 number wide
+    {
+        u8g2_DrawStr(&u8g2, 120, 60, timestring); 
+    }
+    if ((time >= 10) && (time <= 15))               // time is 2 numbers wide
+    {
+        u8g2_DrawStr(&u8g2, 110, 60, timestring); 
+    }
     
     // write the score to the display, align text with left side
     if (score < 10)                                 //score is 1 number wide
@@ -963,6 +978,9 @@ void gameCompleteScreen(void)
     
     //get high score values and turn into strings
     queryHighScores(&score1, &score2, &score3);
+    score1 = score1 * 10;
+    score2 = score2 * 10;
+    score3 = score3 * 10;
     char score1string[8];
     sprintf(score1string, "1. %i", score1);
     char score2string[8];
@@ -983,7 +1001,7 @@ void gameCompleteScreen(void)
 // (i.e. bitUnpack (EventParam, &score, &time, &input))
 // Note which params are uint16_t vs uint8_t - will need to initialize correctly 
 static void bitUnpack(const uint16_t EventParam, uint16_t* score, uint8_t* time, uint8_t* input){
-    uint8_t fourBitMask = ((BIT0HI) || (BIT1HI) || (BIT2HI) || (BIT3HI));
+    uint8_t fourBitMask = ((BIT0HI) | (BIT1HI) | (BIT2HI) | (BIT3HI));
     *input = EventParam & fourBitMask;
     *time = (EventParam >> 4) & fourBitMask;
     *score = EventParam >> 8;
