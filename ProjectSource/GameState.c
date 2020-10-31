@@ -361,7 +361,7 @@ bool CheckTouchSensor(){
 // Note maintained as uint16_t here to ease display service query
 static bool UpdateHighScores(uint16_t score){
   // Sort high scores with QuickSort
-  highScores[0] = score;
+  highScores[3] = score;
   qsort(highScores, 4, 2, compareScores);
   // Check if in top 3 scores
   bool highScoreFlag = false;
