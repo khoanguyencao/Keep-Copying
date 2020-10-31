@@ -54,6 +54,14 @@
 /* prototypes for private functions for this machine.They should be functions
    relevant to the behavior of this state machine
 */
+static void welcomeScreen(void);
+static void readyScreen(uint16_t score, uint16_t round);
+static void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction);
+static void goScreen(uint16_t score, uint16_t round);
+static void playScreen(uint16_t score, uint8_t time, uint8_t input);
+static void roundCompleteScreen(uint16_t score, uint16_t round);
+static void gameCompleteScreen(void);
+static void bitUnpack(uint16_t EventParam, uint16_t* score, uint8_t* time, uint8_t* input);
 
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
