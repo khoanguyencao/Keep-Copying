@@ -567,7 +567,7 @@ uint8_t Input_Direction(uint32_t *adcResults)
             {
                 input = 0;
             }
-            else if((adcResults[1] <= 1 && (adcResults[0] >= (Neutral[0] - 20)) && (adcResults[0] <= (Neutral[0] + 20)))
+            else if((adcResults[1] <= 1) && (adcResults[0] >= (Neutral[0] - 20)) && (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input = 1;
             }
