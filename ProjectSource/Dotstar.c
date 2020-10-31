@@ -151,7 +151,7 @@ ES_Event_t RunDotstar(ES_Event_t ThisEvent)
         if (ThisEvent.EventType == ES_INIT)
         {
             //initialize SPI for dotstar
-            SPI_Init();
+            SPI_Init_Dotstar();
             //transition to next case
             CurrentState = DotstarRed;
             ThisEvent.EventType = ES_RED;

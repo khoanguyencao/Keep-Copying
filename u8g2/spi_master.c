@@ -16,7 +16,7 @@
     but also for the DC (RB13) & Reset (RB12) pins 
  
 ****************************************************************************/
-void SPI_Init(void){
+void SPI_Init_Dotstar(void){
     //disable analog function on all SPI pins
     ANSELBbits.ANSB15 = 0;             //Set RB15 as analog
     TRISBbits.TRISB5 = 0;              //Set RB5 as output
