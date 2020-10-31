@@ -1,12 +1,12 @@
 /* 
- * File:   spi_master.h
+ * File:   SPI_master.h
  * Author: KIKI
  *
  * Created on 2019년 12월 30일 (월), 오후 9:11
  */
 
-#ifndef SPI_MATER_H
-#define	SPI_MATERH
+#ifndef SPI_MASTER_H
+#define	SPI_MASTER_H
 
 #include "../u8g2Headers/u8g2TestHarness_main.h"
 #include "../u8g2Headers/common.h"
@@ -19,4 +19,4 @@ bool SPI_HasTransferCompleted();
 bool SPI_HasXmitBufferSpaceOpened();
 uint8_t SPI_GetNumOpenXmitSpaces();
 
-#endif	/* SPI_MATERH */
+#endif	/* SPI_MASTER_H */

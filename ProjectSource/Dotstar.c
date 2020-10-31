@@ -41,8 +41,6 @@
 #include "GameState.h"
 #include "spi_master.h"
 
-
-
 /*----------------------------- Module Defines ----------------------------*/
 
 /*---------------------------- Module Functions ---------------------------*/
@@ -153,10 +151,7 @@ ES_Event_t RunDotstar(ES_Event_t ThisEvent)
         if (ThisEvent.EventType == ES_INIT)
         {
             //initialize SPI for dotstar
-            dotStarSPI_Init();
-            
-            //enable SPI operation by setting the ON bit
-            SPI1CONbits.ON = 1;
+            SPI_Init();
             //transition to next case
             CurrentState = DotstarRed;
             ThisEvent.EventType = ES_RED;
@@ -173,7 +168,7 @@ ES_Event_t RunDotstar(ES_Event_t ThisEvent)
         if (ThisEvent.EventType == ES_RED)
         {
             printf("if red\n\r");
-            dotStar_Write(0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00);
+            dotStar_Write(0xFF, 0xFF, 0, 0xFF, 0xFF, 0xFF, 0xFF, 0);
         }
     }
     break;
@@ -228,72 +223,12 @@ DotstarState_t QueryDotstar(void)
 /***************************************************************************
  private functions
  ***************************************************************************/
-void dotStarSPI_Init(){
-    uint8_t bitWidth = 32;
-    uint16_t bitRate = 10000;
-    uint8_t clearbuff;
-
-    //disable analog function on all SPI pins
-    ANSELAbits.ANSA0 = 0;   //RA0
-    ANSELBbits.ANSB15 = 0;  //RB15
-
-    //map SDO, SCK, and SS outputs to desired pins
-    RPA0R = 0b0011; //set RA0 as SS*
-    TRISAbits.TRISA0 = 0; //set RA0 as output
-    
-    RPB5R = 0b0100; //set RB5 as SDO2
-    TRISBbits.TRISB5 = 0; //set RB5 as output
-    
-    TRISBbits.TRISB15 = 0; //set RB15 as output, RB15 is always set to SCK
-
-    //stop and reset SPI module by clearing the ON bit
-    SPI1CONbits.ON = 0;
-
-    //clear the receive buffer
-    clearbuff = SPI1BUF;
-
-    //set the ENHBUF bit to use enhanced buffer mode
-    SPI1CONbits.ENHBUF = 1;
-
-    //write the baud rate register
-    SPI1BRG = ((10*10^6) / bitRate) - 1;
-
-    //clear the SPIROV bit
-    SPI1STATbits.SPIROV = 0;
-
-    //write desired settings
-    if (bitWidth == 8){
-        SPI1CONbits.MODE32 = 0; //turn off 32 bit transfer mode
-        SPI1CONbits.MODE16 = 0; //turn off 16 bit transfer mode
-    }
-    else if (bitWidth == 16){
-        SPI1CONbits.MODE32 = 0; //turn off 32 bit transfer mode
-        SPI1CONbits.MODE16 = 1; //turn on 16 bit transfer mode
-    }
-    else if (bitWidth == 32){
-        SPI1CONbits.MODE32 = 1; //turn on 32 bit transfer mode
-        SPI1CONbits.MODE16 = 0; //turn off 16 bit transfer mode
-    }
-
-    SPI1CONbits.CKE = 0; //set 2nd clock edge as active
-    SPI1CONbits.CKP = 1; //set clock idle high
-    SPI1CONbits.MSTEN = 1; //enable master mode
-    SPI1CONbits.MSSEN = 1; //slave select enabled
-    SPI1CONbits.MCLKSEL = 0; //set MCLK as peripheral bus CLK
-    SPI1CONbits.SMP = 0; //input data sampled at middle of data output time
-    SPI1CONbits.FRMPOL = 0; //frame pulse or SS pin is active low
-    SPI1CONbits.FRMEN = 0; //framed SPI support is disabled
-    SPI1CONbits.DISSDI = 0; //SDI pin controlled by SPI module
-
-    //enable SPI operation by setting the ON bit
-    SPI1CONbits.ON = 1;
-}
 
 void dotStar_Write(uint8_t Bright1, uint8_t Red1, uint8_t Blue1, uint8_t Green1, 
             uint8_t Bright2, uint8_t Red2, uint8_t Blue2, uint8_t Green2){
     uint32_t data;
     //write start frame
-    SPI_Write(0x00000000);
+    SPI_Write(0);
     
     //write first LED
     data = ((Bright1 << 24) | (Blue1 << 16) | (Green1 << 8) | (Red1));
@@ -304,12 +239,12 @@ void dotStar_Write(uint8_t Bright1, uint8_t Red1, uint8_t Blue1, uint8_t Green1,
     SPI_Write(data);
     
     //write reset frame
-    SPI_Write(0x00000000);
+    SPI_Write(0);
     
     //wait for buffer to not be full
     while (!SPI_HasXmitBufferSpaceOpened()){
     }
     
     //write end frame
-    SPI_Write(0x00000000);
+    SPI_Write(0);
 }
