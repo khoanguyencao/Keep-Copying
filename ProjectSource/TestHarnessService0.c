@@ -50,6 +50,7 @@
 // My Modules
 #include "Seq.h"
 #include "Display.h"
+#include "Dotstar.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 /*---------------------------- Module Functions ---------------------------*/
@@ -316,7 +317,29 @@ ES_Event_t RunTestHarnessService0(ES_Event_t ThisEvent)
           PostDisplay(ThisEvent);
       }
       
+      if ('d' == ThisEvent.EventParam)
+      {
+          ThisEvent.EventType = ES_OFF;
+          PostDotstar(ThisEvent);
+      }
       
+      if ('f' == ThisEvent.EventParam)
+      {
+          ThisEvent.EventType = ES_RED;
+          PostDotstar(ThisEvent);
+      }
+      
+      if ('g' == ThisEvent.EventParam)
+      {
+          ThisEvent.EventType = ES_GREEN;
+          PostDotstar(ThisEvent);
+      }
+      
+      if ('h' == ThisEvent.EventParam)
+      {
+          ThisEvent.EventType = ES_RANDOM;
+          PostDotstar(ThisEvent);
+      }
         
     }
     break;

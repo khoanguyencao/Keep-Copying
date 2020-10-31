@@ -21,4 +21,5 @@ FrameworkHeaders/ES_DeferRecall.h  \
 FrameworkHeaders/ES_ShortTimer.h  \
  ProjectHeaders/Seq.h  \
 ProjectHeaders/Display.h  \
- FrameworkHeaders/ES_Types.h 
+ FrameworkHeaders/ES_Types.h  \
+ProjectHeaders/Dotstar.h 

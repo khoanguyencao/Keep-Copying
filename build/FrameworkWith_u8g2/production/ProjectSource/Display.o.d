@@ -26,4 +26,5 @@ ProjectSource/../u8g2Headers/u8x8.h  \
  ProjectSource/../u8g2Headers/u8x8.h  \
 ProjectHeaders/Display.h  \
  FrameworkHeaders/ES_Types.h  \
-ProjectHeaders/GameState.h 
+ProjectHeaders/GameState.h  \
+ u8g2Headers/spi_master.h 

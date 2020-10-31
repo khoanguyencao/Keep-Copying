@@ -11,6 +11,7 @@
 #include "../u8g2Headers/u8g2TestHarness_main.h"
 #include "../u8g2Headers/common.h"
 
+void SPI_Init_Display(void);
 void SPI_Init_Dotstar(void);
 void SPI_Tx(uint8_t data);
 void SPI_TxBuffer(uint8_t *buffer, uint8_t length);
