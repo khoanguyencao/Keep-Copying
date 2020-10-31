@@ -15,6 +15,7 @@
  When           Who     What/Why
  -------------- ---     --------
  10/30/20 01:46 acg      first pass
+ 10/31/20 02:43 acg      restructured RunDotstar
 ****************************************************************************/
 /*----------------------------- Include Files -----------------------------*/
 /* include header files for this state machine as well as any machines at the
@@ -44,20 +45,18 @@
 /*----------------------------- Module Defines ----------------------------*/
 // these times assume a 10.000mS/tick timing
 #define ONE_SEC 1000
-#define HALF_SEC (ONE_SEC / 2)
 #define QUARTER_SEC (ONE_SEC / 4)
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this machine.They should be functions
    relevant to the behavior of this state machine
 */
+void dotStar_Write(uint8_t Bright1, uint8_t Red1, uint8_t Blue1, uint8_t Green1, 
+            uint8_t Bright2, uint8_t Red2, uint8_t Blue2, uint8_t Green2);
 
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match that of enum in header file
 static DotstarState_t CurrentState;
-
-// keep track of values needing to be written on the display
-
 
 // with the introduction of Gen2, we need a module level Priority var as well
 static uint8_t MyPriority;
@@ -91,7 +90,6 @@ bool InitDotstar(uint8_t Priority)
   CurrentState = DotstarInitPState;
   // post the initial transition event
   ThisEvent.EventType = ES_INIT;
-  printf("init func\n\r");
   if (ES_PostToService(MyPriority, ThisEvent) == true)
   {
     return true;
@@ -160,8 +158,7 @@ ES_Event_t RunDotstar(ES_Event_t ThisEvent)
             //transition to next case
             CurrentState = DotstarOff;
             // turn off LEDs
-            ThisEvent.EventType == ES_OFF;
-            ES_PostToService(MyPriority, ThisEvent);
+            dotStar_Write(0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00);
         }
     }
     break;
@@ -169,14 +166,6 @@ ES_Event_t RunDotstar(ES_Event_t ThisEvent)
     /*---------------------------------------------------------- DotstarRed*/      
     case DotstarRed:        
     {
-        if (ThisEvent.EventType == ES_RED)
-        {
-            // set flipflop to 0
-            flipflop = 0;
-            // set Dotstar Timer
-            ES_Timer_InitTimer(DOTSTAR_TIMER, QUARTER_SEC);
-        }
-        
         if ((ThisEvent.EventType == ES_TIMEOUT) && (ThisEvent.EventParam == DOTSTAR_TIMER))
         {
             // increment flipflop
@@ -205,42 +194,37 @@ ES_Event_t RunDotstar(ES_Event_t ThisEvent)
         
         if (ThisEvent.EventType == ES_OFF)
         {
+            // transition to DotstarOff state
             CurrentState = DotstarOff;
-            ThisEvent.EventType = ES_OFF;
-            ES_PostToService(MyPriority, ThisEvent);
+            // turn off LEDs
+            dotStar_Write(0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00);
         }
         
         if (ThisEvent.EventType == ES_GREEN)
         {
             // transition to DotstarGreen state
             CurrentState = DotstarGreen;
-            // post ES_GREEN event
-            ThisEvent.EventType = ES_GREEN;
-            ES_PostToService(MyPriority, ThisEvent);
-        }
-        
-        if (ThisEvent.EventType == ES_RANDOM)
-        {
-            // transition to DotstarRandom state
-            CurrentState = DotstarRandom;
-            // post ES_RANDOM event
-            ThisEvent.EventType = ES_RANDOM;
-            ES_PostToService(MyPriority, ThisEvent);
-        }
-    }
-    break;
-    
-    /*-------------------------------------------------------- DotstarGreen*/      
-    case DotstarGreen:
-    {
-        if (ThisEvent.EventType == ES_GREEN)
-        {
             // set flipflop to 0
             flipflop = 0;
             // set Dotstar Timer
             ES_Timer_InitTimer(DOTSTAR_TIMER, QUARTER_SEC);
         }
         
+        if (ThisEvent.EventType == ES_RANDOM)
+        {
+            // transition to DotstarRandom state
+            CurrentState = DotstarRandom;
+            // set flipflop to 0
+            flipflop = 0;
+            // set Dotstar Timer
+            ES_Timer_InitTimer(DOTSTAR_TIMER, QUARTER_SEC);
+        }
+    }
+    break;
+    
+    /*-------------------------------------------------------- DotstarGreen*/      
+    case DotstarGreen:
+    {        
         if ((ThisEvent.EventType == ES_TIMEOUT) && (ThisEvent.EventParam == DOTSTAR_TIMER))
         {
             // increment flipflop
@@ -269,42 +253,37 @@ ES_Event_t RunDotstar(ES_Event_t ThisEvent)
         
         if (ThisEvent.EventType == ES_OFF)
         {
+            // transition to DotstarOff state
             CurrentState = DotstarOff;
-            ThisEvent.EventType = ES_OFF;
-            ES_PostToService(MyPriority, ThisEvent);
+            // turn off LEDs
+            dotStar_Write(0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00);
         }
         
         if (ThisEvent.EventType == ES_RED)
         {
             // transition to DotstarRed state
             CurrentState = DotstarRed;
-            // post ES_RED event
-            ThisEvent.EventType = ES_RED;
-            ES_PostToService(MyPriority, ThisEvent);
-        }
-        
-        if (ThisEvent.EventType == ES_RANDOM)
-        {
-            // transition to DotstarRandom state
-            CurrentState = DotstarRandom;
-            // post ES_RANDOM event
-            ThisEvent.EventType = ES_RANDOM;
-            ES_PostToService(MyPriority, ThisEvent);
-        }
-    }
-    break;
-    
-    /*------------------------------------------------------- DotstarRandom*/ 
-    case DotstarRandom:
-    {
-        if (ThisEvent.EventType == ES_RANDOM)
-        {
             // set flipflop to 0
             flipflop = 0;
             // set Dotstar Timer
             ES_Timer_InitTimer(DOTSTAR_TIMER, QUARTER_SEC);
         }
         
+        if (ThisEvent.EventType == ES_RANDOM)
+        {
+            // transition to DotstarRandom state
+            CurrentState = DotstarRandom;
+            // set flipflop to 0
+            flipflop = 0;
+            // set Dotstar Timer
+            ES_Timer_InitTimer(DOTSTAR_TIMER, QUARTER_SEC);
+        }
+    }
+    break;
+    
+    /*------------------------------------------------------- DotstarRandom*/ 
+    case DotstarRandom:
+    {        
         if ((ThisEvent.EventType == ES_TIMEOUT) && (ThisEvent.EventParam == DOTSTAR_TIMER))
         {
             // increment flipflop
@@ -347,36 +326,8 @@ ES_Event_t RunDotstar(ES_Event_t ThisEvent)
         
         if (ThisEvent.EventType == ES_OFF)
         {
+            // transition to DotstarOff state
             CurrentState = DotstarOff;
-            ThisEvent.EventType = ES_OFF;
-            ES_PostToService(MyPriority, ThisEvent);
-        }
-        
-        if (ThisEvent.EventType == ES_RED)
-        {
-            // transition to DotstarRed state
-            CurrentState = DotstarRed;
-            // post ES_RED event
-            ThisEvent.EventType = ES_RED;
-            ES_PostToService(MyPriority, ThisEvent);
-        }
-        
-        if (ThisEvent.EventType == ES_GREEN)
-        {
-            // transition to DotstarGreen state
-            CurrentState = DotstarGreen;
-            // post ES_GREEN event
-            ThisEvent.EventType = ES_GREEN;
-            ES_PostToService(MyPriority, ThisEvent);
-        }
-    }
-    break;
-    
-    /*---------------------------------------------------------- DotstarOff*/ 
-    case DotstarOff:
-    {
-        if (ThisEvent.EventType == ES_OFF)
-        {
             // turn off LEDs
             dotStar_Write(0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00);
         }
@@ -385,27 +336,55 @@ ES_Event_t RunDotstar(ES_Event_t ThisEvent)
         {
             // transition to DotstarRed state
             CurrentState = DotstarRed;
-            // post ES_RED event
-            ThisEvent.EventType = ES_RED;
-            ES_PostToService(MyPriority, ThisEvent);
+            // set flipflop to 0
+            flipflop = 0;
+            // set Dotstar Timer
+            ES_Timer_InitTimer(DOTSTAR_TIMER, QUARTER_SEC);
         }
         
         if (ThisEvent.EventType == ES_GREEN)
         {
             // transition to DotstarGreen state
             CurrentState = DotstarGreen;
-            // post ES_GREEN event
-            ThisEvent.EventType = ES_GREEN;
-            ES_PostToService(MyPriority, ThisEvent);
+            // set flipflop to 0
+            flipflop = 0;
+            // set Dotstar Timer
+            ES_Timer_InitTimer(DOTSTAR_TIMER, QUARTER_SEC);
+        }
+    }
+    break;
+    
+    /*---------------------------------------------------------- DotstarOff*/ 
+    case DotstarOff:
+    {        
+        if (ThisEvent.EventType == ES_RED)
+        {
+            // transition to DotstarRed state
+            CurrentState = DotstarRed;
+            // set flipflop to 0
+            flipflop = 0;
+            // set Dotstar Timer
+            ES_Timer_InitTimer(DOTSTAR_TIMER, QUARTER_SEC);
+        }
+        
+        if (ThisEvent.EventType == ES_GREEN)
+        {
+            // transition to DotstarGreen state
+            CurrentState = DotstarGreen;
+            // set flipflop to 0
+            flipflop = 0;
+            // set Dotstar Timer
+            ES_Timer_InitTimer(DOTSTAR_TIMER, QUARTER_SEC);
         }
         
         if (ThisEvent.EventType == ES_RANDOM)
         {
             // transition to DotstarRandom state
             CurrentState = DotstarRandom;
-            // post ES_RANDOM event
-            ThisEvent.EventType = ES_RANDOM;
-            ES_PostToService(MyPriority, ThisEvent);
+            // set flipflop to 0
+            flipflop = 0;
+            // set Dotstar Timer
+            ES_Timer_InitTimer(DOTSTAR_TIMER, QUARTER_SEC);
         }
     }
     break;
@@ -458,10 +437,6 @@ void dotStar_Write(uint8_t Bright1, uint8_t Red1, uint8_t Blue1, uint8_t Green1,
     
     //write reset frame
     SPI_Write(0);
-    
-    //wait for buffer to not be full
-//    while (!SPI_HasXmitBufferSpaceOpened()){
-//    }
     
     //write end frame
     SPI_Write(0);
