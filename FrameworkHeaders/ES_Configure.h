@@ -284,7 +284,8 @@ typedef enum
   ES_RED,
   ES_OFF,
   ES_SENSOR_PRESSED,
-  ES_ROUND_COMPLETE
+  ES_ROUND_COMPLETE,
+  ES_MASTER_RESET
 }ES_EventType_t;
 
 /****************************************************************************/
