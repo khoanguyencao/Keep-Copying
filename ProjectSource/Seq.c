@@ -312,9 +312,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         {
                             // Update sequence state machine
                             CurrentState = SequenceCreate;
-                            ES_Event_t SequenceEvent;                            
-                            SequenceEvent.EventType = ES_FIRST_ROUND;
-                            PostSequence(SequenceEvent);
 
                             // Inform GameState machine 
                             ES_Event_t GameStateEvent;
@@ -333,9 +330,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 {
                     // Update sequence state machine
                     CurrentState = SequenceCreate;
-                    ES_Event_t SequenceEvent;                            
-                    SequenceEvent.EventType = ES_FIRST_ROUND;
-                    PostSequence(SequenceEvent);
 
                     // Inform GameState machine 
                     ES_Event_t GameStateEvent;
