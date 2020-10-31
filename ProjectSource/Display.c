@@ -14,7 +14,8 @@
  History
  When           Who     What/Why
  -------------- ---     --------
- 10/28/20 07:59 acg      first pass
+ 10/30/20       kcao    Integration with GameState and Seq
+ 10/28/20 07:59 acg     first pass
 ****************************************************************************/
 /*----------------------------- Include Files -----------------------------*/
 /* include header files for this state machine as well as any machines at the

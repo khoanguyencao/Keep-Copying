@@ -13,6 +13,8 @@
  History
  When           Who     What/Why
  -------------- ---     --------
+ 10/30/20       kcao    Integration with Display Service
+ 10/29/20       kcao    Integration with Sequence State Machine 
  10/28/20       kcao    File creation 
 ****************************************************************************/
 /*----------------------------- Include Files -----------------------------*/

@@ -1,8 +1,22 @@
-/*******************************************
- * Note: Currently missing a way to inform display
- * of input direction
- * 
-*******************************************/
+/****************************************************************************
+ Module
+   Seq.c
+
+ Revision
+   1.0.0
+
+ Description
+   
+
+ Notes
+
+ History
+ When           Who       What/Why
+ -------------- ---       --------
+ 10/30/20       kcao      Integration with Display Service
+ 10/29/20       kcao      Integration with Game State
+ 10/29/20       cbarresi  Creation and implementation
+****************************************************************************/
 
 #include "Seq.h"
 #include "PIC32_AD_Lib.h"
@@ -189,7 +203,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 {
                     // Append random direction to sequence
                     seqIndex = 0;
-                    seqArray[arrayLength] = (rand() %80)/10;        //ES_Timer_GetTime() % 8;
+                    seqArray[arrayLength] = (rand() % 80) / 10;        //ES_Timer_GetTime() % 8;
                     arrayLength++;
                     roundNumber++;
                 }
@@ -255,7 +269,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             playtimeLeft = ROUND_TIME;
                             // Inform display service to update to play screen and starts input timer
                             ES_Event_t DisplayEvent;
-                            input = 8;
+                            input = 8;              // all arrows on
                             DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
                             DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
                             PostDisplay(DisplayEvent);
