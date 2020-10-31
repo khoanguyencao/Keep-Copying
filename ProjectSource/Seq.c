@@ -180,9 +180,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     // Randomly initialize a sequence
                     srand(ES_Timer_GetTime());
                     for (uint8_t i = 0; i < arrayLength; i++){
-                        //uint16_t time = rand();
                         seqArray[i] = (rand() % 80) / 10; //time % 8;
-                        printf("%u\r\n", seqArray[i]);
                     }
                 }
                 break;
@@ -194,13 +192,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     seqArray[arrayLength] = (rand() %80)/10;        //ES_Timer_GetTime() % 8;
                     arrayLength++;
                     roundNumber++;
-                    
-                    // TESTING
-                    //printf("sequence %d \r\n", seqArray[0]);
-                    //printf("sequence %d \r\n", seqArray[1]);
-                    //printf("sequence %d \r\n", seqArray[2]);
-                    //printf("sequence %d \r\n", seqArray[3]);
-                    //printf("sequence %d \r\n", seqArray[4]);
                 }
                 break;
                 
@@ -407,7 +398,7 @@ bool CheckXYVal (void)
     if ((CurrentState == SequenceInput) && (seqIndex <= (arrayLength - 1)))
     {
         ES_Event_t JoystickEvent;
-        // Read Current Z value
+        // Read Current Touch Sensor
         currentTouchSensor = PORTBbits.RB4;
         
         // Decision Matrix for executable action
