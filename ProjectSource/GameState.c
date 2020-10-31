@@ -39,6 +39,7 @@
 
 static bool UpdateHighScores(uint16_t score);
 static int compareScores(const void *a, const void *b);
+static void masterReset();
 
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
@@ -179,6 +180,12 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         }
         break;
 
+        case ES_MASTER_RESET:
+        {
+            masterReset();
+        }
+        break;
+
         default:
           ;
       } 
@@ -201,6 +208,12 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
             CurrentState = GAFollower;
           }
           
+        }
+        break;
+
+        case ES_MASTER_RESET:
+        {
+            masterReset();
         }
         break;
 
@@ -248,6 +261,12 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         }
         break;
 
+        case ES_MASTER_RESET:
+        {
+            masterReset();
+        }
+        break;
+
         default:
           ;
       } 
@@ -273,6 +292,12 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
           ES_Timer_InitTimer(READY_TIMER, 2000);
           CurrentState = GALeader;
+        }
+        break;
+
+        case ES_MASTER_RESET:
+        {
+            masterReset();
         }
         break;
 
@@ -316,6 +341,12 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         }
         break;
 
+        case ES_MASTER_RESET:
+        {
+            masterReset();
+        }
+        break;
+        
         default:
           ;
       } 
@@ -379,4 +410,16 @@ static bool UpdateHighScores(uint16_t score){
 // Comparison Function for Scores
 static int compareScores(const void *a, const void *b){
   return *(const uint16_t *)b - *(const uint16_t *)a;
+}
+
+static void masterReset(){
+  ES_Event_t DisplayEvent;
+  DisplayEvent.EventType = ES_DISPLAY_WELCOME;
+  PostDisplay(DisplayEvent);
+  printf("Welcome Screen\r\n");
+
+  ES_Event_t DotstarEvent;
+  DotstarEvent.EventType = ES_RANDOM;
+  //PostDotstar(DotstarEvent);
+  CurrentState = WelcomeScreen;
 }

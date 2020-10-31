@@ -57,6 +57,7 @@
 static void updateScore();
 static bool inputChecker(uint32_t *adcResults);
 static uint16_t bitPack(uint8_t score, uint8_t time, uint8_t input);
+static void masterReset();
 
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
@@ -68,7 +69,7 @@ static uint8_t score; //initial player score
 static uint8_t seqIndex; //Sequence Index 
 static uint8_t playtimeLeft; //Play time counter
 static uint8_t roundNumber; //Round number
-static uint8_t displayCounter;
+static uint8_t displayCounter; // Display Counter
 
 static SequenceState_t CurrentState; //State Machine Current State Variable
 
@@ -228,6 +229,12 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     }
                 }
                 break;
+
+                case ES_MASTER_RESET:
+                {
+                    masterReset();
+                }
+                break;
                 
                 default:{} break;
             }
@@ -285,6 +292,12 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     }    
                 }
                 break;
+
+                case ES_MASTER_RESET:
+                {
+                    masterReset();
+                }
+                break;
                 
                 default:{} break;
             }
@@ -327,7 +340,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             printf("Game Over from Timeout\r\n");
                         }
                     }
-                    
                 }
                 break;
 
@@ -384,6 +396,12 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
 
                     // TESTING
                     //printf("Round Complete\r\n");
+                }
+                break;
+
+                case ES_MASTER_RESET:
+                {
+                    masterReset();
                 }
                 break;
                 
@@ -643,3 +661,6 @@ static uint16_t bitPack(uint8_t score, uint8_t time, uint8_t input){
     return EventParam;
 }
 
+static void masterReset(){
+    CurrentState = SequenceCreate;
+}
