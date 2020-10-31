@@ -33,7 +33,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 4
+#define NUM_SERVICES 5
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -96,11 +96,11 @@
 // These are the definitions for Service 4
 #if NUM_SERVICES > 4
 // the header file with the public function prototypes
-#define SERV_4_HEADER "TestHarnessService4.h"
+#define SERV_4_HEADER "MasterReset.h"
 // the name of the Init function
-#define SERV_4_INIT InitTestHarnessService4
+#define SERV_4_INIT InitMasterReset
 // the name of the run function
-#define SERV_4_RUN RunTestHarnessService4
+#define SERV_4_RUN RunMasterReset
 // How big should this services Queue be?
 #define SERV_4_QUEUE_SIZE 3
 #endif
@@ -271,7 +271,8 @@ typedef enum
   ES_CORRECT_INPUT_FINAL,
   ES_CORRECT_INPUT,
   ES_GAME_COMPLETE,
-  ES_DISPLAY_WELCOME,       /*display stuff */
+  /* Display Events */
+  ES_DISPLAY_WELCOME,       
   ES_DISPLAY_READY,
   ES_DISPLAY_INSTRUCTION,
   ES_DISPLAY_GO,
@@ -279,13 +280,16 @@ typedef enum
   ES_DISPLAY_ROUNDCOMPLETE,
   ES_DISPLAY_GAMECOMPLETE,
   ES_UPDATE_COMPLETE,
+  /* Dotstar Events */
   ES_RANDOM,
   ES_GREEN,
   ES_RED,
   ES_OFF,
   ES_SENSOR_PRESSED,
   ES_ROUND_COMPLETE,
-  ES_MASTER_RESET
+  /* Master Reset Events */
+  ES_MASTER_RESET,
+  ES_INPUT_DETECTED
 }ES_EventType_t;
 
 /****************************************************************************/
@@ -294,7 +298,7 @@ typedef enum
 // services are on that distribution list.
 #define NUM_DIST_LISTS 0
 #if NUM_DIST_LISTS > 0
-#define DIST_LIST0 PostTestHarnessService0, PostTestHarnessService0
+#define DIST_LIST0 PostGameState, PostSequence
 #endif
 #if NUM_DIST_LISTS > 1
 #define DIST_LIST1 PostTestHarnessService1, PostTestHarnessService1
@@ -335,7 +339,7 @@ typedef enum
 #define TIMER3_RESP_FUNC PostGameState      // GameOverTimer
 #define TIMER4_RESP_FUNC PostSequence       // DirectionTimer
 #define TIMER5_RESP_FUNC PostSequence       // InputTimer
-#define TIMER6_RESP_FUNC TIMER_UNUSED       // IdleTimer
+#define TIMER6_RESP_FUNC PostMasterReset    // IdleTimer
 #define TIMER7_RESP_FUNC PostGameState      // LastDirectionTimer
 #define TIMER8_RESP_FUNC TIMER_UNUSED
 #define TIMER9_RESP_FUNC TIMER_UNUSED

@@ -32,8 +32,9 @@ FrameworkHeaders/ES_Queue.h  \
  FrameworkHeaders/ES_Events.h  \
 FrameworkHeaders/ES_ShortTimer.h  \
  ProjectHeaders/GameState.h  \
-ProjectHeaders/EventCheckWrapper.h  \
- ProjectHeaders/EventCheckers.h  \
-ProjectHeaders/GameState.h  \
- ProjectHeaders/Seq.h  \
+ProjectHeaders/MasterReset.h  \
+ ProjectHeaders/EventCheckWrapper.h  \
+ProjectHeaders/EventCheckers.h  \
+ ProjectHeaders/GameState.h  \
+ProjectHeaders/Seq.h  \
 ProjectHeaders/Display.h 

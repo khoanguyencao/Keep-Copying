@@ -171,10 +171,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                       Neutral[1] = adcResults[1];           // X neutral position
                       printf("Yn %d\r\n", Neutral[0]);
                       printf("Xn %d\r\n", Neutral[1]);
-
-                      //ES_Event_t InitEvent;
-                      //InitEvent.EventType = ES_FIRST_ROUND;
-                      //PostSequence(InitEvent);
                       CurrentState = SequenceCreate;
                 }
         }
@@ -494,6 +490,14 @@ bool CheckXYVal (void)
             returnValue = true;
         }
     }
+    // Master Reset Code
+    if (returnValue)
+    {
+        ES_Event_t InputEvent;
+        InputEvent.EventType = ES_INPUT_DETECTED;
+        //PostMasterReset(InputEvent);
+    }
+
     return returnValue;
 }
 

@@ -376,9 +376,13 @@ bool CheckTouchSensor(){
       (CurrentState == GameComplete)){
     uint8_t currentTouchSensorState = digitalRead(SENSOR_INPUT_PIN);
     if ((currentTouchSensorState != lastTouchSensorState) && (currentTouchSensorState == LOW)){
-      ES_Event_t ThisEvent;
-      ThisEvent.EventType = ES_SENSOR_PRESSED;
-      PostGameState(ThisEvent);
+      ES_Event_t TouchSensorEvent;
+      TouchSensorEvent.EventType = ES_SENSOR_PRESSED;
+      PostGameState(TouchSensorEvent);
+
+      ES_Event_t InputEvent;
+      InputEvent.EventType = ES_INPUT_DETECTED;
+      //PostMasterReset(InputEvent);
       eventStatus = true;
       printf("Touch Sensor Pressed\r\n");
     }

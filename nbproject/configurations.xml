@@ -39,11 +39,12 @@
       <itemPath>ProjectHeaders/EventCheckWrapper.h</itemPath>
       <itemPath>ProjectHeaders/TestHarnessService0.h</itemPath>
       <itemPath>ProjectHeaders/dbprintf.h</itemPath>
-      <itemPath>ProjectHeaders/hal.h</itemPath>
-      <itemPath>ProjectHeaders/Seq.h</itemPath>
-      <itemPath>ProjectHeaders/PIC32_AD_Lib.h</itemPath>
-      <itemPath>ProjectHeaders/GameState.h</itemPath>
       <itemPath>ProjectHeaders/Display.h</itemPath>
+      <itemPath>ProjectHeaders/GameState.h</itemPath>
+      <itemPath>ProjectHeaders/hal.h</itemPath>
+      <itemPath>ProjectHeaders/PIC32_AD_Lib.h</itemPath>
+      <itemPath>ProjectHeaders/Seq.h</itemPath>
+      <itemPath>ProjectHeaders/MasterReset.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -57,11 +58,12 @@
       <itemPath>ProjectSource/TestHarnessService0.c</itemPath>
       <itemPath>ProjectSource/dbprintf.c</itemPath>
       <itemPath>u8g2/u8g2_TestHarness_main.c</itemPath>
-      <itemPath>ProjectSource/hal.c</itemPath>
-      <itemPath>ProjectSource/Seq.c</itemPath>
-      <itemPath>ProjectSource/PIC32_AD_Lib.c</itemPath>
-      <itemPath>ProjectSource/GameState.c</itemPath>
       <itemPath>ProjectSource/Display.c</itemPath>
+      <itemPath>ProjectSource/GameState.c</itemPath>
+      <itemPath>ProjectSource/hal.c</itemPath>
+      <itemPath>ProjectSource/PIC32_AD_Lib.c</itemPath>
+      <itemPath>ProjectSource/Seq.c</itemPath>
+      <itemPath>ProjectSource/MasterReset.c</itemPath>
     </logicalFolder>
     <logicalFolder name="f3" displayName="u8g2Headers" projectFiles="true">
       <itemPath>u8g2Headers/common.h</itemPath>

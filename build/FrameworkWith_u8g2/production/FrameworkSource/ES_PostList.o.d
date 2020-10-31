@@ -31,4 +31,5 @@ FrameworkHeaders/ES_Timers.h  \
 FrameworkHeaders/ES_Queue.h  \
  FrameworkHeaders/ES_ShortTimer.h  \
 FrameworkHeaders/ES_Configure.h  \
- ProjectHeaders/GameState.h 
+ ProjectHeaders/GameState.h  \
+ProjectHeaders/MasterReset.h 

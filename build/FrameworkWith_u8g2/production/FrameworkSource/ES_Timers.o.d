@@ -28,6 +28,7 @@ FrameworkHeaders/ES_Events.h  \
  FrameworkHeaders/ES_ShortTimer.h  \
 FrameworkHeaders/ES_Configure.h  \
  ProjectHeaders/GameState.h  \
+ProjectHeaders/MasterReset.h  \
  FrameworkSource/../FrameworkHeaders/ES_General.h  \
  FrameworkSource/../FrameworkHeaders/ES_Events.h  \
  FrameworkSource/../FrameworkHeaders/ES_PostList.h  \
