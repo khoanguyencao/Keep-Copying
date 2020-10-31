@@ -563,35 +563,35 @@ static void masterReset(){
 uint8_t Input_Direction(uint32_t *adcResults)
 {
     //Direction being analyzed
-            if(adcResults[1] >1 && adcResults[1] <(Neutral[1]-2) && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            if((adcResults[1] > 1) && (adcResults[1] < (Neutral[1] - 2)) && (adcResults[0] >= (Neutral[0] - 20)) && (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input = 0;
             }
-            else if(adcResults[1] <=1 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            else if((adcResults[1] <= 1 && (adcResults[0] >= (Neutral[0] - 20)) && (adcResults[0] <= (Neutral[0] + 20)))
             {
-                input =1;
+                input = 1;
             }
-            else if(adcResults[1] >(Neutral[1]+2) && adcResults[1] <1020 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            else if((adcResults[1] > (Neutral[1] + 2)) && (adcResults[1] < 1020) && (adcResults[0] >= (Neutral[0] - 20)) && (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input = 2;
             }
-            else if(adcResults[1] >=1020 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            else if((adcResults[1] >= 1020) && (adcResults[0] >= (Neutral[0] - 20)) && (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input = 3;
             }
-            else if(adcResults[0] >1 && adcResults[0] <(Neutral[0]-2) && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            else if((adcResults[0] > 1) && (adcResults[0] < (Neutral[0] - 2)) && (adcResults[1] >= (Neutral[1] - 20)) && (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 4;
             }
-            else if(adcResults[0] <=1 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            else if((adcResults[0] <= 1) && (adcResults[1] >= (Neutral[1] - 20)) && (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 5;
             }
-            else if(adcResults[0] >(Neutral[0]+2) && adcResults[0] <1020 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            else if((adcResults[0] > (Neutral[0] + 2)) && (adcResults[0] < 1020) && (adcResults[1] >= (Neutral[1] - 20)) && (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 6;
             }
-            else if(adcResults[0] >=1020 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            else if((adcResults[0] >= 1020) && (adcResults[1] >= (Neutral[1] - 20)) && (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 7;
             }
