@@ -51,20 +51,21 @@
  ******************************************************************************/
 void Terminal_HWInit(void)
 {
-  // Set up RB2 as RX and RB3 as TX
+  // Set up RB6 as RX and RB7 as TX
   // clear analog control
-  ANSELB &= (BIT3LO & BIT2LO);
+  //ANSELB &= (BIT6LO);
+  //ANSELB &= (BIT7LO);
   // start with TX high
-  LATBbits.LATB3 = 1;
-  // set RB3 as output
-  TRISBbits.TRISB3 = 0;
-  // set RB2 as input
-  TRISBbits.TRISB2 = 1;
+  LATBbits.LATB7 = 1;
+  // set RB7 as output
+  TRISBbits.TRISB7 = 0;
+  // set RB6 as input
+  TRISBbits.TRISB6 = 1;
   // Remap the pins
-  RPB3R = 0b0001; // U1TX -> RB3
-  U1RXR = 0b0100; // U1RX <- RB2
+  RPB7R = 0b0001; // U1TX -> RB7
+  U1RXR = 0b0001; // U1RX <- RB6
 
-  // diable the UART to be safe
+  // disable the UART to be safe
   U1MODEbits.ON = 0;
   // Setup high-speed mode, data = 8 bit, no parity, 1 stop bit
   // Disable: loop-back, autobaud, wake, inversion

@@ -14,5 +14,9 @@
 void SPI_Init(void);
 void SPI_Tx(uint8_t data);
 void SPI_TxBuffer(uint8_t *buffer, uint8_t length);
+bool SPI_Write(uint32_t value);
+bool SPI_HasTransferCompleted();
+bool SPI_HasXmitBufferSpaceOpened();
+uint8_t SPI_GetNumOpenXmitSpaces();
 
 #endif	/* SPI_MATERH */

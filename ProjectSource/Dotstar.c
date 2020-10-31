@@ -235,14 +235,13 @@ void dotStarSPI_Init(){
 
     //disable analog function on all SPI pins
     ANSELAbits.ANSA0 = 0;   //RA0
-    ANSELBbits.ANSB1 = 0;   //RB1
     ANSELBbits.ANSB15 = 0;  //RB15
 
     //map SDO, SCK, and SS outputs to desired pins
     RPA0R = 0b0011; //set RA0 as SS*
     TRISAbits.TRISA0 = 0; //set RA0 as output
     
-    RPB5R = 0b0011; //set RB5 as SDO
+    RPB5R = 0b0100; //set RB5 as SDO2
     TRISBbits.TRISB5 = 0; //set RB5 as output
     
     TRISBbits.TRISB15 = 0; //set RB15 as output, RB15 is always set to SCK
@@ -296,11 +295,11 @@ void dotStar_Write(uint8_t Bright1, uint8_t Red1, uint8_t Blue1, uint8_t Green1,
     //write start frame
     SPI_Write(0x00000000);
     
-    //write first LED to full intensity white
+    //write first LED
     data = ((Bright1 << 24) | (Blue1 << 16) | (Green1 << 8) | (Red1));
     SPI_Write(data);
     
-    //write second LED to full intensity red
+    //write second LED
     data = ((Bright2 << 24) | (Blue2 << 16) | (Green2 << 8) | (Red2));
     SPI_Write(data);
     
@@ -312,5 +311,5 @@ void dotStar_Write(uint8_t Bright1, uint8_t Red1, uint8_t Blue1, uint8_t Green1,
     }
     
     //write end frame
-    SPI_Write(0xFFFFFFFF);
+    SPI_Write(0x00000000);
 }
