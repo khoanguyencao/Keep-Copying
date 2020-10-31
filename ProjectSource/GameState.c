@@ -37,7 +37,7 @@
    relevant to the behavior of this state machine
 */
 
-static bool UpdateHighScores(uint16_t score);
+static bool UpdateHighScores(const uint16_t score);
 static int compareScores(const void *a, const void *b);
 static void masterReset();
 
@@ -245,15 +245,15 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         {   
           uint16_t score = ThisEvent.EventParam;
           ES_Event_t DisplayEvent;
-          ES_Event_t DotstarEvent;
           DisplayEvent.EventType = ES_DISPLAY_GAMECOMPLETE;
+          PostDisplay(DisplayEvent);
           
+          ES_Event_t DotstarEvent;
           if (UpdateHighScores(score)){
             DotstarEvent.EventType = ES_GREEN;
           } else {
             DotstarEvent.EventType = ES_RED;
           }
-          PostDisplay(DisplayEvent);
           //PostDotstar(DotstarEvent);
           ES_Timer_InitTimer(GAMEOVER_TIMER, 30000);
           CurrentState = GameComplete;
@@ -375,7 +375,8 @@ bool CheckTouchSensor(){
       (CurrentState == GARoundComplete) || 
       (CurrentState == GameComplete)){
     uint8_t currentTouchSensorState = digitalRead(SENSOR_INPUT_PIN);
-    if ((currentTouchSensorState != lastTouchSensorState) && (currentTouchSensorState == LOW)){
+    if ((currentTouchSensorState != lastTouchSensorState) && 
+        (currentTouchSensorState == LOW)){
       ES_Event_t TouchSensorEvent;
       TouchSensorEvent.EventType = ES_SENSOR_PRESSED;
       PostGameState(TouchSensorEvent);
@@ -396,7 +397,7 @@ bool CheckTouchSensor(){
  ***************************************************************************/
 // Update Function for High Scores
 // Note maintained as uint16_t here to ease display service query
-static bool UpdateHighScores(uint16_t score){
+static bool UpdateHighScores(const uint16_t score){
   // Sort high scores with QuickSort
   highScores[3] = score;
   qsort(highScores, 4, 2, compareScores);

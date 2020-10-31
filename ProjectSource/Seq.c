@@ -56,7 +56,7 @@
 */
 static void updateScore();
 static bool inputChecker(uint32_t *adcResults);
-static uint16_t bitPack(uint8_t score, uint8_t time, uint8_t input);
+static uint16_t bitPack(const uint8_t score, const uint8_t time, const uint8_t input);
 static void masterReset();
 
 /*---------------------------- Module Variables ---------------------------*/
@@ -658,7 +658,7 @@ static void updateScore(){
 }
 
 // score 8 bits, time 4 bits, input 4 bits 
-static uint16_t bitPack(uint8_t score, uint8_t time, uint8_t input){
+static uint16_t bitPack(const uint8_t score, const uint8_t time, const uint8_t input){
     uint16_t EventParam = score << 8;
     EventParam = EventParam | (time << 4);
     EventParam = EventParam | (input);
