@@ -341,8 +341,8 @@ typedef enum
 #define TIMER5_RESP_FUNC PostSequence       // InputTimer
 #define TIMER6_RESP_FUNC PostMasterReset    // IdleTimer
 #define TIMER7_RESP_FUNC PostGameState      // LastDirectionTimer
-#define TIMER8_RESP_FUNC TIMER_UNUSED
-#define TIMER9_RESP_FUNC TIMER_UNUSED
+#define TIMER8_RESP_FUNC PostSequence       // InstructionTimer
+#define TIMER9_RESP_FUNC PostSequence       // Direction Pause Timer
 #define TIMER10_RESP_FUNC TIMER_UNUSED
 #define TIMER11_RESP_FUNC PostTestHarnessService0
 #define TIMER12_RESP_FUNC TIMER_UNUSED
@@ -364,6 +364,8 @@ typedef enum
 #define INPUT_TIMER 5
 #define IDLE_TIMER 6
 #define LAST_DIRECTION_TIMER 7
+#define INSTRUCTION_TIMER 8
+#define DIRECTION_PAUSE_TIMER 9
 
 #define TEST_TIMER 11
 

@@ -618,6 +618,25 @@ void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction)
         u8g2_SetDrawColor(&u8g2, 1);
     }
     
+    if (instruction == 8)   // BLANK
+    {
+        u8g2_SetFontDirection(&u8g2, 3);            // font direction 270 deg
+        u8g2_DrawStr(&u8g2, 65, 15, ">");           // super up arrow
+        u8g2_DrawStr(&u8g2, 65, 25, ">");           // up arrow
+        u8g2_SetFontDirection(&u8g2, 0);            // reset font direction
+        
+        u8g2_DrawStr(&u8g2, 28, 40, "<");           // super left arrow
+        u8g2_DrawStr(&u8g2, 38, 40, "<");           // left arrow
+                      
+        u8g2_DrawStr(&u8g2, 75, 40, ">");           // right arrow
+        u8g2_DrawStr(&u8g2, 85, 40, ">");           // super right arrow
+        
+        u8g2_SetFontDirection(&u8g2, 1);            // font direction 90 deg
+        u8g2_DrawStr(&u8g2, 55, 45, ">");           // down arrow
+        u8g2_DrawStr(&u8g2, 55, 55, ">");           // super down arrow
+        u8g2_SetFontDirection(&u8g2, 0);            // reset font direction
+    }
+    
     // set last display state to busy
     LastDisplayState = 1;
 }
@@ -969,7 +988,7 @@ void roundCompleteScreen(uint16_t score, uint16_t round)
     {
         u8g2_DrawStr(&u8g2, 90, 15, scorestring);
     }
-    
+    u8g2_DrawStr(&u8g2, 1, 60, " press button");
     // set last display state to busy
     LastDisplayState = 1;
 }

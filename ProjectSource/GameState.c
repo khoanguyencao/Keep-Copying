@@ -170,7 +170,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           DotstarEvent.EventType = ES_OFF;
           //PostDotstar(DotstarEvent);
 
-          ES_Timer_InitTimer(READY_TIMER, 2000);       
+          ES_Timer_InitTimer(READY_TIMER, 1000);       
           CurrentState = GALeader;
          
           ES_Event_t SequenceRandomizer;
@@ -204,7 +204,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
             PostDisplay(DisplayEvent);
             printf("Go Screen\r\n");
 
-            ES_Timer_InitTimer(GO_TIMER, 2000);
+            ES_Timer_InitTimer(GO_TIMER, 1000);
             CurrentState = GAFollower;
           }
           
@@ -290,7 +290,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           DotstarEvent.EventType = ES_OFF;
           //PostDotstar(DotstarEvent);
 
-          ES_Timer_InitTimer(READY_TIMER, 2000);
+          ES_Timer_InitTimer(READY_TIMER, 1000);
           CurrentState = GALeader;
         }
         break;

@@ -58,6 +58,7 @@ static void updateScore();
 static bool inputChecker(uint32_t *adcResults);
 static uint16_t bitPack(const uint8_t score, const uint8_t time, const uint8_t input);
 static void masterReset();
+uint8_t Input_Direction(uint32_t *adcResults);
 
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
@@ -217,7 +218,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         DisplayEvent.EventParam = seqArray[displayCounter];
                         PostDisplay(DisplayEvent);
                         displayCounter++;
-                        ES_Timer_InitTimer(DIRECTION_TIMER, 500);
+                        ES_Timer_InitTimer(DIRECTION_TIMER, 750);
                         CurrentState = SequenceDisplay;
 
                         // TESTING
@@ -245,7 +246,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 {
                     switch (ThisEvent.EventParam)
                     {
-                        case DIRECTION_TIMER:
+                        case DIRECTION_PAUSE_TIMER:
                         {
                             // Inform display service to demonstrate input and starts subsequent direction timers
                             ES_Event_t DisplayEvent;
@@ -256,14 +257,26 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                                                         
                             // If not last direction
                             if (displayCounter < (arrayLength - 1)){
-                                ES_Timer_InitTimer(DIRECTION_TIMER, 500);
+                                ES_Timer_InitTimer(DIRECTION_TIMER, 750);
                             }
 
                             // If last direction
                             if (displayCounter == (arrayLength - 1)){
-                                ES_Timer_InitTimer(LAST_DIRECTION_TIMER, 500);
+                                ES_Timer_InitTimer(LAST_DIRECTION_TIMER, 750);
                             }
                             displayCounter++;
+                        }
+                        break;
+                        
+                        case DIRECTION_TIMER:
+                        {
+                            //Post all arrows unhighlighted to create blinking
+                            //effect
+                            ES_Timer_InitTimer(DIRECTION_PAUSE_TIMER, 250);
+                            ES_Event_t DisplayEvent;
+                            DisplayEvent.EventType = ES_DISPLAY_INSTRUCTION;
+                            DisplayEvent.EventParam = 8; //All arrows blank
+                            PostDisplay(DisplayEvent);
                         }
                         break;
                         
@@ -277,6 +290,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
                             PostDisplay(DisplayEvent);
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
+                            ES_Timer_InitTimer(INSTRUCTION_TIMER, 101);
                             CurrentState = SequenceInput;
 
                             // TESTING
@@ -313,10 +327,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         {
                             // Inform display service to update time
                             playtimeLeft--;
-                            ES_Event_t DisplayEvent;
-                            DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
-                            DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
-                            PostDisplay(DisplayEvent);
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
 
                             printf("%u seconds remaining\r\n", playtimeLeft);
@@ -335,6 +345,21 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
 
                             printf("Game Over from Timeout\r\n");
                         }
+                    }
+                    if (ThisEvent.EventParam == INSTRUCTION_TIMER)
+                    {
+                        //Read X and Y values from Joystick
+                        ADC_MultiRead(adcResults);
+
+                        //Post to OLED
+                        ES_Event_t DisplayEvent;
+                        DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
+                        DisplayEvent.EventParam = bitPack(score, playtimeLeft, Input_Direction(adcResults));
+                        PostDisplay(DisplayEvent);
+
+                        printf("input  %d\r\n",input);
+                        //Restart Timer
+                        ES_Timer_InitTimer(INSTRUCTION_TIMER, 101);
                     }
                 }
                 break;
@@ -358,11 +383,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 {
                     updateScore();
                     seqIndex++;
-
-                    ES_Event_t DisplayEvent;
-                    DisplayEvent.EventType = ES_DISPLAY_PLAY_UPDATE;
-                    DisplayEvent.EventParam = bitPack(score, playtimeLeft, input);
-                    PostDisplay(DisplayEvent);
                     
                     // TESTING
                     //printf("Input Correct\r\n");
@@ -435,7 +455,7 @@ bool CheckXYVal (void)
             // Do nothing; user has not decided on input if both are zero
             // or user has not released Z button
             
-            returnValue = true;
+            returnValue = false;
         }
         else if (currentTouchSensor == 1 && lastTouchSensor == 0)
         {
@@ -508,143 +528,14 @@ bool CheckXYVal (void)
 static bool inputChecker(uint32_t *adcResults)
 {
     static bool returnValue = false;
-    // Switch case to analyze direction 
-    switch (seqArray[seqIndex])
-    {
-        case 0:
-        {
-            if ((adcResults[1] > 1) && (adcResults[1] < (Neutral[1] - 10)) && 
-                    (adcResults[0] >= (Neutral[0] - 20)) && 
-                    (adcResults[0] <= (Neutral[0] + 20)))
-            {
-                input = 0;
-                returnValue = true;
-            }
-           else
-           {
-                returnValue = false;
-           }
-        }
-        break;
-        
-        case 1:
-        {
-            if ((adcResults[1] <= 1) && 
-                    (adcResults[0] >= (Neutral[0] - 20)) && 
-                    (adcResults[0] <= (Neutral[0] + 20)))
-            {
-                input = 1;
-                returnValue = true;
-            }
-           else
-           {
-                returnValue = false;
-           }
-        }
-        break;
-        
-        case 2:
-        {
-            if ((adcResults[1] > (Neutral[1] + 10)) && 
-                    (adcResults[1] < 1020) && 
-                    (adcResults[0] >= (Neutral[0] - 20)) && 
-                    (adcResults[0] <= (Neutral[0] + 20)))
-            {
-                input = 2;
-                returnValue = true;
-            }
-           else
-           {
-                returnValue = false;
-           }
-        }
-        break;
-        
-        case 3:
-        {
-            if ((adcResults[1] >= 1020) && 
-                    (adcResults[0] >= (Neutral[0] - 20)) && 
-                    (adcResults[0]<=(Neutral[0] + 20)))
-            {
-                input = 3;
-                returnValue = true;
-            }
-           else
-           {
-                returnValue = false;
-           }
-        }
-        break;
-        
-        case 4:
-        {
-            if ((adcResults[0] > 1) && 
-                    (adcResults[0] < (Neutral[0] - 10)) && 
-                    (adcResults[1] >= (Neutral[1] - 20)) && 
-                    (adcResults[1] <= (Neutral[1] + 20)))
-            {
-                input = 4;
-                returnValue = true;
-            }
-           else
-           {
-                returnValue = false;
-           }
-        }
-        break;
-        
-        case 5:
-        {
-            if ((adcResults[0] <= 1) && 
-                    (adcResults[1] >= (Neutral[1] - 20)) && 
-                    (adcResults[1] <= (Neutral[1] + 20)))
-            {
-                input = 5;
-                returnValue = true;
-            }
-           else
-           {
-                returnValue = false;
-           }
-        }
-        break;
-        
-        case 6:
-        {
-            if ((adcResults[0] > (Neutral[0] + 10)) && 
-                    (adcResults[0] < 1020) && 
-                    (adcResults[1] >= (Neutral[1] - 20)) && 
-                    (adcResults[1] <= (Neutral[1] + 20)))
-            {
-                input = 6;
-                returnValue = true;
-            }
-           else
-           {
-                returnValue = false;
-           }
-        }
-        break;
-        
-        case 7:
-        {
-            if ((adcResults[0] >= 1020) && 
-                    (adcResults[1] >= (Neutral[1] - 20)) && 
-                    (adcResults[1] <= (Neutral[1] + 20)))
-            {
-                input = 7;
-                returnValue = true;
-            }
-           else
-           {
-                returnValue = false;
-           }
-        }
-        break;
-        
-        default:{} break;
-        
+    // Switch case to analyze direction   
+    if(seqArray[seqIndex] == Input_Direction(adcResults)){
+        returnValue = true;
+    }  
+    else{
+        returnValue = false;
     }
+    
     return returnValue;
     
 }
@@ -667,4 +558,48 @@ static uint16_t bitPack(const uint8_t score, const uint8_t time, const uint8_t i
 
 static void masterReset(){
     CurrentState = SequenceCreate;
+}
+
+uint8_t Input_Direction(uint32_t *adcResults)
+{
+    //Direction being analyzed
+            if(adcResults[1] >1 && adcResults[1] <(Neutral[1]-2) && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            {
+                input = 0;
+            }
+            else if(adcResults[1] <=1 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            {
+                input =1;
+            }
+            else if(adcResults[1] >(Neutral[1]+2) && adcResults[1] <1020 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            {
+                input = 2;
+            }
+            else if(adcResults[1] >=1020 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            {
+                input = 3;
+            }
+            else if(adcResults[0] >1 && adcResults[0] <(Neutral[0]-2) && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            {
+                input = 4;
+            }
+            else if(adcResults[0] <=1 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            {
+                input = 5;
+            }
+            else if(adcResults[0] >(Neutral[0]+2) && adcResults[0] <1020 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            {
+                input = 6;
+            }
+            else if(adcResults[0] >=1020 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            {
+                input = 7;
+            }
+            else
+            {
+                input = 8;
+            }
+
+    return input;
+    
 }

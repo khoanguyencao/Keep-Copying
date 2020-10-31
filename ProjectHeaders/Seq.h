@@ -42,6 +42,7 @@ bool CheckXYVal (void);
 
 //Complementary functions
 bool Input_Check(uint32_t *adcResults);
+uint8_t Input_Direction(uint32_t *adcResults);
 
 #endif	/* SEQ_H */
 
