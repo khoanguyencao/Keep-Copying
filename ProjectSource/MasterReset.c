@@ -144,11 +144,13 @@ ES_Event_t RunMasterReset(ES_Event_t ThisEvent)
 
         case ES_TIMEOUT:
         {   
-          if (ThisEvent.EventParam == IDLE_TIMER){
+          if (ThisEvent.EventParam == IDLE_TIMER)
+          {
             ES_Event_t ResetEvent;
             ResetEvent.EventType = ES_MASTER_RESET;
             PostGameState(ResetEvent);
             PostSequence(ResetEvent);
+            printf("Master Reset");
           }
         }
         break;

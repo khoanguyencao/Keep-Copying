@@ -29,6 +29,7 @@
 #include "Seq.h"
 #include "Display.h"
 #include "Dotstar.h"
+#include "MasterReset.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -385,7 +386,7 @@ bool CheckTouchSensor(){
 
       ES_Event_t InputEvent;
       InputEvent.EventType = ES_INPUT_DETECTED;
-      //PostMasterReset(InputEvent);
+      PostMasterReset(InputEvent);
       eventStatus = true;
       printf("Touch Sensor Pressed\r\n");
     }

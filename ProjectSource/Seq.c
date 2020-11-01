@@ -46,6 +46,7 @@
 #include "GameState.h"
 #include "Display.h"
 #include "hal.h"
+#include "MasterReset.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -515,7 +516,7 @@ bool CheckXYVal (void)
     {
         ES_Event_t InputEvent;
         InputEvent.EventType = ES_INPUT_DETECTED;
-        //PostMasterReset(InputEvent);
+        PostMasterReset(InputEvent);
     }
 
     return returnValue;
