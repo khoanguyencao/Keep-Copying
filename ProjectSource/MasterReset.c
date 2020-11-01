@@ -150,7 +150,7 @@ ES_Event_t RunMasterReset(ES_Event_t ThisEvent)
             ResetEvent.EventType = ES_MASTER_RESET;
             PostGameState(ResetEvent);
             PostSequence(ResetEvent);
-            printf("Master Reset");
+            printf("Master Reset\r\n");
           }
         }
         break;
