@@ -181,7 +181,7 @@ ES_Event_t RunDisplay(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_INIT)  
       {
-        SPI_Init(); //initialize SPI1
+        SPI_Init_Display(); //initialize SPI1
         //build up the u8g2 structure with the proper values for our display
         u8g2_Setup_ssd1306_128x64_noname_f(&u8g2, U8G2_R0, u8x8_byte_pic32_hw_spi, 
                                    u8x8_pic32_gpio_and_delay);

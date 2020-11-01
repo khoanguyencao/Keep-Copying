@@ -44,6 +44,7 @@
       <itemPath>ProjectHeaders/hal.h</itemPath>
       <itemPath>ProjectHeaders/PIC32_AD_Lib.h</itemPath>
       <itemPath>ProjectHeaders/Seq.h</itemPath>
+      <itemPath>ProjectHeaders/Dotstar.h</itemPath>
       <itemPath>ProjectHeaders/MasterReset.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -63,6 +64,7 @@
       <itemPath>ProjectSource/hal.c</itemPath>
       <itemPath>ProjectSource/PIC32_AD_Lib.c</itemPath>
       <itemPath>ProjectSource/Seq.c</itemPath>
+      <itemPath>ProjectSource/Dotstar.c</itemPath>
       <itemPath>ProjectSource/MasterReset.c</itemPath>
     </logicalFolder>
     <logicalFolder name="f3" displayName="u8g2Headers" projectFiles="true">
@@ -642,7 +644,7 @@
         <platformTool>snap</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>2.41</languageToolchainVersion>
-        <platform>3</platform>
+        <platform>4</platform>
       </toolsSet>
       <packs>
         <pack name="PIC32MX_DFP" vendor="Microchip" version="1.3.231"/>

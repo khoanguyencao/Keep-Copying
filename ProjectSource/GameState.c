@@ -13,6 +13,7 @@
  History
  When           Who     What/Why
  -------------- ---     --------
+ 10/31/20       kcao    Integration with Dotstar Service
  10/30/20       kcao    Integration with Display Service
  10/29/20       kcao    Integration with Sequence State Machine 
  10/28/20       kcao    File creation 
@@ -27,6 +28,7 @@
 #include "hal.h"
 #include "Seq.h"
 #include "Display.h"
+#include "Dotstar.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -146,7 +148,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
         ES_Event_t DotstarEvent;
         DotstarEvent.EventType = ES_RANDOM;
-        //PostDotstar(DotstarEvent);
+        PostDotstar(DotstarEvent);
         CurrentState = WelcomeScreen;
         
       }
@@ -168,7 +170,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_OFF;
-          //PostDotstar(DotstarEvent);
+          PostDotstar(DotstarEvent);
 
           ES_Timer_InitTimer(READY_TIMER, 1000);       
           CurrentState = GALeader;
@@ -236,7 +238,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_GREEN;
-          //PostDotstar(DotstarEvent);
+          PostDotstar(DotstarEvent);
           CurrentState = GARoundComplete;
         }
         break;
@@ -254,7 +256,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           } else {
             DotstarEvent.EventType = ES_RED;
           }
-          //PostDotstar(DotstarEvent);
+          PostDotstar(DotstarEvent);
           ES_Timer_InitTimer(GAMEOVER_TIMER, 30000);
           CurrentState = GameComplete;
           printf("Game Complete Screen\r\n");
@@ -288,7 +290,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_OFF;
-          //PostDotstar(DotstarEvent);
+          PostDotstar(DotstarEvent);
 
           ES_Timer_InitTimer(READY_TIMER, 1000);
           CurrentState = GALeader;
@@ -320,7 +322,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_RANDOM;
-          //PostDotstar(DotstarEvent);
+          PostDotstar(DotstarEvent);
           CurrentState = WelcomeScreen;
         }
         break;
@@ -335,7 +337,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
             ES_Event_t DotstarEvent;
             DotstarEvent.EventType = ES_RANDOM;
-            //PostDotstar(DotstarEvent);
+            PostDotstar(DotstarEvent);
             CurrentState = WelcomeScreen;
           }
         }
@@ -425,6 +427,6 @@ static void masterReset(){
 
   ES_Event_t DotstarEvent;
   DotstarEvent.EventType = ES_RANDOM;
-  //PostDotstar(DotstarEvent);
+  PostDotstar(DotstarEvent);
   CurrentState = WelcomeScreen;
 }

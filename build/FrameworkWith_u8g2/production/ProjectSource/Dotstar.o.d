@@ -1,0 +1,26 @@
+build/FrameworkWith_u8g2/production/ProjectSource/Dotstar.o:  \
+ ProjectSource/Dotstar.c  \
+FrameworkHeaders/ES_Configure.h  \
+ FrameworkHeaders/ES_Framework.h  \
+FrameworkHeaders/ES_Types.h  \
+ FrameworkHeaders/ES_Port.h  \
+FrameworkHeaders/bitdefs.h  \
+ FrameworkHeaders/Bin_Const.h  \
+FrameworkHeaders/terminal.h  \
+ FrameworkHeaders/ES_Events.h  \
+FrameworkHeaders/ES_Configure.h  \
+ FrameworkHeaders/ES_PostList.h  \
+FrameworkHeaders/ES_General.h  \
+ FrameworkHeaders/ES_Timers.h  \
+FrameworkHeaders/ES_DeferRecall.h  \
+ FrameworkHeaders/ES_Queue.h  \
+FrameworkHeaders/ES_ShortTimer.h  \
+ FrameworkHeaders/ES_Port.h  \
+ProjectHeaders/EventCheckers.h  \
+ ProjectHeaders/Dotstar.h  \
+FrameworkHeaders/ES_Types.h  \
+ ProjectHeaders/GameState.h  \
+u8g2Headers/spi_master.h  \
+ u8g2Headers/../u8g2Headers/u8g2TestHarness_main.h  \
+ u8g2Headers/../u8g2Headers/common.h  \
+ u8g2Headers/../u8g2Headers/../u8g2Headers/u8g2TestHarness_main.h 

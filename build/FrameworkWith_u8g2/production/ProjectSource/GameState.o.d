@@ -20,4 +20,5 @@ ProjectHeaders/Seq.h  \
 FrameworkHeaders/ES_Queue.h  \
  FrameworkHeaders/ES_ShortTimer.h  \
 FrameworkHeaders/ES_Port.h  \
- ProjectHeaders/Display.h 
+ ProjectHeaders/Display.h  \
+ProjectHeaders/Dotstar.h 
