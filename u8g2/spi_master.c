@@ -94,7 +94,6 @@ void SPI_Init_Dotstar(void){
     TRISBbits.TRISB5 = 0;              //Set RB5 as output
     TRISBbits.TRISB15 = 0;             //Set RB15 as output
     // Set up PPS
-    RPA3R = 0b0100;                    // Set RA3 as SS2
     RPB5R = 0b0100;                    // Set RB5 as SDO2
     // Turn off SPI
     SPI2CONbits.ON = 0;
