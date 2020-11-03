@@ -18,4 +18,6 @@ FrameworkHeaders/ES_General.h  \
  FrameworkHeaders/ES_Timers.h  \
 FrameworkHeaders/ES_DeferRecall.h  \
  FrameworkHeaders/ES_Queue.h  \
-FrameworkHeaders/ES_ShortTimer.h 
+FrameworkHeaders/ES_ShortTimer.h  \
+ ProjectHeaders/Display.h  \
+FrameworkHeaders/ES_Types.h 
