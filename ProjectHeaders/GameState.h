@@ -16,7 +16,8 @@
 // State definitions for use with the query function
 typedef enum
 {
-  InitPState, WelcomeScreen, GALeader, GAFollower, GARoundComplete, GameComplete
+  InitPState, WelcomeScreen, GALeader, GAFollower, GARoundComplete, 
+  GameComplete, Demo
 }GameState_t;
 
 // Public Function Prototypes

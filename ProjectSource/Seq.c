@@ -210,7 +210,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 
                 case ES_TIMEOUT: 
                 {
-                    if (ThisEvent.EventParam == READY_TIMER)
+                    if ((ThisEvent.EventParam == READY_TIMER) || 
+                        (ThisEvent.EventParam == DEMO_SCREEN_TIMER))
                     {
                         // Inform display service to demonstrate input and starts first direction timer
                         displayCounter = 0;
@@ -271,8 +272,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         
                         case DIRECTION_TIMER:
                         {
-                            //Post all arrows unhighlighted to create blinking
-                            //effect
+                            //Post all arrows unhighlighted to create blinking effect
                             ES_Timer_InitTimer(DIRECTION_PAUSE_TIMER, 250);
                             ES_Event_t DisplayEvent;
                             DisplayEvent.EventType = ES_DISPLAY_INSTRUCTION;

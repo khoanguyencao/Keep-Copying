@@ -265,12 +265,16 @@ typedef enum
   ES_WRITE,
   ES_XFER_C,
   ES_PRESS,
+  /* Game State Events */
   ES_FIRST_ROUND,
   ES_NEXT_ROUND,
-  ES_INCORRECT_INPUT,
-  ES_CORRECT_INPUT_FINAL,
-  ES_CORRECT_INPUT,
+  ES_ROUND_COMPLETE,
   ES_GAME_COMPLETE,
+  ES_SENSOR_PRESSED,
+  /* Sequence Events */
+  ES_INCORRECT_INPUT,
+  ES_CORRECT_INPUT,
+  ES_CORRECT_INPUT_FINAL,
   /* Display Events */
   ES_DISPLAY_WELCOME,       
   ES_DISPLAY_READY,
@@ -286,11 +290,9 @@ typedef enum
   ES_GREEN,
   ES_RED,
   ES_OFF,
-  ES_SENSOR_PRESSED,
-  ES_ROUND_COMPLETE,
   /* Master Reset Events */
   ES_MASTER_RESET,
-  ES_INPUT_DETECTED
+  ES_INPUT_DETECTED,
 }ES_EventType_t;
 
 /****************************************************************************/
@@ -345,9 +347,9 @@ typedef enum
 #define TIMER8_RESP_FUNC PostSequence       // InstructionTimer
 #define TIMER9_RESP_FUNC PostSequence       // DirectionPauseTimer
 #define TIMER10_RESP_FUNC PostDotstar       // DotstarTimer
-#define TIMER11_RESP_FUNC PostTestHarnessService0
-#define TIMER12_RESP_FUNC TIMER_UNUSED
-#define TIMER13_RESP_FUNC TIMER_UNUSED
+#define TIMER11_RESP_FUNC PostGameState     // DemoTimer
+#define TIMER12_RESP_FUNC PostSequence      // DemoScreenTimer
+#define TIMER13_RESP_FUNC PostTestHarnessService0
 #define TIMER14_RESP_FUNC TIMER_UNUSED
 #define TIMER15_RESP_FUNC TIMER_UNUSED
 
@@ -368,6 +370,8 @@ typedef enum
 #define INSTRUCTION_TIMER 8
 #define DIRECTION_PAUSE_TIMER 9
 #define DOTSTAR_TIMER 10
-#define TEST_TIMER 11
+#define DEMO_TIMER 11
+#define DEMO_SCREEN_TIMER 12
+#define TEST_TIMER 13
 
 #endif /* ES_CONFIGURE_H */
