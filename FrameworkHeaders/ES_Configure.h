@@ -47,7 +47,7 @@
 // the name of the run function
 #define SERV_0_RUN RunTestHarnessService0
 // How big should this services Queue be?
-#define SERV_0_QUEUE_SIZE 5
+#define SERV_0_QUEUE_SIZE 3
 
 /****************************************************************************/
 // The following sections are used to define the parameters for each of the
@@ -76,7 +76,7 @@
 // the name of the run function
 #define SERV_2_RUN RunDisplay
 // How big should this services Queue be?
-#define SERV_2_QUEUE_SIZE 5
+#define SERV_2_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
@@ -89,7 +89,7 @@
 // the name of the run function
 #define SERV_3_RUN RunSequence
 // How big should this services Queue be?
-#define SERV_3_QUEUE_SIZE 15
+#define SERV_3_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
@@ -260,11 +260,6 @@ typedef enum
   ES_SHORT_TIMEOUT,         /* signals that a short timer has expired */
   /* User-defined events start here */
   ES_NEW_KEY,               /* signals a new key received from terminal */
-  ES_PS_INIT,
-  ES_NOT_BUSY,
-  ES_WRITE,
-  ES_XFER_C,
-  ES_PRESS,
   /* Game State Events */
   ES_FIRST_ROUND,
   ES_NEXT_ROUND,
@@ -272,9 +267,9 @@ typedef enum
   ES_GAME_COMPLETE,
   ES_SENSOR_PRESSED,
   /* Sequence Events */
-  ES_INCORRECT_INPUT,
   ES_CORRECT_INPUT,
   ES_CORRECT_INPUT_FINAL,
+  ES_INCORRECT_INPUT,
   /* Display Events */
   ES_DISPLAY_WELCOME,       
   ES_DISPLAY_READY,
