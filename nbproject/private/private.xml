@@ -3,12 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/khoa/Dropbox/Stanford/2.1%20Fall%20'20/1%20-%20Smart%20Product%20Design%20A/me218a_project/me218a/ProjectHeaders/EventCheckWrapper.h</file>
-            <file>file:/Users/khoa/Dropbox/Stanford/2.1%20Fall%20'20/1%20-%20Smart%20Product%20Design%20A/me218a_project/me218a/FrameworkHeaders/ES_Configure.h</file>
-            <file>file:/Users/khoa/Dropbox/Stanford/2.1%20Fall%20'20/1%20-%20Smart%20Product%20Design%20A/me218a_project/me218a/u8g2/spi_master.c</file>
-            <file>file:/Users/khoa/Dropbox/Stanford/2.1%20Fall%20'20/1%20-%20Smart%20Product%20Design%20A/me218a_project/me218a/ProjectSource/MasterReset.c</file>
-            <file>file:/Users/khoa/Dropbox/Stanford/2.1%20Fall%20'20/1%20-%20Smart%20Product%20Design%20A/me218a_project/me218a/ProjectSource/TestHarnessService0.c</file>
-            <file>file:/Users/khoa/Dropbox/Stanford/2.1%20Fall%20'20/1%20-%20Smart%20Product%20Design%20A/me218a_project/me218a/ProjectSource/Display.c</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/pCode/ProjectSource/GameState.c</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/pCode/FrameworkHeaders/ES_Configure.h</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/pCode/ProjectSource/Seq.c</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/pCode/ProjectSource/Display.c</file>
+            <file>file:/C:/Users/chris/Documents/STANFORD%20UNIVERSITY/TRIMESTER%20CLASSES/20-21%20AUTUUM/ME%20218A/Project/pCode/ProjectHeaders/Seq.h</file>
         </group>
     </open-files>
 </project-private>
