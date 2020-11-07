@@ -47,6 +47,8 @@
 #include "ES_ShortTimer.h"
 #include "ES_Port.h"
 
+#include "Display.h"
+
 /*----------------------------- Module Defines ----------------------------*/
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
@@ -215,6 +217,11 @@ ES_Event_t RunTestHarnessService0(ES_Event_t ThisEvent)
           ThisEvent.EventType = ES_CORRECT_INPUT_FINAL;
           ThisEvent.EventParam = 10;
           PostSequence(ThisEvent);
+      }
+      if ('d' == ThisEvent.EventParam)
+      {
+          ThisEvent.EventType = ES_DISPLAY_DEMO;
+          PostDisplay(ThisEvent);
       }
       
       

@@ -46,6 +46,7 @@
 #include "GameState.h"
 #include "Display.h"
 #include "hal.h"
+#include "MasterReset.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -209,7 +210,8 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 
                 case ES_TIMEOUT: 
                 {
-                    if (ThisEvent.EventParam == READY_TIMER)
+                    if ((ThisEvent.EventParam == READY_TIMER) || 
+                        (ThisEvent.EventParam == DEMO_SCREEN_TIMER))
                     {
                         // Inform display service to demonstrate input and starts first direction timer
                         displayCounter = 0;
@@ -270,8 +272,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         
                         case DIRECTION_TIMER:
                         {
-                            //Post all arrows unhighlighted to create blinking
-                            //effect
+                            //Post all arrows unhighlighted to create blinking effect
                             ES_Timer_InitTimer(DIRECTION_PAUSE_TIMER, 250);
                             ES_Event_t DisplayEvent;
                             DisplayEvent.EventType = ES_DISPLAY_INSTRUCTION;
@@ -510,14 +511,17 @@ bool CheckXYVal (void)
             returnValue = true;
         }
     }
+
     // Master Reset Code
-    if (returnValue)
+    ADC_MultiRead(adcResults);
+    Input_Direction(adcResults);
+    if (input!=8)
     {
         ES_Event_t InputEvent;
         InputEvent.EventType = ES_INPUT_DETECTED;
-        //PostMasterReset(InputEvent);
+        PostMasterReset(InputEvent);
     }
-
+    
     return returnValue;
 }
 
@@ -563,35 +567,35 @@ static void masterReset(){
 uint8_t Input_Direction(uint32_t *adcResults)
 {
     //Direction being analyzed
-            if(adcResults[1] >1 && adcResults[1] <(Neutral[1]-2) && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            if((adcResults[1] > 1) && (adcResults[1] < (Neutral[1] - 10)) && (adcResults[0] >= (Neutral[0] - 20)) && (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input = 0;
             }
-            else if(adcResults[1] <=1 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            else if((adcResults[1] <= 1) && (adcResults[0] >= (Neutral[0] - 20)) && (adcResults[0] <= (Neutral[0] + 20)))
             {
-                input =1;
+                input = 1;
             }
-            else if(adcResults[1] >(Neutral[1]+2) && adcResults[1] <1020 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            else if((adcResults[1] > (Neutral[1] + 10)) && (adcResults[1] < 1020) && (adcResults[0] >= (Neutral[0] - 20)) && (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input = 2;
             }
-            else if(adcResults[1] >=1020 && adcResults[0]>=(Neutral[0]-20) && adcResults[0]<=(Neutral[0]+20))
+            else if((adcResults[1] >= 1020) && (adcResults[0] >= (Neutral[0] - 20)) && (adcResults[0] <= (Neutral[0] + 20)))
             {
                 input = 3;
             }
-            else if(adcResults[0] >1 && adcResults[0] <(Neutral[0]-2) && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            else if((adcResults[0] > 1) && (adcResults[0] < (Neutral[0] - 10)) && (adcResults[1] >= (Neutral[1] - 20)) && (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 4;
             }
-            else if(adcResults[0] <=1 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            else if((adcResults[0] <= 1) && (adcResults[1] >= (Neutral[1] - 20)) && (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 5;
             }
-            else if(adcResults[0] >(Neutral[0]+2) && adcResults[0] <1020 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            else if((adcResults[0] > (Neutral[0] + 10)) && (adcResults[0] < 1020) && (adcResults[1] >= (Neutral[1] - 20)) && (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 6;
             }
-            else if(adcResults[0] >=1020 && adcResults[1]>=(Neutral[1]-20) && adcResults[1]<=(Neutral[1]+20))
+            else if((adcResults[0] >= 1020) && (adcResults[1] >= (Neutral[1] - 20)) && (adcResults[1] <= (Neutral[1] + 20)))
             {
                 input = 7;
             }
@@ -599,7 +603,7 @@ uint8_t Input_Direction(uint32_t *adcResults)
             {
                 input = 8;
             }
-
+            
     return input;
     
 }

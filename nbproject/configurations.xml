@@ -44,6 +44,7 @@
       <itemPath>ProjectHeaders/hal.h</itemPath>
       <itemPath>ProjectHeaders/PIC32_AD_Lib.h</itemPath>
       <itemPath>ProjectHeaders/Seq.h</itemPath>
+      <itemPath>ProjectHeaders/Dotstar.h</itemPath>
       <itemPath>ProjectHeaders/MasterReset.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -63,6 +64,7 @@
       <itemPath>ProjectSource/hal.c</itemPath>
       <itemPath>ProjectSource/PIC32_AD_Lib.c</itemPath>
       <itemPath>ProjectSource/Seq.c</itemPath>
+      <itemPath>ProjectSource/Dotstar.c</itemPath>
       <itemPath>ProjectSource/MasterReset.c</itemPath>
     </logicalFolder>
     <logicalFolder name="f3" displayName="u8g2Headers" projectFiles="true">

@@ -5,8 +5,8 @@
 
  ****************************************************************************/
 
-#ifndef GameState_H
-#define GameState_H
+#ifndef Dotstar_H
+#define Dotstar_H
 
 // Event Definitions
 #include "ES_Configure.h" /* gets us event definitions */
@@ -16,23 +16,18 @@
 // State definitions for use with the query function
 typedef enum
 {
-  InitPState, WelcomeScreen, GALeader, GAFollower, GARoundComplete, 
-  GameComplete, Demo
-}GameState_t;
+  DotstarInitPState, DotstarRed, DotstarGreen, DotstarRandom, DotstarOff
+}DotstarState_t;
 
 // Public Function Prototypes
 
-bool InitGameState(uint8_t Priority);
-bool PostGameState(ES_Event_t ThisEvent);
-ES_Event_t RunGameState(ES_Event_t ThisEvent);
+bool InitDotstar(uint8_t Priority);
+bool PostDotstar(ES_Event_t ThisEvent);
+ES_Event_t RunDotstar(ES_Event_t ThisEvent);
+DotstarState_t QueryDotstar(void);
+void dotStar_Write(uint8_t Bright1, uint8_t Red1, uint8_t Blue1, uint8_t Green1, 
+            uint8_t Bright2, uint8_t Red2, uint8_t Blue2, uint8_t Green2);
+        
 
-// Event Checkers
-
-bool CheckTouchSensor();
-
-// High Score Query
-
-void queryHighScores(uint16_t* score1, uint16_t* score2, uint16_t* score3);
-
-#endif /* GameState_H */
+#endif /* Dotstar_H */
 

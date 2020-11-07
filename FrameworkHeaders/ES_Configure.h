@@ -33,7 +33,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 5
+#define NUM_SERVICES 6
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -47,7 +47,7 @@
 // the name of the run function
 #define SERV_0_RUN RunTestHarnessService0
 // How big should this services Queue be?
-#define SERV_0_QUEUE_SIZE 5
+#define SERV_0_QUEUE_SIZE 3
 
 /****************************************************************************/
 // The following sections are used to define the parameters for each of the
@@ -57,37 +57,37 @@
 // These are the definitions for Service 1
 #if NUM_SERVICES > 1
 // the header file with the public function prototypes
-#define SERV_1_HEADER "Display.h"
+#define SERV_1_HEADER "Dotstar.h"
 // the name of the Init function
-#define SERV_1_INIT InitDisplay
+#define SERV_1_INIT InitDotstar
 // the name of the run function
-#define SERV_1_RUN RunDisplay
+#define SERV_1_RUN RunDotstar
 // How big should this services Queue be?
-#define SERV_1_QUEUE_SIZE 5
+#define SERV_1_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 2
 #if NUM_SERVICES > 2
 // the header file with the public function prototypes
-#define SERV_2_HEADER "Seq.h"
+#define SERV_2_HEADER "Display.h"
 // the name of the Init function
-#define SERV_2_INIT InitSequence
+#define SERV_2_INIT InitDisplay
 // the name of the run function
-#define SERV_2_RUN RunSequence
+#define SERV_2_RUN RunDisplay
 // How big should this services Queue be?
-#define SERV_2_QUEUE_SIZE 15
+#define SERV_2_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 3
 #if NUM_SERVICES > 3
 // the header file with the public function prototypes
-#define SERV_3_HEADER "GameState.h"
+#define SERV_3_HEADER "Seq.h"
 // the name of the Init function
-#define SERV_3_INIT InitGameState
+#define SERV_3_INIT InitSequence
 // the name of the run function
-#define SERV_3_RUN RunGameState
+#define SERV_3_RUN RunSequence
 // How big should this services Queue be?
 #define SERV_3_QUEUE_SIZE 3
 #endif
@@ -96,11 +96,11 @@
 // These are the definitions for Service 4
 #if NUM_SERVICES > 4
 // the header file with the public function prototypes
-#define SERV_4_HEADER "MasterReset.h"
+#define SERV_4_HEADER "GameState.h"
 // the name of the Init function
-#define SERV_4_INIT InitMasterReset
+#define SERV_4_INIT InitGameState
 // the name of the run function
-#define SERV_4_RUN RunMasterReset
+#define SERV_4_RUN RunGameState
 // How big should this services Queue be?
 #define SERV_4_QUEUE_SIZE 3
 #endif
@@ -109,11 +109,11 @@
 // These are the definitions for Service 5
 #if NUM_SERVICES > 5
 // the header file with the public function prototypes
-#define SERV_5_HEADER "TestHarnessService5.h"
+#define SERV_5_HEADER "MasterReset.h"
 // the name of the Init function
-#define SERV_5_INIT InitTestHarnessService5
+#define SERV_5_INIT InitMasterReset
 // the name of the run function
-#define SERV_5_RUN RunTestHarnessService5
+#define SERV_5_RUN RunMasterReset
 // How big should this services Queue be?
 #define SERV_5_QUEUE_SIZE 3
 #endif
@@ -260,17 +260,16 @@ typedef enum
   ES_SHORT_TIMEOUT,         /* signals that a short timer has expired */
   /* User-defined events start here */
   ES_NEW_KEY,               /* signals a new key received from terminal */
-  ES_PS_INIT,
-  ES_NOT_BUSY,
-  ES_WRITE,
-  ES_XFER_C,
-  ES_PRESS,
+  /* Game State Events */
   ES_FIRST_ROUND,
   ES_NEXT_ROUND,
-  ES_INCORRECT_INPUT,
-  ES_CORRECT_INPUT_FINAL,
-  ES_CORRECT_INPUT,
+  ES_ROUND_COMPLETE,
   ES_GAME_COMPLETE,
+  ES_SENSOR_PRESSED,
+  /* Sequence Events */
+  ES_CORRECT_INPUT,
+  ES_CORRECT_INPUT_FINAL,
+  ES_INCORRECT_INPUT,
   /* Display Events */
   ES_DISPLAY_WELCOME,       
   ES_DISPLAY_READY,
@@ -279,17 +278,16 @@ typedef enum
   ES_DISPLAY_PLAY_UPDATE,
   ES_DISPLAY_ROUNDCOMPLETE,
   ES_DISPLAY_GAMECOMPLETE,
+  ES_DISPLAY_DEMO,
   ES_UPDATE_COMPLETE,
   /* Dotstar Events */
   ES_RANDOM,
   ES_GREEN,
   ES_RED,
   ES_OFF,
-  ES_SENSOR_PRESSED,
-  ES_ROUND_COMPLETE,
   /* Master Reset Events */
   ES_MASTER_RESET,
-  ES_INPUT_DETECTED
+  ES_INPUT_DETECTED,
 }ES_EventType_t;
 
 /****************************************************************************/
@@ -342,11 +340,11 @@ typedef enum
 #define TIMER6_RESP_FUNC PostMasterReset    // IdleTimer
 #define TIMER7_RESP_FUNC PostGameState      // LastDirectionTimer
 #define TIMER8_RESP_FUNC PostSequence       // InstructionTimer
-#define TIMER9_RESP_FUNC PostSequence       // Direction Pause Timer
-#define TIMER10_RESP_FUNC TIMER_UNUSED
-#define TIMER11_RESP_FUNC PostTestHarnessService0
-#define TIMER12_RESP_FUNC TIMER_UNUSED
-#define TIMER13_RESP_FUNC TIMER_UNUSED
+#define TIMER9_RESP_FUNC PostSequence       // DirectionPauseTimer
+#define TIMER10_RESP_FUNC PostDotstar       // DotstarTimer
+#define TIMER11_RESP_FUNC PostGameState     // DemoTimer
+#define TIMER12_RESP_FUNC PostSequence      // DemoScreenTimer
+#define TIMER13_RESP_FUNC PostTestHarnessService0
 #define TIMER14_RESP_FUNC TIMER_UNUSED
 #define TIMER15_RESP_FUNC TIMER_UNUSED
 
@@ -366,7 +364,9 @@ typedef enum
 #define LAST_DIRECTION_TIMER 7
 #define INSTRUCTION_TIMER 8
 #define DIRECTION_PAUSE_TIMER 9
-
-#define TEST_TIMER 11
+#define DOTSTAR_TIMER 10
+#define DEMO_TIMER 11
+#define DEMO_SCREEN_TIMER 12
+#define TEST_TIMER 13
 
 #endif /* ES_CONFIGURE_H */

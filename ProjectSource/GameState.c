@@ -13,6 +13,8 @@
  History
  When           Who     What/Why
  -------------- ---     --------
+ 11/03/20       kcao    Implementation of Demo
+ 10/31/20       kcao    Integration with Dotstar Service
  10/30/20       kcao    Integration with Display Service
  10/29/20       kcao    Integration with Sequence State Machine 
  10/28/20       kcao    File creation 
@@ -27,6 +29,8 @@
 #include "hal.h"
 #include "Seq.h"
 #include "Display.h"
+#include "Dotstar.h"
+#include "MasterReset.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -146,9 +150,10 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
         ES_Event_t DotstarEvent;
         DotstarEvent.EventType = ES_RANDOM;
-        //PostDotstar(DotstarEvent);
+        PostDotstar(DotstarEvent);
         CurrentState = WelcomeScreen;
         
+        ES_Timer_InitTimer(DEMO_TIMER, 15000);
       }
     }
     break;
@@ -168,21 +173,33 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_OFF;
-          //PostDotstar(DotstarEvent);
+          PostDotstar(DotstarEvent);
 
           ES_Timer_InitTimer(READY_TIMER, 1000);       
           CurrentState = GALeader;
          
-          ES_Event_t SequenceRandomizer;
-          SequenceRandomizer.EventType = ES_FIRST_ROUND;
-          SequenceRandomizer.EventParam = ES_Timer_GetTime();
-          PostSequence(SequenceRandomizer);
+          ES_Event_t SequenceEvent;
+          SequenceEvent.EventType = ES_FIRST_ROUND;
+          PostSequence(SequenceEvent);
         }
         break;
 
-        case ES_MASTER_RESET:
+        case ES_TIMEOUT:
         {
-            masterReset();
+          if (ThisEvent.EventParam == DEMO_TIMER)
+          {
+            ES_Event_t DisplayEvent;
+            DisplayEvent.EventType = ES_DISPLAY_DEMO;
+            PostDisplay(DisplayEvent);
+            printf("Demo Screen\r\n");
+
+            ES_Event_t SequenceEvent;
+            SequenceEvent.EventType = ES_FIRST_ROUND;
+            PostSequence(SequenceEvent);
+
+            ES_Timer_InitTimer(DEMO_SCREEN_TIMER, 1000);
+            CurrentState = Demo;
+          }
         }
         break;
 
@@ -207,7 +224,6 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
             ES_Timer_InitTimer(GO_TIMER, 1000);
             CurrentState = GAFollower;
           }
-          
         }
         break;
 
@@ -236,7 +252,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_GREEN;
-          //PostDotstar(DotstarEvent);
+          PostDotstar(DotstarEvent);
           CurrentState = GARoundComplete;
         }
         break;
@@ -254,7 +270,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
           } else {
             DotstarEvent.EventType = ES_RED;
           }
-          //PostDotstar(DotstarEvent);
+          PostDotstar(DotstarEvent);
           ES_Timer_InitTimer(GAMEOVER_TIMER, 30000);
           CurrentState = GameComplete;
           printf("Game Complete Screen\r\n");
@@ -288,7 +304,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_OFF;
-          //PostDotstar(DotstarEvent);
+          PostDotstar(DotstarEvent);
 
           ES_Timer_InitTimer(READY_TIMER, 1000);
           CurrentState = GALeader;
@@ -297,6 +313,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
         case ES_MASTER_RESET:
         {
+            printf("Ready Screen Master Reset\r\n");
             masterReset();
         }
         break;
@@ -320,8 +337,10 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_RANDOM;
-          //PostDotstar(DotstarEvent);
+          PostDotstar(DotstarEvent);
           CurrentState = WelcomeScreen;
+
+          ES_Timer_InitTimer(DEMO_TIMER, 15000);
         }
         break;
 
@@ -335,8 +354,10 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
             ES_Event_t DotstarEvent;
             DotstarEvent.EventType = ES_RANDOM;
-            //PostDotstar(DotstarEvent);
+            PostDotstar(DotstarEvent);
             CurrentState = WelcomeScreen;
+
+            ES_Timer_InitTimer(DEMO_TIMER, 15000);
           }
         }
         break;
@@ -347,6 +368,27 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         }
         break;
         
+        default:
+          ;
+      } 
+    }
+    break;
+
+    case Demo:       
+    {
+      switch (ThisEvent.EventType)
+      {
+        case ES_TIMEOUT:
+        {   
+          if (ThisEvent.EventParam == LAST_DIRECTION_TIMER){
+            masterReset();
+            ES_Event_t SequenceEvent;
+            SequenceEvent.EventType = ES_MASTER_RESET;
+            PostSequence(SequenceEvent);
+          }
+        }
+        break;
+
         default:
           ;
       } 
@@ -373,7 +415,8 @@ bool CheckTouchSensor(){
   bool eventStatus = false;
   if ((CurrentState == WelcomeScreen) || 
       (CurrentState == GARoundComplete) || 
-      (CurrentState == GameComplete)){
+      (CurrentState == GameComplete) || 
+      (CurrentState == Demo)){
     uint8_t currentTouchSensorState = digitalRead(SENSOR_INPUT_PIN);
     if ((currentTouchSensorState != lastTouchSensorState) && 
         (currentTouchSensorState == LOW)){
@@ -383,7 +426,7 @@ bool CheckTouchSensor(){
 
       ES_Event_t InputEvent;
       InputEvent.EventType = ES_INPUT_DETECTED;
-      //PostMasterReset(InputEvent);
+      PostMasterReset(InputEvent);
       eventStatus = true;
       printf("Touch Sensor Pressed\r\n");
     }
@@ -425,6 +468,8 @@ static void masterReset(){
 
   ES_Event_t DotstarEvent;
   DotstarEvent.EventType = ES_RANDOM;
-  //PostDotstar(DotstarEvent);
+  PostDotstar(DotstarEvent);
   CurrentState = WelcomeScreen;
+
+  ES_Timer_InitTimer(DEMO_TIMER, 15000);
 }

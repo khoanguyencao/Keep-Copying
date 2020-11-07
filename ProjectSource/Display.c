@@ -62,6 +62,7 @@ static void goScreen(uint16_t score, uint16_t round);
 static void playScreen(uint16_t score, uint8_t time, uint8_t input);
 static void roundCompleteScreen(uint16_t score, uint16_t round);
 static void gameCompleteScreen(void);
+void demoScreen(void);
 static void bitUnpack(uint16_t EventParam, uint16_t* score, uint8_t* time, uint8_t* input);
 
 /*---------------------------- Module Variables ---------------------------*/
@@ -181,7 +182,7 @@ ES_Event_t RunDisplay(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_INIT)  
       {
-        SPI_Init(); //initialize SPI1
+        SPI_Init_Display(); //initialize SPI1
         //build up the u8g2 structure with the proper values for our display
         u8g2_Setup_ssd1306_128x64_noname_f(&u8g2, U8G2_R0, u8x8_byte_pic32_hw_spi, 
                                    u8x8_pic32_gpio_and_delay);
@@ -251,6 +252,12 @@ ES_Event_t RunDisplay(ES_Event_t ThisEvent)
             gameCompleteScreen();               // display game complete screen
             CurrentState = DisplayBusy;         // transition to busy state
         }
+        
+        if (ThisEvent.EventType == ES_DISPLAY_DEMO)
+        {
+            demoScreen();                       // display demo screen
+            CurrentState = DisplayBusy;         // transition to busy state
+        }
     }
     break;
     
@@ -291,6 +298,11 @@ ES_Event_t RunDisplay(ES_Event_t ThisEvent)
         }
         
         if (ThisEvent.EventType == ES_DISPLAY_GAMECOMPLETE)
+        {
+            ES_DeferEvent(DeferralQueue, ThisEvent);    // defer event
+        }
+        
+        if (ThisEvent.EventType == ES_DISPLAY_DEMO)
         {
             ES_DeferEvent(DeferralQueue, ThisEvent);    // defer event
         }
@@ -1023,6 +1035,17 @@ void gameCompleteScreen(void)
     
     // set last display state to busy
     LastDisplayState = 1;
+}
+
+// creates and displays the demo screen
+void demoScreen(void)
+{
+    // clear screen
+    u8g2_FirstPage(&u8g2); 
+    // write Ready to display
+    u8g2_DrawStr(&u8g2, 4, 40, "     DEMO    "); 
+    // set last display state to busy
+    LastDisplayState = 1;    
 }
 
 // Needs to pass score, time and input by reference 
