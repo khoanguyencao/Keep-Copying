@@ -90,8 +90,8 @@ static uint8_t input; //variable to pass user input to OLED
  Returns
      bool, false if error in initialization, true otherwise
  Description
-     Initialize Joystick pins and program, sets input for touch button and
-     Z button.  Initializes lastTouchSensor for event checking function xyVal
+     Initialize Joystick pins and program, sets input for touch button button. 
+ *  Initializes lastTouchSensor for event checking function xyVal
 ****************************************************************************/
 
 bool InitSequence(uint8_t Priority)
@@ -435,7 +435,7 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
 
 /* Event Checkers ------------------------------------------------------------
  * This event checker takes reads the joystick x and y values when
- * the z button is pressed, preserving the input the user wants to give to
+ * the touch button is pressed, preserving the input the user wants to give to
  * the game.
  ----------------------------------------------------------------------------*/
 bool CheckXYVal (void)
