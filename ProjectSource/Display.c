@@ -72,7 +72,7 @@ static DisplayState_t CurrentState;
 static uint8_t LastDisplayState;
 
 // keep track of values needing to be written on the display
-static uint16_t score = 1234;
+static uint16_t score;
 static uint8_t time = 15;
 static uint8_t input = 8;
 static uint16_t round = 1;
@@ -359,6 +359,7 @@ void welcomeScreen(void)
 // Creates and displays the Ready screen
 void readyScreen(uint16_t score, uint16_t round)
 {
+    // multiply score by 10 to get actual score
     score = score * 10;
     // turn round into a string and add it to "R"
     char roundstring[4];
@@ -375,19 +376,19 @@ void readyScreen(uint16_t score, uint16_t round)
     // write the round number to the display
     u8g2_DrawStr(&u8g2, 1, 15, roundstring); 
     // write the score to the display, align text with left side
-    if (score < 10)
+    if (score < 10)                                 //score is 1 number wide
     {
         u8g2_DrawStr(&u8g2, 120, 15, scorestring);
     }
-    else if ((score >= 10) && (score < 100))
+    else if ((score >= 10) && (score < 100))        //score is 2 numbers wide
     {
-        u8g2_DrawStr(&u8g2, 110, 15, scorestring);
+        u8g2_DrawStr(&u8g2, 110, 15, scorestring);  
     }
-    else if ((score >= 100) && (score < 1000))
+    else if ((score >= 100) && (score < 1000))      //score is 3 numbers wide
     {
         u8g2_DrawStr(&u8g2, 100, 15, scorestring);
     }
-    else
+    else                                            //score is 4 numbers wide
     {
         u8g2_DrawStr(&u8g2, 90, 15, scorestring);
     }
@@ -667,7 +668,7 @@ void goScreen(uint16_t score, uint16_t round)
     
     // clear screen
     u8g2_FirstPage(&u8g2); 
-    // write READY to the display
+    // write GO to the display
     u8g2_DrawStr(&u8g2, 55, 40, "GO!");
     // write the round number to the display
     u8g2_DrawStr(&u8g2, 1, 15, roundstring); 
@@ -969,17 +970,17 @@ void playScreen(uint16_t score, uint8_t time, uint8_t input)
 void roundCompleteScreen(uint16_t score, uint16_t round)
 {
     // turn round into a string and add it to "R"
-    score = score * 10;
     char roundstring[4];
     sprintf(roundstring, "R%i", round);
     
-    // turn score into a string
+    // multiply score by 10 and turn score into a string
+    score = score * 10;
     char scorestring[5];
     sprintf(scorestring, "%i", score);
     
     // clear screen
     u8g2_FirstPage(&u8g2); 
-    // write READY to the display
+    // write BOMB DEFUSED! to the display
     u8g2_DrawStr(&u8g2, 7, 40, "BOMB DEFUSED!");
     // write the round number to the display
     u8g2_DrawStr(&u8g2, 1, 15, roundstring); 
@@ -1000,6 +1001,7 @@ void roundCompleteScreen(uint16_t score, uint16_t round)
     {
         u8g2_DrawStr(&u8g2, 90, 15, scorestring);
     }
+    // write press button to the display
     u8g2_DrawStr(&u8g2, 1, 60, " press button");
     // set last display state to busy
     LastDisplayState = 1;
@@ -1028,7 +1030,7 @@ void gameCompleteScreen(void)
     char score3string[8];
     sprintf(score3string, "3. %i", score3);
     
-    // write high score values to displayed
+    // write high score values to display
     u8g2_DrawStr(&u8g2, 1, 30, score1string);
     u8g2_DrawStr(&u8g2, 1, 45, score2string);
     u8g2_DrawStr(&u8g2, 1, 60, score3string);
@@ -1042,7 +1044,7 @@ void demoScreen(void)
 {
     // clear screen
     u8g2_FirstPage(&u8g2); 
-    // write Ready to display
+    // write DEMO to display
     u8g2_DrawStr(&u8g2, 4, 40, "     DEMO    "); 
     // set last display state to busy
     LastDisplayState = 1;    
@@ -1073,7 +1075,7 @@ bool Check4WriteDone(void)
       // check for display done AND different from last time
       if ((LastDisplayState != CurrentDisplayState) &&(CurrentDisplayState == 0)) 
       {
-        // Post event to OLEDService0
+        // Post event to Display Service
         ES_Event_t ThisEvent;
         ThisEvent.EventType   = ES_UPDATE_COMPLETE;
         ThisEvent.EventParam  = 1;

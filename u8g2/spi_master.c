@@ -68,7 +68,7 @@ void SPI_Init_Display(void){
     SPI1CONbits.FRMEN = 0; //framed SPI support is disabled
     SPI1CONbits.DISSDI = 0; //SDI pin controlled by SPI module
     
-    //enable SPI operation by setting th ON bit
+    //enable SPI operation by setting the ON bit
     SPI1CONbits.ON = 1;   
 }
 
