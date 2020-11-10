@@ -40,7 +40,6 @@
 /* prototypes for private functions for this machine.They should be functions
    relevant to the behavior of this state machine
 */
-
 static bool UpdateHighScores(const uint16_t score);
 static int compareScores(const void *a, const void *b);
 static void masterReset();
@@ -62,7 +61,7 @@ static uint8_t MyPriority;
      InitGameState
 
  Parameters
-     uint8_t : the priorty of this service
+     uint8_t : the priority of this service
 
  Returns
      bool, false if error in initialization, true otherwise
@@ -94,7 +93,7 @@ bool InitGameState(uint8_t Priority)
      PostGameState
 
  Parameters
-     EF_Event_t ThisEvent , the event to post to the queue
+     EF_Event_t ThisEvent, the event to post to the queue
 
  Returns
      boolean False if the Enqueue operation failed, True otherwise
@@ -122,7 +121,9 @@ bool PostGameState(ES_Event_t ThisEvent)
    ES_Event_t, ES_NO_EVENT if no error ES_ERROR otherwise
 
  Description
-   add your description here
+   State machine that manages what the current game state is and communicates
+   directly with the display and dotstar. The FSM also manages the scores.
+  
  Notes
    uses nested switch/case to implement the machine.
  Author
@@ -139,21 +140,26 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_INIT)    
       {
-        lastTouchSensorState = digitalRead(SENSOR_INPUT_PIN);
-        for (uint8_t i = 0; i < 4; i++){
+        // Init high scores
+        for (uint8_t i = 0; i < 4; i++)
+        {
           highScores[i] = 0;
         }
+        
+        // Update display to Welcome Screen
         ES_Event_t DisplayEvent;
         DisplayEvent.EventType = ES_DISPLAY_WELCOME;
         PostDisplay(DisplayEvent);
-        printf("Welcome Screen\r\n");
-
+        
+        // Update dotstar to be on random colors
         ES_Event_t DotstarEvent;
         DotstarEvent.EventType = ES_RANDOM;
         PostDotstar(DotstarEvent);
-        CurrentState = WelcomeScreen;
-        
+
+        // Init touch sensor state and demo timer  
+        lastTouchSensorState = digitalRead(SENSOR_INPUT_PIN);
         ES_Timer_InitTimer(DEMO_TIMER, 15000);
+        CurrentState = WelcomeScreen;
       }
     }
     break;
@@ -164,23 +170,26 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       {
         case ES_SENSOR_PRESSED:
         {   
+          // Update display with ready screen and round number 
           roundNumber = 1;
           ES_Event_t DisplayEvent;
           DisplayEvent.EventType = ES_DISPLAY_READY;
           DisplayEvent.EventParam = roundNumber;
           PostDisplay(DisplayEvent);
-          printf("Ready Screen\r\n");
 
+          // Update dotstar to be off         
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_OFF;
           PostDotstar(DotstarEvent);
-
-          ES_Timer_InitTimer(READY_TIMER, 1000);       
-          CurrentState = GALeader;
-         
+          
+          // Update sequence state machine for first round
           ES_Event_t SequenceEvent;
           SequenceEvent.EventType = ES_FIRST_ROUND;
           PostSequence(SequenceEvent);
+
+          // Init ready timer
+          ES_Timer_InitTimer(READY_TIMER, 1000);
+          CurrentState = GALeader;
         }
         break;
 
@@ -188,15 +197,17 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         {
           if (ThisEvent.EventParam == DEMO_TIMER)
           {
+            // Update display with Demo Screen
             ES_Event_t DisplayEvent;
             DisplayEvent.EventType = ES_DISPLAY_DEMO;
             PostDisplay(DisplayEvent);
-            printf("Demo Screen\r\n");
 
+            // Update sequence state machine for first round
             ES_Event_t SequenceEvent;
             SequenceEvent.EventType = ES_FIRST_ROUND;
             PostSequence(SequenceEvent);
 
+            // Init demo screen timer
             ES_Timer_InitTimer(DEMO_SCREEN_TIMER, 1000);
             CurrentState = Demo;
           }
@@ -215,12 +226,14 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       {
         case ES_TIMEOUT:
         {   
-          if (ThisEvent.EventParam == LAST_DIRECTION_TIMER){
+          if (ThisEvent.EventParam == LAST_DIRECTION_TIMER)
+          {
+            // Update display with Go Screen
             ES_Event_t DisplayEvent;
             DisplayEvent.EventType = ES_DISPLAY_GO;
             PostDisplay(DisplayEvent);
-            printf("Go Screen\r\n");
 
+            // Init Go Timer
             ES_Timer_InitTimer(GO_TIMER, 1000);
             CurrentState = GAFollower;
           }
@@ -244,26 +257,30 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       switch (ThisEvent.EventType)
       {
         case ES_ROUND_COMPLETE:
-        {   
+        {  
+          // Update display to Round Complete Screen
           ES_Event_t DisplayEvent;
           DisplayEvent.EventType = ES_DISPLAY_ROUNDCOMPLETE;
           PostDisplay(DisplayEvent);
-          printf("Round Complete Screen\r\n");
 
+          // Update dotstar to flash green
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_GREEN;
           PostDotstar(DotstarEvent);
+
           CurrentState = GARoundComplete;
         }
         break;
 
         case ES_GAME_COMPLETE:
         {   
-          uint16_t score = ThisEvent.EventParam;
+          // Update display to Game Complete Screen
           ES_Event_t DisplayEvent;
           DisplayEvent.EventType = ES_DISPLAY_GAMECOMPLETE;
           PostDisplay(DisplayEvent);
           
+          // Update dotstar to flash green/red based on whether high score achieved
+          uint16_t score = ThisEvent.EventParam;
           ES_Event_t DotstarEvent;
           if (UpdateHighScores(score)){
             DotstarEvent.EventType = ES_GREEN;
@@ -271,9 +288,10 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
             DotstarEvent.EventType = ES_RED;
           }
           PostDotstar(DotstarEvent);
+
+          // Init Game Over Timer
           ES_Timer_InitTimer(GAMEOVER_TIMER, 30000);
           CurrentState = GameComplete;
-          printf("Game Complete Screen\r\n");
         }
         break;
 
@@ -295,17 +313,19 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       {
         case ES_SENSOR_PRESSED:
         {   
+          // Update display to Ready Screen with round number 
           roundNumber++;
           ES_Event_t DisplayEvent;
           DisplayEvent.EventType = ES_DISPLAY_READY;
           DisplayEvent.EventParam = roundNumber;
           PostDisplay(DisplayEvent);
-          printf("Ready Screen\r\n");
-
+          
+          // Update dotstar to turn off
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_OFF;
           PostDotstar(DotstarEvent);
 
+          // Init Ready Timer
           ES_Timer_InitTimer(READY_TIMER, 1000);
           CurrentState = GALeader;
         }
@@ -313,7 +333,6 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
 
         case ES_MASTER_RESET:
         {
-            printf("Ready Screen Master Reset\r\n");
             masterReset();
         }
         break;
@@ -329,35 +348,39 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
       switch (ThisEvent.EventType)
       {
         case ES_SENSOR_PRESSED:
-        {   
+        { 
+          // Update display to Welcome Screen  
           ES_Event_t DisplayEvent;
           DisplayEvent.EventType = ES_DISPLAY_WELCOME;
           PostDisplay(DisplayEvent);
-          printf("Welcome Screen\r\n");
 
+          // Update dotstar with random colors
           ES_Event_t DotstarEvent;
           DotstarEvent.EventType = ES_RANDOM;
           PostDotstar(DotstarEvent);
-          CurrentState = WelcomeScreen;
-
+          
+          // Init Demo Timer 
           ES_Timer_InitTimer(DEMO_TIMER, 15000);
+          CurrentState = WelcomeScreen;
         }
         break;
 
         case ES_TIMEOUT:
         {   
           if (ThisEvent.EventParam == GAMEOVER_TIMER){
-            ES_Event_t DisplayEvent;
-            DisplayEvent.EventType = ES_DISPLAY_WELCOME;
-            PostDisplay(DisplayEvent);
-            printf("Welcome Screen\r\n");
+          // Update display to Welcome Screen  
+          ES_Event_t DisplayEvent;
+          DisplayEvent.EventType = ES_DISPLAY_WELCOME;
+          PostDisplay(DisplayEvent);
 
-            ES_Event_t DotstarEvent;
-            DotstarEvent.EventType = ES_RANDOM;
-            PostDotstar(DotstarEvent);
-            CurrentState = WelcomeScreen;
-
-            ES_Timer_InitTimer(DEMO_TIMER, 15000);
+          // Update dotstar with random colors
+          ES_Event_t DotstarEvent;
+          DotstarEvent.EventType = ES_RANDOM;
+          PostDotstar(DotstarEvent);
+          
+          // Init Demo Timer 
+          ES_Timer_InitTimer(DEMO_TIMER, 15000);
+          CurrentState = WelcomeScreen;
           }
         }
         break;
@@ -381,6 +404,7 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
         case ES_TIMEOUT:
         {   
           if (ThisEvent.EventParam == LAST_DIRECTION_TIMER){
+            // Complete a master reset of both the game state and sequence FSMs
             masterReset();
             ES_Event_t SequenceEvent;
             SequenceEvent.EventType = ES_MASTER_RESET;
@@ -401,7 +425,23 @@ ES_Event_t RunGameState(ES_Event_t ThisEvent)
   return ReturnEvent;
 }
 
-// Need to pass by reference (queryHighScores(&score1, &score2, &score3))
+/****************************************************************************
+ Function
+   queryHighScores
+
+ Parameters
+   Three uint16_t passed by reference
+
+ Returns
+   Nothing
+
+ Description
+   Query function for the display to update scores. Three unsigned 
+   16-bit integers must be passed by reference.
+
+ Author
+   K Cao, 10/28/20
+****************************************************************************/
 void queryHighScores(uint16_t* score1, uint16_t* score2, uint16_t* score3){
   *score1 = highScores[0];
   *score2 = highScores[1];
@@ -411,35 +451,72 @@ void queryHighScores(uint16_t* score1, uint16_t* score2, uint16_t* score3){
 /***************************************************************************
  event checkers
  ***************************************************************************/
+
+/****************************************************************************
+ Function
+   CheckTouchSensor
+
+ Parameters
+   Nothing
+
+ Returns
+   bool, true if touch sensor changes from pressed to unpressed
+
+ Description
+   Event checker to check if touch sensor pressed.
+
+ Notes
+   Only checks in specific states - WelcomeScreen, GARoundComplete, 
+   GameComplete
+
+ Author
+   K Cao, 10/28/20
+****************************************************************************/
 bool CheckTouchSensor(){
   bool eventStatus = false;
-  if ((CurrentState == WelcomeScreen) || 
-      (CurrentState == GARoundComplete) || 
-      (CurrentState == GameComplete) || 
-      (CurrentState == Demo)){
+  if ((CurrentState == WelcomeScreen) || (CurrentState == GARoundComplete) || 
+      (CurrentState == GameComplete)) 
+  {
     uint8_t currentTouchSensorState = digitalRead(SENSOR_INPUT_PIN);
     if ((currentTouchSensorState != lastTouchSensorState) && 
         (currentTouchSensorState == LOW)){
+      // Update game state of touch sensor press
       ES_Event_t TouchSensorEvent;
       TouchSensorEvent.EventType = ES_SENSOR_PRESSED;
       PostGameState(TouchSensorEvent);
-
+      
+      // Update master reset state machine of a detected input
       ES_Event_t InputEvent;
       InputEvent.EventType = ES_INPUT_DETECTED;
       PostMasterReset(InputEvent);
+
       eventStatus = true;
-      printf("Touch Sensor Pressed\r\n");
     }
   lastTouchSensorState = currentTouchSensorState;
   }
   return eventStatus;
 }
 
-/***************************************************************************
- private functions
- ***************************************************************************/
-// Update Function for High Scores
-// Note maintained as uint16_t here to ease display service query
+/****************************************************************************
+ Function
+   UpdateHighScores
+
+ Parameters
+   uint16_t score, achieved by the player after game is complete
+
+ Returns
+   bool, true if latest score in top 3, false if not 
+
+ Description
+   Helper function that maintains and updates the high scores.
+
+ Notes
+   Newest score written to fourth array component before being sorted with 
+   QuickSort.
+
+ Author
+   K Cao, 10/28/20
+****************************************************************************/
 static bool UpdateHighScores(const uint16_t score){
   // Sort high scores with QuickSort
   highScores[3] = score;
@@ -455,21 +532,61 @@ static bool UpdateHighScores(const uint16_t score){
   return highScoreFlag;
 }
 
-// Comparison Function for Scores
+/****************************************************************************
+ Function
+   compareScores
+
+ Parameters
+   Two void pointers
+
+ Returns
+   Integer value - positive if b is greater than a, negative if a is greater
+   than b, and zero if a is equal to b.
+
+ Description
+   Comparison function for two unsigned 16-bit integers that returns an 
+   integer value based on strcmp standards.
+
+ Notes
+   Required for C's implementation of qsort.
+
+ Author
+   K Cao, 10/28/20
+****************************************************************************/
 static int compareScores(const void *a, const void *b){
   return *(const uint16_t *)b - *(const uint16_t *)a;
 }
 
+/****************************************************************************
+ Function
+   masterReset
+
+ Parameters
+   Nothing
+
+ Returns
+   Nothing
+
+ Description
+   Completes a master reset of the display, dotstar and demo timers.
+
+ Notes
+
+ Author
+   K Cao, 10/28/20
+****************************************************************************/
 static void masterReset(){
+  // Update display to Welcome Screen
   ES_Event_t DisplayEvent;
   DisplayEvent.EventType = ES_DISPLAY_WELCOME;
   PostDisplay(DisplayEvent);
-  printf("Welcome Screen\r\n");
 
+  // Update dotstar to random colors
   ES_Event_t DotstarEvent;
   DotstarEvent.EventType = ES_RANDOM;
   PostDotstar(DotstarEvent);
-  CurrentState = WelcomeScreen;
 
+  // Init Demo Timer
   ES_Timer_InitTimer(DEMO_TIMER, 15000);
+  CurrentState = WelcomeScreen;
 }
