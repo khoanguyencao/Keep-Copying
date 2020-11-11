@@ -22,7 +22,7 @@
       </runprofile>
     </conf>
     <conf name="FrameworkWith_u8g2" type="2">
-      <platformToolSN>:=MPLABComm-USB-Microchip:=&lt;vid>04D8:=&lt;pid>9012:=&lt;rev>0100:=&lt;man>Microchip Technology Incorporated:=&lt;prod>MPLAB PICkit 4:=&lt;sn>BUR203614006:=&lt;drv>x:=&lt;xpt>b:=end</platformToolSN>
+      <platformToolSN>:=MPLABComm-USB-Microchip:=&lt;vid>04D8:=&lt;pid>9018:=&lt;rev>0100:=&lt;man>Microchip Technology Incorporated:=&lt;prod>MPLAB Snap ICD:=&lt;sn>BUR190972952:=&lt;drv>x:=&lt;xpt>b:=end</platformToolSN>
       <languageToolchainDir>C:\Program Files\Microchip\xc32\v2.41\bin</languageToolchainDir>
       <mdbdebugger version="1">
         <placeholder1>place holder 1</placeholder1>

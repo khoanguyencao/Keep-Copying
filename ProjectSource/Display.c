@@ -14,8 +14,9 @@
  History
  When           Who     What/Why
  -------------- ---     --------
- 10/30/20       kcao    Integration with GameState and Seq
- 10/28/20 07:59 acg     first pass
+ 11/03/20       acg     added demo screen      
+ 10/30/20       kcao    integration with GameState and Seq
+ 10/28/20       acg     first pass
 ****************************************************************************/
 /*----------------------------- Include Files -----------------------------*/
 /* include header files for this state machine as well as any machines at the
@@ -46,8 +47,6 @@
 // My Modules
 #include "Display.h"
 #include "GameState.h"
-
-
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -91,6 +90,7 @@ static u8g2_t u8g2;
 
 // add a deferral queue for up to 2 pending deferrals to allow for overhead
 static ES_Event_t DeferralQueue[2];
+
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
  Function
@@ -164,9 +164,11 @@ bool PostDisplay(ES_Event_t ThisEvent)
    ES_Event_t, ES_NO_EVENT if no error ES_ERROR otherwise
 
  Description
-   add your description here
+   displays different screens to OLED based on state
+ 
  Notes
    uses nested switch/case to implement the machine.
+ 
  Author
    A. Gin
 ****************************************************************************/
@@ -177,7 +179,7 @@ ES_Event_t RunDisplay(ES_Event_t ThisEvent)
 
   switch (CurrentState)
   {
-    /*---------------------------------------------------------- InitPState*/   
+    /*--------------------------------------------------- DisplayInitPState*/      
     case DisplayInitPState:        
     {
       if (ThisEvent.EventType == ES_INIT)  
@@ -341,7 +343,18 @@ DisplayState_t QueryDisplay(void)
 /***************************************************************************
  private functions
  ***************************************************************************/
-//Creates and displays the Welcome 
+/****************************************************************************
+ Function
+   welcomeScreen
+ Parameters
+   Nothing
+ Returns
+   Nothing
+ Description
+   Creates and displays the welcome screen
+ Author
+    A. Gin
+****************************************************************************/
 void welcomeScreen(void)
 {
     // clear screen
@@ -356,7 +369,18 @@ void welcomeScreen(void)
     LastDisplayState = 1;    
 }
 
-// Creates and displays the Ready screen
+/****************************************************************************
+ Function
+   readyScreen
+ Parameters
+   round
+ Returns
+   Nothing
+ Description
+   Creates and displays the ready screen
+ Author
+    A. Gin
+****************************************************************************/
 void readyScreen(uint16_t score, uint16_t round)
 {
     // multiply score by 10 to get actual score
@@ -396,7 +420,18 @@ void readyScreen(uint16_t score, uint16_t round)
     LastDisplayState = 1;
 }
 
-// Creates and displays the Instruction screen
+/****************************************************************************
+ Function
+   instructionScreen
+ Parameters
+   score, round, instruction
+ Returns
+   Nothing
+ Description
+   Creates and displays the instruction screen
+ Author
+    A. Gin
+****************************************************************************/
 void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction)
 {
     // turn round into a string and add it to "R"
@@ -654,7 +689,18 @@ void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction)
     LastDisplayState = 1;
 }
 
-// Creates and displays the Go screen
+/****************************************************************************
+ Function
+   goScreen
+ Parameters
+   score, round
+ Returns
+   Nothing
+ Description
+   Creates and displays the go screen
+ Author
+    A. Gin
+****************************************************************************/
 void goScreen(uint16_t score, uint16_t round)
 {
     // turn round into a string and add it to "R"
@@ -693,7 +739,18 @@ void goScreen(uint16_t score, uint16_t round)
     LastDisplayState = 1;
 }
 
-// Creates and displays the Play screen
+/****************************************************************************
+ Function
+   playScreen
+ Parameters
+   score, time, input
+ Returns
+   Nothing
+ Description
+   Creates and displays the gameplay screen
+ Author
+    A. Gin
+****************************************************************************/
 void playScreen(uint16_t score, uint8_t time, uint8_t input)
 {
     // turn round into a string and add it to "R"
@@ -966,7 +1023,18 @@ void playScreen(uint16_t score, uint8_t time, uint8_t input)
     LastDisplayState = 1;
 }
 
-// Creates and displays the Round Complete screen
+/****************************************************************************
+ Function
+   roundCompleteScreen
+ Parameters
+   score, round
+ Returns
+   Nothing
+ Description
+   Creates and displays the round complete screen
+ Author
+    A. Gin
+****************************************************************************/
 void roundCompleteScreen(uint16_t score, uint16_t round)
 {
     // turn round into a string and add it to "R"
@@ -1007,7 +1075,18 @@ void roundCompleteScreen(uint16_t score, uint16_t round)
     LastDisplayState = 1;
 }
 
-// Creates and displays the Game Complete screen
+/****************************************************************************
+ Function
+   gameCompleteScreen
+ Parameters
+   Nothing
+ Returns
+   Nothing
+ Description
+   Creates and displays the game complete screen
+ Author
+    A. Gin
+****************************************************************************/
 void gameCompleteScreen(void)
 {
     // clear screen
@@ -1039,7 +1118,18 @@ void gameCompleteScreen(void)
     LastDisplayState = 1;
 }
 
-// creates and displays the demo screen
+/****************************************************************************
+ Function
+   demoScreen
+ Parameters
+   Nothing
+ Returns
+   Nothing
+ Description
+   Creates and displays the demo screen
+ Author
+    A. Gin
+****************************************************************************/
 void demoScreen(void)
 {
     // clear screen
@@ -1050,9 +1140,21 @@ void demoScreen(void)
     LastDisplayState = 1;    
 }
 
-// Needs to pass score, time and input by reference 
-// (i.e. bitUnpack (EventParam, &score, &time, &input))
-// Note which params are uint16_t vs uint8_t - will need to initialize correctly 
+/****************************************************************************
+ Function
+   bitUnpack
+ Parameters
+   EventParam, score, time, input by reference
+ Returns
+   Nothing
+ Description
+   Updates values for score, time, input
+ Notes
+   Note which params are uint16_t vs uint8_t - will need to initialize correctly
+   Needs to pass score, time and input by reference 
+ Author
+    K. Cao
+****************************************************************************/
 static void bitUnpack(const uint16_t EventParam, uint16_t* score, uint8_t* time, uint8_t* input){
     uint8_t fourBitMask = ((BIT0HI) | (BIT1HI) | (BIT2HI) | (BIT3HI));
     *input = EventParam & fourBitMask;
@@ -1064,6 +1166,19 @@ static void bitUnpack(const uint16_t EventParam, uint16_t* score, uint8_t* time,
 /***************************************************************************
  event checkers
  ***************************************************************************/
+/****************************************************************************
+ Function
+   Check4WriteDone
+ Parameters
+   Nothing
+ Returns
+   bool
+ Description
+   Event checker that checks if display is done writing to screen, then returns 
+   true
+ Author
+    A. Gin
+****************************************************************************/
 bool Check4WriteDone(void)
 {
   uint8_t         CurrentDisplayState;

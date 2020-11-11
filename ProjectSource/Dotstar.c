@@ -420,7 +420,18 @@ DotstarState_t QueryDotstar(void)
 /***************************************************************************
  private functions
  ***************************************************************************/
-
+/****************************************************************************
+ Function
+   dotStar_Write
+ Parameters
+   Bright1, Red1, Blue1, Green1, Bright2, Red2, Blue2, Green2
+ Returns
+   Nothing
+ Description
+   writes specified brightness and RGB values to dotstar
+ Author
+    A. Gin
+****************************************************************************/
 void dotStar_Write(uint8_t Bright1, uint8_t Red1, uint8_t Blue1, uint8_t Green1, 
             uint8_t Bright2, uint8_t Red2, uint8_t Blue2, uint8_t Green2){
     uint32_t data;

@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=pCode
+PROJECTNAME=me218a
 
 # Active Configuration
 DEFAULTCONF=FrameworkWith_u8g2
