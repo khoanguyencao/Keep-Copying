@@ -355,7 +355,7 @@ DisplayState_t QueryDisplay(void)
  Author
     A. Gin
 ****************************************************************************/
-void welcomeScreen(void)
+static void welcomeScreen(void)
 {
     // clear screen
     u8g2_FirstPage(&u8g2); 
@@ -381,7 +381,7 @@ void welcomeScreen(void)
  Author
     A. Gin
 ****************************************************************************/
-void readyScreen(uint16_t score, uint16_t round)
+static void readyScreen(uint16_t score, uint16_t round)
 {
     // multiply score by 10 to get actual score
     score = score * 10;
@@ -432,7 +432,7 @@ void readyScreen(uint16_t score, uint16_t round)
  Author
     A. Gin
 ****************************************************************************/
-void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction)
+static void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction)
 {
     // turn round into a string and add it to "R"
     char roundstring[4];
@@ -701,7 +701,7 @@ void instructionScreen(uint16_t score, uint16_t round, uint16_t instruction)
  Author
     A. Gin
 ****************************************************************************/
-void goScreen(uint16_t score, uint16_t round)
+static void goScreen(uint16_t score, uint16_t round)
 {
     // turn round into a string and add it to "R"
     score = score * 10;
@@ -751,7 +751,7 @@ void goScreen(uint16_t score, uint16_t round)
  Author
     A. Gin
 ****************************************************************************/
-void playScreen(uint16_t score, uint8_t time, uint8_t input)
+static void playScreen(uint16_t score, uint8_t time, uint8_t input)
 {
     // turn round into a string and add it to "R"
     char roundstring[4];
@@ -1035,7 +1035,7 @@ void playScreen(uint16_t score, uint8_t time, uint8_t input)
  Author
     A. Gin
 ****************************************************************************/
-void roundCompleteScreen(uint16_t score, uint16_t round)
+static void roundCompleteScreen(uint16_t score, uint16_t round)
 {
     // turn round into a string and add it to "R"
     char roundstring[4];
@@ -1087,7 +1087,7 @@ void roundCompleteScreen(uint16_t score, uint16_t round)
  Author
     A. Gin
 ****************************************************************************/
-void gameCompleteScreen(void)
+static void gameCompleteScreen(void)
 {
     // clear screen
     u8g2_FirstPage(&u8g2); 
@@ -1130,7 +1130,7 @@ void gameCompleteScreen(void)
  Author
     A. Gin
 ****************************************************************************/
-void demoScreen(void)
+static void demoScreen(void)
 {
     // clear screen
     u8g2_FirstPage(&u8g2); 
