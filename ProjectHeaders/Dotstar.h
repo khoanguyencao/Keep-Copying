@@ -1,10 +1,3 @@
-/****************************************************************************
-
-  Header file for template Flat Sate Machine
-  based on the Gen2 Events and Services Framework
-
- ****************************************************************************/
-
 #ifndef Dotstar_H
 #define Dotstar_H
 
@@ -25,8 +18,9 @@ bool InitDotstar(uint8_t Priority);
 bool PostDotstar(ES_Event_t ThisEvent);
 ES_Event_t RunDotstar(ES_Event_t ThisEvent);
 DotstarState_t QueryDotstar(void);
-void dotStar_Write(uint8_t Bright1, uint8_t Red1, uint8_t Blue1, uint8_t Green1, 
-            uint8_t Bright2, uint8_t Red2, uint8_t Blue2, uint8_t Green2);
+static void dotStar_Write(const uint8_t Bright1, const uint8_t Red1, const uint8_t Blue1, 
+        const uint8_t Green1, const uint8_t Bright2, const uint8_t Red2, const uint8_t Blue2, 
+        const uint8_t Green2);
         
 
 #endif /* Dotstar_H */

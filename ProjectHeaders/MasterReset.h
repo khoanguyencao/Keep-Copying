@@ -1,10 +1,3 @@
-/****************************************************************************
-
-  Header file for template Flat Sate Machine
-  based on the Gen2 Events and Services Framework
-
- ****************************************************************************/
-
 #ifndef MasterReset_H
 #define MasterReset_H
 

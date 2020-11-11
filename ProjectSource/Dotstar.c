@@ -432,8 +432,9 @@ DotstarState_t QueryDotstar(void)
  Author
     A. Gin
 ****************************************************************************/
-void dotStar_Write(uint8_t Bright1, uint8_t Red1, uint8_t Blue1, uint8_t Green1, 
-            uint8_t Bright2, uint8_t Red2, uint8_t Blue2, uint8_t Green2){
+static void dotStar_Write(const uint8_t Bright1, const uint8_t Red1, 
+        const uint8_t Blue1, const uint8_t Green1, const uint8_t Bright2, 
+        const uint8_t Red2, const uint8_t Blue2, const uint8_t Green2){
     uint32_t data;
     //write start frame
     SPI_Write(0);
