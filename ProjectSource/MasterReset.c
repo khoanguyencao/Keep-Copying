@@ -6,8 +6,8 @@
    1.0.1
 
  Description
-   This is a template file for implementing flat state machines under the
-   Gen2 Events and Services Framework.
+   MasterReset is a file that resets the game once no inputs have been 
+   detected for 30 seconds.
 
  Notes
 
@@ -109,9 +109,12 @@ bool PostMasterReset(ES_Event_t ThisEvent)
    ES_Event_t, ES_NO_EVENT if no error ES_ERROR otherwise
 
  Description
-   add your description here
+   Implementation of master reset function when 30 seconds without an input
+   expires. If an input is detected, then the timer resets.
+
  Notes
    uses nested switch/case to implement the machine.
+
  Author
    K. Cao
 ****************************************************************************/
@@ -138,7 +141,7 @@ ES_Event_t RunMasterReset(ES_Event_t ThisEvent)
       {
         case ES_INPUT_DETECTED:
         {
-            printf("Master Reset Input detected\r\n");
+          // Restart timer 
           ES_Timer_InitTimer(IDLE_TIMER, 30000);
         }
         break;
@@ -147,11 +150,11 @@ ES_Event_t RunMasterReset(ES_Event_t ThisEvent)
         {   
           if (ThisEvent.EventParam == IDLE_TIMER)
           {
+            // Update Game State and Sequence FSMs
             ES_Event_t ResetEvent;
             ResetEvent.EventType = ES_MASTER_RESET;
             PostGameState(ResetEvent);
             PostSequence(ResetEvent);
-            printf("Master Reset\r\n");
           }
         }
         break;
