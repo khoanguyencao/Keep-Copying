@@ -91,7 +91,7 @@ static uint8_t input; //variable to pass user input to OLED
      bool, false if error in initialization, true otherwise
  Description
      Initialize Joystick pins and program, sets input for touch button button. 
- *  Initializes lastTouchSensor for event checking function xyVal
+ *  Initializes lastTouchSensor for event checking function CheckXYVal
 ****************************************************************************/
 
 bool InitSequence(uint8_t Priority)
@@ -171,8 +171,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                       ADC_MultiRead(adcResults);
                       Neutral[0] = adcResults[0];           // Y neutral position
                       Neutral[1] = adcResults[1];           // X neutral position
-                      printf("Yn %d\r\n", Neutral[0]);
-                      printf("Xn %d\r\n", Neutral[1]);
                       CurrentState = SequenceCreate;
                 }
         }
@@ -222,9 +220,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         displayCounter++;
                         ES_Timer_InitTimer(DIRECTION_TIMER, 750);
                         CurrentState = SequenceDisplay;
-
-                        // TESTING
-                        printf("Direction %d \r\n", seqArray[seqIndex]); 
                     }
                 }
                 break;
@@ -255,7 +250,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             DisplayEvent.EventType = ES_DISPLAY_INSTRUCTION;
                             DisplayEvent.EventParam = seqArray[displayCounter];
                             PostDisplay(DisplayEvent);
-                            printf("Direction %d \r\n", seqArray[displayCounter]);
                                                         
                             // If not last direction
                             if (displayCounter < (arrayLength - 1)){
@@ -293,9 +287,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
                             ES_Timer_InitTimer(INSTRUCTION_TIMER, 101);
                             CurrentState = SequenceInput;
-
-                            // TESTING
-                            printf("Gameplay Screen\r\n");
                         }
                         break;
                         
@@ -329,8 +320,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             // Inform display service to update time
                             playtimeLeft--;
                             ES_Timer_InitTimer(INPUT_TIMER, 1000);
-
-                            printf("%u seconds remaining\r\n", playtimeLeft);
                         } 
 
                         else if (playtimeLeft == 0) 
@@ -343,8 +332,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                             GameStateEvent.EventType = ES_GAME_COMPLETE;
                             GameStateEvent.EventParam = score;
                             PostGameState(GameStateEvent);
-
-                            printf("Game Over from Timeout\r\n");
                         }
                     }
                     if (ThisEvent.EventParam == INSTRUCTION_TIMER)
@@ -358,7 +345,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                         DisplayEvent.EventParam = bitPack(score, playtimeLeft, Input_Direction(adcResults));
                         PostDisplay(DisplayEvent);
 
-                        printf("input  %d\r\n",input);
                         //Restart Timer
                         ES_Timer_InitTimer(INSTRUCTION_TIMER, 101);
                     }
@@ -375,8 +361,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     GameStateEvent.EventType = ES_GAME_COMPLETE;
                     GameStateEvent.EventParam = score;
                     PostGameState(GameStateEvent);
-
-                    printf("Game Over from Incorrect Input\r\n");
                 }
                 break;
 
@@ -384,9 +368,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                 {
                     updateScore();
                     seqIndex++;
-                    
-                    // TESTING
-                    //printf("Input Correct\r\n");
                 }
                 break;
                 
@@ -410,9 +391,6 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
                     ES_Event_t GameStateEvent;
                     GameStateEvent.EventType = ES_ROUND_COMPLETE;
                     PostGameState(GameStateEvent);
-
-                    // TESTING
-                    //printf("Round Complete\r\n");
                 }
                 break;
 
@@ -432,12 +410,24 @@ ES_Event_t RunSequence(ES_Event_t ThisEvent)
 
   return ReturnEvent;
 }
+/****************************************************************************
+ Function
+   CheckXYVal
+ Parameters
+   void
+ Returns
+   bool, true for event detected and posting, false for no event detected
+ Description
 
-/* Event Checkers ------------------------------------------------------------
- * This event checker takes reads the joystick x and y values when
- * the touch button is pressed, preserving the input the user wants to give to
- * the game.
- ----------------------------------------------------------------------------*/
+Event Checker
+  This event checker takes reads the joystick x and y values when
+  the touch button is pressed, preserving the input the user wants to give to
+  the game. Event Checker compares user input to sequence pattern and post 
+  Correct Input or Incorrect Input
+  
+Second Function: Post to Master Reset if the JoyStick is not in neutral
+  position
+****************************************************************************/
 bool CheckXYVal (void)
 {
     static bool returnValue = false;
@@ -524,11 +514,18 @@ bool CheckXYVal (void)
     
     return returnValue;
 }
+/****************************************************************************
+ Function
+   inputChecker
+ Parameters
+   pointer adcResults
+ Returns
+   bool, true for user input same as sequence pattern, false otherwise
+ Description
 
-/*---------------------------------------------------------------------------
- This function compares the input of the X, Y axis of joystick and compares
- that input to the sequence of directions, being currently analyzed
- Also updates the input variable to display to the oled---------------------*/
+  This function compares the input of the X, Y axis of joystick and compares
+  that input to the sequence of directions, being currently analyzed
+****************************************************************************/
 static bool inputChecker(uint32_t *adcResults)
 {
     static bool returnValue = false;
@@ -543,7 +540,18 @@ static bool inputChecker(uint32_t *adcResults)
     return returnValue;
     
 }
+/****************************************************************************
+ Function
+   updateScore
+ Parameters
+   void
+ Returns
+   
+ Description
 
+  Updates score everytime a user enters a correct input, double score for
+  every 4 correct inputs
+****************************************************************************/
 static void updateScore(){
     if (arrayLength <= 4) {
         score = score + 1;
@@ -559,11 +567,31 @@ static uint16_t bitPack(const uint8_t score, const uint8_t time, const uint8_t i
     EventParam = EventParam | (input);
     return EventParam;
 }
+/****************************************************************************
+ Function
+   masterReset
+ Parameters
+   void
+ Returns
+   
+ Description
 
+  sets current state to SequenceCreate
+****************************************************************************/
 static void masterReset(){
     CurrentState = SequenceCreate;
 }
+/****************************************************************************
+ Function
+   Input_Direction
+ Parameters
+   pointer adcResults
+ Returns
+   uint8_t input
+ Description
 
+  categorizes the X and Y position of the Joystick into 8 cardinal directions
+****************************************************************************/
 uint8_t Input_Direction(uint32_t *adcResults)
 {
     //Direction being analyzed
